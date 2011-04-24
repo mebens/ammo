@@ -26,37 +26,45 @@ camera = setmetatable({}, {
   end
 })
 
-camera._pos = Vector(0, 0)
-camera.zoom = 1
-camera.rotation = 0
-camera.shakeFactor = 0
 
-function camera:set()
+Camera = class('Camera')
+
+function Camera:initialize(x, y, zoom, rotation)
+  self._pos = Vector(x or 0, y or 0)
+  self.zoom = zoom or 1
+  self.rotation = rotation or 0
+end
+
+function Camera:set()
   love.graphics.push()
   love.graphics.scale(self.zoom)
   love.graphics.rotate(self.rotation)
   love.graphics.translate(-self.x, -self.y)
 end
 
-function camera:unset()
+function Camera:unset()
   love.graphics.pop()
 end
 
-function camera:move(dx, dy)
+function Camera:move(dx, dy)
   self.x = self.x + (dx or 0)
   self.y = self.y + (dy or 0)
 end
 
-function camera:rotate(dr)
+function Camera:rotate(dr)
   self.rotation = self.rotation + dr
 end
 
-function camera:setPosition(x, y)
+function Camera:getPosition()
+  return self.x, self.y
+end
+
+function Camera:setPosition(x, y)
   self.x = x
   self.y = y
 end
 
-function camera:setBounds(x1, y1, x2, y2)
+function Camera:setBounds(x1, y1, x2, y2)
   self.bounds = { x1 = x1, y1 = y1, x2 = x2, y2 = y2 }
 end
 
