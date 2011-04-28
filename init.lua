@@ -21,7 +21,7 @@ local imports = {
   {
     'core',
     'extensions',
-    'camera',
+    'Camera',
     'World',
     'PhysicalWorld',
     'Entity',
