@@ -25,9 +25,7 @@ function PhysicalWorld:initialize(...)
     end
   end)
   
-  -- metatable
-  local old = getmetatable(self)
-  old.__index = PhysicalWorld._mt.__index
+  self:applyAccessors()
 end
 
 function PhysicalWorld:update(dt)

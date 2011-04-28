@@ -31,19 +31,10 @@ function PhysicalEntity._mt:__newindex(key, value)
 end
 
 function PhysicalEntity:initialize(t)
+  self:applyAccessors()
   Entity.initialize(self, t)
-  
-  -- change rotation to private
   self._rotation = self.rotation
-  self.rotation = nil
-  
-  -- other stuff
   self._shapes = {}
-  
-  -- metatable
-  local old = getmetatable(self)
-  old.__index = PhysicalEntity._mt.__index
-  old.__newindex = PhysicalEntity._mt.__newindex
 end
 
 function PhysicalEntity:update(dt)
@@ -85,6 +76,10 @@ function PhysicalEntity:destroy()
       end
     end)
   end
+end
+
+function PhysicalEntity:rotate(dr)
+  self.rotation = self.rotation + dr
 end
 
 function PhysicalEntity:setupBody(mass, inertia)
@@ -134,3 +129,20 @@ function PhysicalEntity:newRevoluteJoint(other, x, y)
 end
 
 -- TODO other joint functions
+
+for _, v in pairs{'applyForce', 'applyImpulse', 'applyTorque', 'destroy', 
+                  'getAllowSleeping', 'getAngle', 'getAngularDamping',
+                  'getAngularVelocity', 'getInertia', 'getLinearDamping',
+                  'getLinearVelocity', 'getLinearVelocityFromLocalPoint',
+                  'getLinearVelocityFromWorldPoint', 'getLocalCenter',
+                  'getLocalPoint', 'getLocalVector', 'getMass', 'getWorldCenter',
+                  'getWorldPoint', 'getWorldVector', 'isBullet', 'isDynamic',
+                  'isFrozen', 'isSleeping', 'isStatic', 'putToSleep',
+                  'setAllowSleeping', 'setAngle', 'setAngularDamping',
+                  'setAngularVelocity', 'setBullet', 'setFixedRotation',
+                  'setInertia', 'setLinearDamping', 'setMass', 'setMassFromShapes',
+                  'wakeUp'} do
+  PhysicalEntity[v] = function(self, ...)
+    return self._body[v](self._body, ...)
+  end
+end

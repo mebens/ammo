@@ -1,3 +1,10 @@
+-- setup random numbers
+math.randomseed(os.time())
+math.random()
+math.random()
+math.random()
+
+-- import stuff
 local path = ({...})[1]:gsub("%.init", "")
 local imports = {
   {

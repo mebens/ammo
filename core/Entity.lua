@@ -1,4 +1,7 @@
-Entity = class('Entity')
+Entity = class('Entity'):include(Accessors)
+
+-- METATABLE --
+
 Entity._mt = {}
 
 function Entity._mt:__index(key)
@@ -33,12 +36,13 @@ function Entity._mt:__newindex(key, value)
   end
 end
 
+-- METHODS --
+
 function Entity:initialize(t)
   -- position/dimensions
   self._pos = Vector(0, 0)
   self.width = 0
   self.height = 0
-  self.rotation = 0
   
   -- settings
   self.active = true
@@ -47,11 +51,6 @@ function Entity:initialize(t)
   -- private stuff
   self._layer = 1
   
-  -- enable getter/setter functionality
-  local old = getmetatable(self)
-  old.__index = Entity._mt.__index
-  old.__newindex = Entity._mt.__newindex
-  
   -- Entities will also have the following properties once added to a world:
   -- self._world
   -- self._updateNext
@@ -59,7 +58,10 @@ function Entity:initialize(t)
   -- self._drawNext
   -- self._drawPrev
   
+  self:applyAccessors()
+  
   if t then
+    print(t)
     for k, v in pairs(t) do
       self[k] = v
     end
@@ -80,13 +82,33 @@ function Entity:move(dx, dy)
   self.y = self.y + dy
 end
 
-function Entity:rotate(dr)
-  self.rotation = self.rotation + dr
+function Entity:animate(duration, t)
+  if not self._world then return end
+  
+  local ease = t.ease
+  local onComplete = t.onComplete
+  t.ease = nil
+  t.onComplete = nil
+  
+  local tween = AttrTween:new(self, duration, t, Tween.ONESHOT, onComplete, ease)
+  self._world:add(tween)
+  return tween:start()
 end
 
-function Entity:animate(duration, values, ease, complete)
-  if not self._world then return end
-  local t = AttrTween:new(self, duration, values, Tween.ONESHOT, complete, ease)
-  self._world:add(t)
-  return t:start()
+function Entity:getPosition()
+  return self.x, self.y
+end
+
+function Entity:setPosition(x, y)
+  if x then self.x = x end
+  if y then self.y = y end
+end
+
+function Entity:getSize()
+  return self.width, self.height
+end
+
+function Entity:setSize(width, height)
+  if width then self.width = width end
+  if height then self.height = height end
 end

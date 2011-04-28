@@ -89,3 +89,14 @@ end
 function love.mouse.getPosition()
   return love.mouse.getX(), love.mouse.getY()
 end
+
+--------------------------------
+-- Object
+
+function Object:applyAccessors()
+  local mt = self.class._mt
+  if not mt then return end
+  local old = getmetatable(self)
+  if mt.__index then old.__index = mt.__index end
+  if mt.__newindex then old.__newindex = mt.__newindex end
+end

@@ -1,4 +1,39 @@
 World = class('World')
+
+-- CLASS METATABLE --
+
+do
+  local mt = getmetatable(World)
+  
+  function mt.__index(_, key)
+    if key == 'current' then
+      return World._current
+    else
+      return World.__classDict[key]
+    end
+  end
+  
+  function mt.__newindex(_, key, value)
+    if key == 'current' then
+      World._goto = value
+    else
+      World.__classDict[key] = value
+    end
+  end
+end
+
+-- CLASS METHODS --
+
+rawset(World, 'update', function(self, dt)
+  
+end)
+
+rawset(World, 'draw', function(self)
+  
+end)
+
+-- METATABLE --
+
 World._mt = {}
 
 function World._mt:__index(key)
@@ -11,6 +46,8 @@ function World._mt:__index(key)
   end
 end
 
+-- METHODS --
+
 function World:initialize(t)
   -- settings
   self.active = true
@@ -22,10 +59,8 @@ function World:initialize(t)
   self._layers = {}
   self._add = {}
   self._remove = {}
-  
-  -- enable getter/setter functionality
-  local old = getmetatable(self)
-  old.__index = World._mt.__index
+ 
+  self:applyAccessors()
   
   if t then
     for k, v in pairs(t) do
