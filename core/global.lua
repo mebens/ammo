@@ -1,7 +1,7 @@
 -- X MODULE --
 
 x = setmetatable({}, {
-  __index = function(self, key) return self['_' .. key] end,
+  __index = function(self, key) return rawget(self, '_' .. key) end,
   
   __newindex = function(self, key, value)
     if key == 'world' then
@@ -34,9 +34,9 @@ end
 
 function x.draw()
   if x._world then
-    if x._camera then x._camera:unset() end
+		if x._camera then x._camera:set() end
     x._world:draw()
-    if x._camera then x._camera:set() end
+    if x._camera then x._camera:unset() end
   end
 end
 
@@ -50,7 +50,7 @@ function love.run()
   while true do
     love.timer.step()
     dt = love.timer.getDelta()
-    x.update()
+    x.update(dt)
     if love.update then love.update(dt) end
     
     love.graphics.clear()

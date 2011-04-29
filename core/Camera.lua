@@ -2,7 +2,13 @@ Camera = class('Camera')
 Camera._mt = {}
 
 function Camera._mt:__index(key)
-  return (key == 'x' or key == 'y') and self._pos[key] or rawget(self, '_' .. key)
+  local result = (key == 'x' or key == 'y') and self._pos[key] or rawget(self, '_' .. key)
+
+	if result then
+		return result
+	else
+		return Camera.__classDict[key]
+	end
 end
   
 function Camera._mt:__newindex(key, value)
@@ -36,7 +42,7 @@ function Camera:unset()
 end
 
 function Camera:update(dt)
-	
+
 end
 
 function Camera:move(dx, dy)

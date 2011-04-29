@@ -33,7 +33,7 @@ end
 function PhysicalEntity:initialize(t)
   self:applyAccessors()
   Entity.initialize(self, t)
-  self._rotation = self.rotation
+  self._rotation = 0
   self._shapes = {}
 end
 

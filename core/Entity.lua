@@ -61,7 +61,6 @@ function Entity:initialize(t)
   self:applyAccessors()
   
   if t then
-    print(t)
     for k, v in pairs(t) do
       self[k] = v
     end
