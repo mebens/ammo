@@ -1,4 +1,4 @@
-Entity = class('Entity'):include(Accessors)
+Entity = class('Entity')
 
 -- METATABLE --
 
