@@ -3,4 +3,4 @@
 	url = git://github.com/kikito/middleclass.git
 [submodule "lib/strong"]
 	path = lib/strong
-	url = git://github.com/BlackBulletIV/x.git
+	url = git://github.com/BlackBulletIV/strong.git
