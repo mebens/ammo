@@ -19,7 +19,8 @@ x = setmetatable({}, {
 function x.update(dt)
   -- update
   if x._world then x._world:update(dt) end
-  love.audio.update()
+  love.audio._update()
+  input._update()
   
   -- world switch
   if x._goto then
@@ -35,6 +36,41 @@ function x.draw()
     if x._camera then x._camera:unset() end
     x._world:draw()
     if x._camera then x._camera:set() end
+  end
+end
+
+-- LOVE.RUN --
+
+function love.run()
+  if love.load then love.load(arg) end
+  dt = 0
+
+  -- Main loop time.
+  while true do
+    love.timer.step()
+    dt = love.timer.getDelta()
+    x.update()
+    if love.update then love.update(dt) end
+    
+    love.graphics.clear()
+    x.draw()
+    if love.draw then love.draw() end -- love.draw will be on-top of everything else
+
+    -- Process events.
+    for e, a, b, c in love.event.poll() do
+      if e == "q" then
+        if not love.quit or not love.quit() then
+          if love.audio then love.audio.stop() end
+          return
+        end
+      end
+      
+      input._event(e, a, b, c)
+      love.handlers[e](a, b, c)
+    end
+
+    love.timer.sleep(1)
+    love.graphics.present()
   end
 end
 

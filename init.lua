@@ -9,18 +9,28 @@ local path = ({...})[1]:gsub("%.init", "")
 local imports = {
   {
     'lib',
-    'middleclass'
+    
+    'middleclass',
+    'strong'
   },
   
   {
     'ds',
+    
     'SpecialLinkedList',
     'Vector'
   },
   
   {
     'core',
+    
+    -- modules/functions
+    'global',
     'extensions',
+    'input',
+    'ease',
+    
+    -- classes
     'Camera',
     'World',
     'PhysicalWorld',
@@ -29,7 +39,6 @@ local imports = {
     'Sfx',
     'Tween',
     'AttrTween',
-    'ease'
   }
 }
 

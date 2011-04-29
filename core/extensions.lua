@@ -50,7 +50,7 @@ end
 
 love.audio._sounds = {}
 
-function love.audio.update()
+function love.audio._update()
   for _, v in pairs(love.audio._sounds) do
     for k, s in pairs(v._sources) do
       if s:isStopped() then
