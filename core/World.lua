@@ -1,39 +1,4 @@
 World = class('World')
-
--- CLASS METATABLE --
-
-do
-  local mt = getmetatable(World)
-  
-  function mt.__index(_, key)
-    if key == 'current' then
-      return World._current
-    else
-      return World.__classDict[key]
-    end
-  end
-  
-  function mt.__newindex(_, key, value)
-    if key == 'current' then
-      World._goto = value
-    else
-      World.__classDict[key] = value
-    end
-  end
-end
-
--- CLASS METHODS --
-
-rawset(World, 'update', function(self, dt)
-  
-end)
-
-rawset(World, 'draw', function(self)
-  
-end)
-
--- METATABLE --
-
 World._mt = {}
 
 function World._mt:__index(key)
@@ -45,8 +10,6 @@ function World._mt:__index(key)
     return self.class.__classDict[key]
   end
 end
-
--- METHODS --
 
 function World:initialize(t)
   -- settings
