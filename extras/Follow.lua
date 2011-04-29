@@ -2,10 +2,10 @@ Follow = {}
 
 function Follow:included(cls)
 	local oldUpdate = cls.update
-	local oldInit = cls.initalize
+	local oldInit = cls.initialize
 	
 	function cls:initialize(target, zoom, rotation)
-		oldInit(0, 0, zoom, rotation)
+		oldInit(self, 0, 0, zoom, rotation)
 		self.target = target
 		
 		if target then
