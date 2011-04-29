@@ -35,6 +35,10 @@ function Camera:unset()
   love.graphics.pop()
 end
 
+function Camera:update(dt)
+	
+end
+
 function Camera:move(dx, dy)
   self.x = self.x + (dx or 0)
   self.y = self.y + (dy or 0)
