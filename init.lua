@@ -1,10 +1,12 @@
--- setup random numbers
+-- SETUP RANDOM NUMBERS --
+
 math.randomseed(os.time())
 math.random()
 math.random()
 math.random()
 
--- import stuff
+-- IMPORTS --
+
 local path = ({...})[1]:gsub("%.init", "")
 local imports = {
   {
@@ -46,4 +48,10 @@ for _, v in ipairs(imports) do
   for i = 2, #v do
     require(path .. '.' .. v[1] .. '.' .. v[i])
   end
+end
+
+-- RESOURCES.INIT AUTOLOAD --
+
+if love.filesystem.exists('resources/init.lua') then
+	require('resources')
 end
