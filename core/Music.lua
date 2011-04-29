@@ -1,16 +1,15 @@
-Sfx = class('Sfx')
-Sfx._mt = {}
+Music = class('Music')
+Music._mt = {}
 
-function Sfx._mt:__index(key)
+function Music._mt:__index(key)
   if key == 'file' then
     return self._file
   else
-    return Sfx.__classDict[key]
+    return Music.__classDict[key]
   end
 end
 
-function Sfx:initialize(file, volume, pan)
-  self._data = love.sound.newSoundData(file)
+function Music:initialize(file, volume, pan)
   self._file = file
   self._sources = {}
 	self.defaultVolume = volume or 1
@@ -19,8 +18,8 @@ function Sfx:initialize(file, volume, pan)
   table.insert(love.audio._sounds, self)
 end
 
-function Sfx:play(x, y, volume, pan)
-  local source = love.audio.newSource(self._data, 'stream')
+function Music:play(x, y, volume, pan)
+  local source = love.audio.newSource(self._file, 'stream')
   source:setVolume(volume or self.defaultVolume)
   source:setPosition(pan or self.defaultPan, 0, 0)
   source:play()
@@ -29,7 +28,7 @@ function Sfx:play(x, y, volume, pan)
 end
 
 for _, v in pairs{'pause', 'resume', 'rewind', 'stop'} do
-  Sfx[v] = function(self, last)
+  Music[v] = function(self, last)
     if last and self._sources[#self._sources] then
       self._sources[#self._sources][v]()
     else

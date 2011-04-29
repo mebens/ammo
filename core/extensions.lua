@@ -64,6 +64,8 @@ end
 -- love.graphics
 
 local _colorStack = {}
+love.graphics.width = love.graphics.getWidth()   -- keeping these in variables will make things faster
+love.graphics.height = love.graphics.getHeight() -- however, they won't be updated on size change
 
 function love.graphics.pushColor(...)
   local r, g, b, a = love.graphics.getColor()
