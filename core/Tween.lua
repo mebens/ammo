@@ -2,11 +2,14 @@ Tween = class('Tween')
 Tween.PERSIST = 1
 Tween.LOOPING = 2
 Tween.ONESHOT = 3
+
+-- METATABLE --
+
 Tween._mt = {}
 
 function Tween._mt:__index(key)
-  if Tween.__classDict[key] then
-    return Tween.__classDict[key]
+  if self.class.__classDict[key] then
+    return self.class.__classDict[key]
   elseif rawget(self, '_' .. key) then
     return self['_' .. key]
   elseif key == 'percent' then
@@ -34,6 +37,10 @@ function Tween._mt:__newindex(key, value)
   end
 end
 
+Tween:enableAccessors()
+
+-- METHODS --
+
 function Tween:initialize(duration, tweenType, complete, ease)
   -- settings
   self.active = false
@@ -48,6 +55,8 @@ function Tween:initialize(duration, tweenType, complete, ease)
   self._target = duration or 1
   self._time = 0
   self._t = 0
+  
+  self:applyAccessors()
 end
 
 function Tween:update(dt)

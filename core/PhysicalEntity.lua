@@ -1,16 +1,8 @@
 PhysicalEntity = class('PhysicalEntity', Entity)
-PhysicalEntity._mt = {}
 
-function PhysicalEntity._mt:__index(key)
-  local result = Entity._mt.__index(self, key)
-  
-  if result then
-    return result
-  elseif rawget(self, '_body') ~= nil and self._body[key] then
-    self[key] = function(self, ...) self._body[key](self._body, ...) end
-    return self[key]
-  end
-end
+-- METATABLE --
+
+PhysicalEntity._mt = {}
 
 function PhysicalEntity._mt:__newindex(key, value)
   if key == 'x' then
@@ -30,9 +22,13 @@ function PhysicalEntity._mt:__newindex(key, value)
   end
 end
 
+PhysicalEntity:enableAccessors()
+
+-- METHODS --
+
 function PhysicalEntity:initialize(t)
-  self:applyAccessors()
   Entity.initialize(self, t)
+  self:applyAccessors()
   self._rotation = 0
   self._shapes = {}
 end

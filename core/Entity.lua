@@ -36,6 +36,8 @@ function Entity._mt:__newindex(key, value)
   end
 end
 
+Entity:enableAccessors()
+
 -- METHODS --
 
 function Entity:initialize(t)

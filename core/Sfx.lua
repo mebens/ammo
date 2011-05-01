@@ -5,9 +5,11 @@ function Sfx._mt:__index(key)
   if key == 'file' then
     return self._file
   else
-    return Sfx.__classDict[key]
+    return self.class.__classDict[key]
   end
 end
+
+Sfx:enableAccessors()
 
 function Sfx:initialize(file, volume, pan)
   self._data = love.sound.newSoundData(file)

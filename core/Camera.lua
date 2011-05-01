@@ -23,6 +23,8 @@ function Camera._mt:__newindex(key, value)
   end
 end
 
+Camera:enableAccessors()
+
 function Camera:initialize(x, y, zoom, rotation)
   self._pos = Vector(x or 0, y or 0)
   self.zoom = zoom or 1

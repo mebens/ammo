@@ -12,6 +12,8 @@ function PhysicalWorld._mt:__index(key)
   end
 end 
 
+PhysicalWorld:enableAccessors()
+
 function PhysicalWorld:initialize(...)
   World.initialize(self)
   self.physicsActive = true
