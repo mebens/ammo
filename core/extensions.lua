@@ -111,20 +111,23 @@ function Object:enableAccessors()
     self._fullMt[v] = self.__classDict[v]
   end
   
-  if self.superclass._mt then
-    if not self._mt.__index then
-      self._fullMt.__index = self.superclass._mt.__index
+  local c = self.superclass
+  while c and c._mt do
+    if not self._fullMt.__index then
+      self._fullMt.__index = c._mt.__index
     end
     
-    if not self._mt.__newindex then
-      self._fullMt.__newindex = self.superclass._mt.__newindex
+    if not self._fullMt.__newindex then
+      self._fullMt.__newindex = c._mt.__newindex
     end
+    
+    c = c.superclass
   end
   
   return self
 end
 
 function Object:applyAccessors()
-  if not self.class._fullMt then return end
-  setmetatable(self, self.class._fullMt)
+  if not self._fullMt then return end
+  setmetatable(self, self._fullMt)
 end

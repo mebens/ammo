@@ -78,22 +78,22 @@ end
 -- GLOBAL FUNCTIONS --
 
 function delay(secs, func)
-  if not world then return end
+  if not x._world then return end
   local t = Tween:new(secs, Tween.ONESHOT, func)
-  world:add(t)
+  x._world:add(t)
   return t:start()
 end
 
 function delayFrames(frames, func)
-  if not world then return end
+  if not x._world then return end
   local t = Tween:new(secs, Tween.ONESHOT, func)
-  world:add(t)
+  x._world:add(t)
   t.useFrames = true
   return t:start()
 end
 
 function tween(obj, duration, t)
-  if not world then return end
+  if not x._world then return end
   
   local ease = t.ease
   local onComplete = t.onComplete
@@ -101,6 +101,6 @@ function tween(obj, duration, t)
   t.onComplete = nil
   
   local t = AttrTween:new(obj, duration, t, Tween.ONESHOT, onComplete, ease)
-  world:add(t)
+  x._world:add(t)
   return t:start()
 end

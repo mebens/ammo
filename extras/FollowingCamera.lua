@@ -4,6 +4,7 @@ function FollowingCamera:initialize(target, zoom, rotation)
   Camera.initialize(self, 0, 0, zoom, rotation)
   self.target = target
 	self.move = true
+	self.speed = 7
 	
 	if target then
 		self.x = target.x - love.graphics.width / 2

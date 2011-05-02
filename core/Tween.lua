@@ -102,6 +102,6 @@ function Tween:_finish()
   elseif self.type == Tween.ONESHOT then
     self._time = self._target
     self.active = false
-    self._world:remove(self)
+    if self._world then self._world:remove(self) end
   end
 end

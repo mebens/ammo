@@ -7,7 +7,7 @@ function Camera._mt:__index(key)
 	if result then
 		return result
 	else
-		return Camera.__classDict[key]
+		return self.class.__classDict[key]
 	end
 end
   
