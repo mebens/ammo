@@ -45,10 +45,6 @@ function PhysicalEntity:update(dt)
   end
 end
 
-function PhysicalEntity:removed()
-  self:destroy()
-end
-
 function PhysicalEntity:collided(shape, other, otherShape, collision)
   
 end
