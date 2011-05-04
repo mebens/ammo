@@ -3,13 +3,12 @@
 input = {}
 input._maps = {}
 
-function input.define(t)
-  if not t.key and not t.mouse then
-    table.remove(t, 1)
-    t.key = t
+function input.define(t, ...)
+  if type(t) == 'string' then
+    input._maps[t] = { key = {...} }
+  else
+    input._maps[t[1]] = t
   end
-  
-  input._maps[t[1]] = t
 end
 
 function input.pressed(name)
