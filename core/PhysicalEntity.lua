@@ -4,6 +4,16 @@ PhysicalEntity = class('PhysicalEntity', Entity)
 
 PhysicalEntity._mt = {}
 
+function PhysicalEntity._mt:__index(key)
+  if key == 'velx' then
+    return self._velocity.x
+  elseif key == 'vely' then
+    return self._velocity.y
+  else
+    return Entity._mt.__index(self, key)
+  end
+end
+
 function PhysicalEntity._mt:__newindex(key, value)
   if key == 'x' then
     self._pos.x = value
@@ -17,6 +27,17 @@ function PhysicalEntity._mt:__newindex(key, value)
   elseif key == 'rotation' then
     self._rotation = value
     if self._body then self._body:setAngle(value) end
+  elseif key == 'velx' then
+    self._velocity.x = value
+    local vx, vy = self._body:getLinearVelocity()
+    if self._body then self._body:setLinearVelocity(value, vy) end
+  elseif key == 'vely' then
+    self._velocity.y = value
+    local vx, vy = self._body:getLinearVelocity()
+    if self._body then self._body:setLinearVelocity(vx, value) end
+  elseif key == 'velocity' then
+    self._velocity = value
+    if self._body then self._body:setLinearVelocity(value.x, value.y) end
   else
     Entity._mt.__newindex(self, key, value)
   end
@@ -28,14 +49,16 @@ PhysicalEntity:enableAccessors()
 
 function PhysicalEntity:initialize(t)
   Entity.initialize(self, t)
-  self:applyAccessors()
+  self._velocity = Vector(0, 0)
   self._rotation = 0
   self._shapes = {}
+  self:applyAccessors()
 end
 
 function PhysicalEntity:update(dt)
   if self._body then
     self._pos.x, self._pos.y = self._body:getPosition()
+    self._velocity.x, self._velocity.y = self._body:getLinearVelocity()
 
     if self.noRotate then
       self._body:setAngle(0)
