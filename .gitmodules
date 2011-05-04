@@ -1,6 +1,6 @@
 [submodule "lib/middleclass"]
 	path = lib/middleclass
-	url = git://github.com/kikito/middleclass.git
+	url = git://github.com/BlackBulletIV/middleclass.git
 [submodule "lib/strong"]
 	path = lib/strong
 	url = git://github.com/BlackBulletIV/strong.git
