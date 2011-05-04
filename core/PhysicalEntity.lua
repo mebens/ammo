@@ -39,6 +39,7 @@ function PhysicalEntity:update(dt)
 
     if self.noRotate then
       self._body:setAngle(0)
+      self._rotation = 0
     else
       self._rotation = self._body:getAngle()
     end

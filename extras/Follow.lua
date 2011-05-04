@@ -6,7 +6,7 @@ function Follow:included(cls, target, speed)
   if subclassOf(Object, cls) then
     local oldInit = cls.initialize
     
-    function Follow:initialize(target, zoom, rotation)
+    function cls:initialize(target, zoom, rotation)
       oldInit(self, 0, 0, zoom, rotation)
 
       self.target = target
@@ -19,17 +19,17 @@ function Follow:included(cls, target, speed)
     	end
     end
   else
-    self.target = target
-  	self.move = true
-  	self.speed = speed or 7
+    cls.target = target
+  	cls.move = true
+  	cls.speed = speed or 7
 
   	if target then
-  		self.x = target.x - love.graphics.width / 2
-  		self.y = target.y - love.graphics.height / 2
+  		cls.x = target.x - love.graphics.width / 2
+  		cls.y = target.y - love.graphics.height / 2
   	end
 	end
 
-  function Follow:update(dt)
+  function cls:update(dt)
     oldUpdate(dt)
     
   	if self.target and self.move then
