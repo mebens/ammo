@@ -66,19 +66,13 @@ end
 --]]
 function SpecialLinkedList:push(...)
   for _, v in ipairs{...} do
-    if not v._lists then v._lists = {} end
-    
-    if not v._lists[self] then
-      if not self._first then
-        self._first = v
-        self._last = v
-      else
-        self._last[self._np] = v
-        v[self._pp] = self._last
-        self._last = v
-      end
-    
-      v._lists[self] = true
+    if not self._first then
+      self._first = v
+      self._last = v
+    else
+      self._last[self._np] = v
+      v[self._pp] = self._last
+      self._last = v
     end
   end
   
@@ -95,19 +89,13 @@ end
 --]]
 function SpecialLinkedList:unshift(...)
   for _, v in ipairs{...} do
-    if not v._lists then v._lists = {} end
-    
-    if not v._lists[self] then
-      if not self._first then
-        self._first = v
-        self._last = v
-      else
-        self._first[self._pp] = v
-        v[self._np] = self._first
-        self._first = v
-      end
-
-      v._lists[self] = true
+    if not self._first then
+      self._first = v
+      self._last = v
+    else
+      self._first[self._pp] = v
+      v[self._np] = self._first
+      self._first = v
     end
   end
   
@@ -130,16 +118,12 @@ end
   The node added.
 --]]
 function SpecialLinkedList:insert(node, after)
-  if not after._lists or not after._lists[self] then return end
-  
   if after[self._np] then
     after[self._np][self._pp] = node
   else
     self._last = node
   end
 
-  if not v._lists then v._lists = {} end
-  node._lists[self] = true
   after[self._np] = node
   self._length = self._length + 1
   return node
@@ -159,7 +143,6 @@ function SpecialLinkedList:pop()
     self._last = ret[self._pp]
     ret[self._pp] = nil
     self._length = self._length - 1
-    ret._lists[self] = nil
     return ret
   end
 end
@@ -178,7 +161,6 @@ function SpecialLinkedList:shift()
     self._first = ret[self._np]
     ret[self._np] = nil
     self._length = self._length - 1
-    ret._lists[self] = nil
     return ret
   end
 end
@@ -192,28 +174,25 @@ end
 --]]
 function SpecialLinkedList:remove(...)
   for _, v in ipairs{...} do
-    if v._lists and v._lists[self] then
-      if v[self._np] then
-        if v[self._pp] then
-          v[self._np][self._pp] = v[self._pp]
-          v[self._pp][self._np] = v[self._np]
-        else
-          v[self._np][self._pp] = nil
-          self._first = v[self._np]
-        end
-      elseif v[self._pp] then
-        v[self._pp][self._np] = nil
-        self._last = v[self._pp]
+    if v[self._np] then
+      if v[self._pp] then
+        v[self._np][self._pp] = v[self._pp]
+        v[self._pp][self._np] = v[self._np]
       else
-        self._first = nil
-        self._last = nil
+        v[self._np][self._pp] = nil
+        self._first = v[self._np]
       end
-
-      v[self._np] = nil
-      v[self._pp] = nil
-      v._lists[self] = nil
-      self._length = self._length - 1
+    elseif v[self._pp] then
+      v[self._pp][self._np] = nil
+      self._last = v[self._pp]
+    else
+      self._first = nil
+      self._last = nil
     end
+
+    v[self._np] = nil
+    v[self._pp] = nil
+    self._length = self._length - 1
   end
 end
 
@@ -236,7 +215,6 @@ function SpecialLinkedList:clear(complete)
     for v in self:getIterator() do
       v[self._np] = nil
       v[self._pp] = nil
-      v._lists[self] = nil
     end
   end
 end
