@@ -33,7 +33,7 @@ end
 
 function math.angle(x1, y1, x2, y2)
   local a = math.atan2(y2 - y1, x2 - x1)
-  return a < 0 and a + 360 or a
+  return a < 0 and a + math.tau or a
 end
 
 --------------------------------

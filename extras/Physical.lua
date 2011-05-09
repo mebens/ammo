@@ -1,3 +1,5 @@
+-- warning: this is an experiement at present
+
 local function computeVelocity(self, axis)
   local vel = self.velocity[axis]
   local max = self.maxVelocity[axis]
