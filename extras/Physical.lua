@@ -1,4 +1,5 @@
--- warning: this is an experiement at present
+-- This is for custom physics, and is a bit of an experiement at present
+-- If you're using love.physics, PhyiscalEntity and PhysicalWorld will be auto-loaded
 
 local function computeVelocity(self, axis)
   local vel = self.velocity[axis]
@@ -18,6 +19,10 @@ local function computeVelocity(self, axis)
     end
   end
   
+  if self.world and self.world.gravity then
+    vel = vel + self.world.gravity[axis]
+  end
+  
   vel = (vel - self.velocity[axis]) / 2
   self.velocity[axis] = self.velocity[axis] + vel
   self[axis] = self[axis] + self.velocity[axis] * dt
@@ -35,7 +40,6 @@ function Phyiscal:initalizePhysics()
   self.acceleration = Vector(0, 0)
   self.drag = Vector(0, 0)
   self.maxVelocity = Vector(10000, 10000)
-  -- possibly include anglular stuff in the future?
 end
 
 function Physical:updatePhysics()

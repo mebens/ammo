@@ -35,14 +35,21 @@ local imports = {
     -- classes
     'Camera',
     'World',
-    'PhysicalWorld',
     'Entity',
-    'PhysicalEntity',
     'Sfx',
     'Tween',
     'AttrTween',
   }
 }
+
+-- auto-load love.physics oriented classes
+if love.physics then
+  table.insert(imports, {
+    'extras',
+    'PhysicalEntity',
+    'PhysicalWorld'
+  })
+end
 
 for _, v in ipairs(imports) do
   for i = 2, #v do
