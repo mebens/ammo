@@ -18,7 +18,7 @@ x = setmetatable({}, {
 
 function x.update(dt)
   -- update
-	if x._camera then x._camera:update(dt) end
+  if x._camera then x._camera:update(dt) end
   if x._world then x._world:update(dt) end
   love.audio._update()
   input._update()
@@ -34,7 +34,7 @@ end
 
 function x.draw()
   if x._world then
-		if x._camera then x._camera:set() end
+    if x._camera then x._camera:set() end
     x._world:draw()
     if x._camera then x._camera:unset() end
   end

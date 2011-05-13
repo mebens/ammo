@@ -4,11 +4,11 @@ Camera._mt = {}
 function Camera._mt:__index(key)
   local result = (key == 'x' or key == 'y') and self._pos[key] or rawget(self, '_' .. key)
 
-	if result then
-		return result
-	else
-		return self.class.__classDict[key]
-	end
+  if result then
+    return result
+  else
+    return self.class.__classDict[key]
+  end
 end
   
 function Camera._mt:__newindex(key, value)

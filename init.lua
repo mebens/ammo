@@ -60,5 +60,5 @@ end
 -- RESOURCES.INIT AUTOLOAD --
 
 if love.filesystem.exists('resources/init.lua') then
-	require('resources.init')
+  require('resources.init')
 end

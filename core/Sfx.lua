@@ -15,8 +15,8 @@ function Sfx:initialize(file, volume, pan)
   self._data = love.sound.newSoundData(file)
   self._file = file
   self._sources = {}
-	self.defaultVolume = volume or 1
-	self.defaultPan = pan or 0
+  self.defaultVolume = volume or 1
+  self.defaultPan = pan or 0
   self:applyAccessors()
   table.insert(love.audio._sounds, self)
 end
