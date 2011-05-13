@@ -7,6 +7,8 @@ function input.define(t, ...)
   if type(t) == 'string' then
     input._maps[t] = { key = {...} }
   else
+    if type(t.key) == 'string' then t.key = { t.key } end
+    if type(t.mouse) == 'string' then t.mouse = { t.mouse } end
     input._maps[t[1]] = t
   end
 end
