@@ -8,7 +8,9 @@ function Shakeable:shake(amount)
       tween(self, .1, { _shakeFactor = (-amount) / 2, onComplete = function()
         tween(self, .1, { _shakeFactor = amount / 8, onComplete = function()
           tween(self, .1, { _shakeFactor = (-amount) / 8, onComplete = function()
-            self._shakeFactor = nil
+            -- we must do this because this is called before AttrTween.update
+            -- therefore setting it to nil will be un-done otherwise
+            delayFrames(1, function() self._shakeFactor = nil end)
           end })
         end })
       end })

@@ -75,6 +75,10 @@ function PhysicalEntity:collided(shape, other, otherShape, collision)
   
 end
 
+function PhysicalEntity:removed()
+  self:destroy()
+end
+
 function PhysicalEntity:destroy()
   if self._body then
     for _, v in pairs(self._shapes) do
@@ -148,7 +152,7 @@ end
 
 -- TODO other joint functions
 
-for _, v in pairs{'applyForce', 'applyImpulse', 'applyTorque', 'destroy', 
+for _, v in pairs{'applyForce', 'applyImpulse', 'applyTorque', 
                   'getAllowSleeping', 'getAngle', 'getAngularDamping',
                   'getAngularVelocity', 'getInertia', 'getLinearDamping',
                   'getLinearVelocity', 'getLinearVelocityFromLocalPoint',
