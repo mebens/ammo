@@ -18,10 +18,12 @@ function World:initialize(t)
   
   -- lists
   self._updates = SpecialLinkedList:new('_updateNext', '_updatePrev')
-  self._classCounts = {}
+  self._updateFilters = {}
+  self._drawFilters = {}
   self._layers = {}
   self._add = {}
   self._remove = {}
+  self._classCounts = {}
  
   self:applyAccessors()
   
@@ -35,7 +37,13 @@ end
 function World:update(dt)
   -- update
   for v in self._updates:getIterator() do
-    if v.active then v:update(dt) end
+    if v.active then
+      v:update(dt)
+      
+      for _, filter in pairs(self._updateFilters) do
+        filter:updateFilter(v, dt)
+      end
+    end
   end
   
   -- remove
@@ -74,6 +82,11 @@ function World:draw()
           v:draw()
           if v.color then love.graphics.popColor() end
         end
+        
+        -- we should apply draw filters even if the actually entity isn't visible
+        for _, filter in pairs(self._drawFilters) do
+          filter:drawFilter(v)
+        end
       end
     end
   end
@@ -110,6 +123,11 @@ function World:removeAll(entitiesOnly)
       self._remove[#self._remove + 1] = v
     end
   end
+end
+
+function World:addFilter(filter, type)
+  if type ~= 'draw' then self._updateFilters[#self._updateFilters + 1] = filter end
+  if type ~= 'update' then self._drawFilters[#self._drawFilters + 1] = filter end
 end
 
 function World:classCount(cls)
