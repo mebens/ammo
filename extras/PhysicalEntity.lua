@@ -162,8 +162,8 @@ for _, v in pairs{'applyForce', 'applyImpulse', 'applyTorque',
                   'isFrozen', 'isSleeping', 'isStatic', 'putToSleep',
                   'setAllowSleeping', 'setAngle', 'setAngularDamping',
                   'setAngularVelocity', 'setBullet', 'setFixedRotation',
-                  'setInertia', 'setLinearDamping', 'setMass', 'setMassFromShapes',
-                  'wakeUp'} do
+                  'setInertia', 'setLinearDamping', 'setLinearVelocity', 'setMass', 
+                  'setMassFromShapes', 'wakeUp'} do
   PhysicalEntity[v] = function(self, ...)
     return self._body[v](self._body, ...)
   end
