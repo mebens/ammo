@@ -3,11 +3,13 @@ gui = {}
 gui.style = {
   darkBg = { 35, 35, 35 },
   darkActiveBg = { 55, 55, 55 },
+  medBg = { 60, 60, 60 },
+  medActiveBg = { 80, 80, 80 },
   lightBg = { 170, 170, 170 },
   lightActiveBg = { 200, 200, 200 },
   
+  border = { 145, 145, 145 },
   activeBorder = { 23, 181, 230 },
-  inactiveBorder = { 145, 145, 145 },
   
   text = { 240, 240, 240 },
   darkText = { 20, 20, 20 },

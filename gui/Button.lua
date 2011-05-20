@@ -19,8 +19,9 @@ Button:enableAccessors()
 
 function Button:initialize(display, x, y, width, height)
   Control.initialize(self, x, y)
-  self.color = table.copy(self.style.darkBg)
+  self.color = table.copy(self.style.medBg)
   self.padding = 5
+  self.showBorder = true
   self:applyAccessors()
   self[type(display) == 'string' and 'text' or 'image'] = display
 end
@@ -28,6 +29,7 @@ end
 function Button:draw()
   local ax = self.absX
   local ay = self.absY
+  self:drawBorder(self.style.border)
   love.graphics.rectangle("fill", ax, ay, self.width, self.height)
   
   if self.text then
@@ -44,13 +46,13 @@ end
 function Button:mouseOver()
   if self.onOver then self:onOver() end
   if self.colorTween then self.colorTween:stop() end
-  self.colorTween = tween(self.color, .15, self.style.darkActiveBg)
+  self.colorTween = tween(self.color, .15, self.style.medActiveBg)
 end
 
 function Button:mouseOut()
   if self.onOut then self:onOut() end
   if self.colorTween then self.colorTween:stop() end
-  self.colorTween = tween(self.color, .15, self.style.darkBg)
+  self.colorTween = tween(self.color, .15, self.style.medBg)
 end
 
 function Button:mouseUp(x, y)

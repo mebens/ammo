@@ -6,6 +6,7 @@ function Control:initialize(x, y)
   self.y = y or 0
   self.style = gui.style
   self.draggable = false
+  self.showBorder = true
 end
 
 function Control:update()
@@ -27,4 +28,12 @@ end
 
 function Control:mouseUp()
   self._mouseDown = nil
+end
+
+function Control:drawBorder(color)
+  if self.showBorder then
+    love.graphics.pushColor(color)
+    love.graphics.rectangle("line", self.absX - 1, self.absY - 1, self.width + 2, self.height + 2)
+    love.graphics.popColor()
+  end
 end

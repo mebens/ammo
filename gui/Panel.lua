@@ -30,6 +30,7 @@ end
 function Panel:draw()
   local ax = self.absX
   local ay = self.absY
+  self:drawBorder(self.style.border)
   love.graphics.rectangle("fill", ax, ay, self.width, self.height)
   
   if self.showTitleBar then
