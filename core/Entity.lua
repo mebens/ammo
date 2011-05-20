@@ -11,12 +11,16 @@ function Entity._mt:__index(key)
     return result
   elseif key == 'x' or key == 'y' then
     return self._pos[key]
+  elseif key == 'absX' then
+    return self._pos.x + (self._parent and self._parent.absX or 0)
+  elseif key == 'absY' then
+    return self._pos.y + (self._parent and self._parent.absY or 0) 
   end
 end
 
 function Entity._mt:__newindex(key, value)
   if key == 'x' or key == 'y' then
-    self._pos[key] = value    
+    self._pos[key] = value
   elseif key == 'layer' then
     if self._layer == value then return end
     
@@ -31,6 +35,8 @@ function Entity._mt:__newindex(key, value)
     if self._world == value then return end
     if self._world then self._world:remove(self) end
     if value then value:add(self) end
+  elseif key == 'parent' then
+    value:add(self)
   else
     rawset(self, key, value)
   end
@@ -76,6 +82,36 @@ function Entity:update(dt) end
 function Entity:draw() end
 function Entity:added() end
 function Entity:removed() end
+
+function Entity:add(...)
+  if not self._world then return end
+  if not self._children then
+    self._children = SpecialLinkedList:new('_childNext', '_childPrev')
+  end
+  
+  for _, v in pairs{...} do
+    self._world:add(v)
+    self._children:push(v)
+    v._parent = self
+  end
+end
+
+function Entity:remove(...)
+  if not self._world or not self._children then return end
+  
+  for _, v in pairs{...} do
+    if v._parent == self then
+      self._world:remove(v)
+      self._children:remove(v)
+      v._parent = nil
+    end
+  end
+end
+
+function Entity:removeAll()
+  if not self._children then return end
+  for v in self._children:getIterator() do self:remove(v) end
+end
 
 function Entity:move(dx, dy)
   self.x = self.x + dx
@@ -138,6 +174,10 @@ end
 function Entity:setPosition(x, y)
   if x then self.x = x end
   if y then self.y = y end
+end
+
+function Entity:absPosition()
+  return self.absX, self.absY
 end
 
 function Entity:getSize()

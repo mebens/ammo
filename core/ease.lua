@@ -1,11 +1,13 @@
 ease = {}
 
-local B1 = 1 / 2.75
-local B2 = 2 / 2.75
-local B3 = 1.5 / 2.75
-local B4 = 2.5 / 2.75
-local B5 = 2.25 / 2.75
-local B6 = 2.625 / 2.75
+-- making these locals will make things slighly faster
+local tau = math.tau
+local b1 = 1 / 2.75
+local b2 = 2 / 2.75
+local b3 = 1.5 / 2.75
+local b4 = 2.5 / 2.75
+local b5 = 2.25 / 2.75
+local b6 = 2.625 / 2.75
 
 function ease.quadIn(t)
   return t * t
@@ -80,11 +82,11 @@ function ease.quintInOut(t)
 end
 
 function ease.sineIn(t)
-  return -math.cos(math.tau / 4 * t) + 1
+  return -math.cos(tau / 4 * t) + 1
 end
 
 function ease.sineOut(t)
-  return math.sin(math.tau / 4 * t)
+  return math.sin(tau / 4 * t)
 end
 
 function ease.sineInOut(t)
@@ -93,32 +95,32 @@ end
 
 function ease.bounceIn(t)
   t = 1 - t
-  if t < B1 then return 1 - 7.5625 * t * t end
-  if t < B2 then return 1 - (7.5625 * (t - B3) * (t - B3) + .75) end
-  if t < B4 then return 1 - (7.5625 * (t - B5) * (t - B5) + .9375) end
-  return 1 - (7.5625 * (t - B6) * (t - B6) + .984375)
+  if t < b1 then return 1 - 7.5625 * t * t end
+  if t < b2 then return 1 - (7.5625 * (t - b3) * (t - b3) + .75) end
+  if t < b4 then return 1 - (7.5625 * (t - b5) * (t - b5) + .9375) end
+  return 1 - (7.5625 * (t - b6) * (t - b6) + .984375)
 end
 
 function ease.bounceOut(t)
-  if t < B1 then return 7.5625 * t * t end
-  if t < B2 then return 7.5625 * (t - B3) * (t - B3) + .75 end
-  if t < B4 then return 7.5625 * (t - B5) * (t - B5) + .9375 end
-  return 7.5625 * (t - B6) * (t - B6) + .984375
+  if t < b1 then return 7.5625 * t * t end
+  if t < b2 then return 7.5625 * (t - b3) * (t - b3) + .75 end
+  if t < b4 then return 7.5625 * (t - b5) * (t - b5) + .9375 end
+  return 7.5625 * (t - b6) * (t - b6) + .984375
 end
 
 function ease.bounceInOut(t)
   if t < .5 then
     t = 1 - t * 2
-    if t < B1 then return (1 - 7.5625 * t * t) / 2 end
-    if t < B2 then return (1 - (7.5625 * (t - B3) * (t - B3) + .75)) / 2 end
-    if t < B4 then return (1 - (7.5625 * (t - B5) * (t - B5) + .9375)) / 2 end
-    return (1 - (7.5625 * (t - B6) * (t - B6) + .984375)) / 2
+    if t < b1 then return (1 - 7.5625 * t * t) / 2 end
+    if t < b2 then return (1 - (7.5625 * (t - b3) * (t - b3) + .75)) / 2 end
+    if t < b4 then return (1 - (7.5625 * (t - b5) * (t - b5) + .9375)) / 2 end
+    return (1 - (7.5625 * (t - b6) * (t - b6) + .984375)) / 2
   else
     t = t * 2 - 1
-    if t < B1 then return (7.5625 * t * t) / 2 + .5 end
-    if t < B2 then return (7.5625 * (t - B3) * (t - B3) + .75) / 2 + .5 end
-    if t < B4 then return (7.5625 * (t - B5) * (t - B5) + .9375) / 2 + .5 end
-    return (7.5625 * (t - B6) * (t - B6) + .984375) / 2 + .5
+    if t < b1 then return (7.5625 * t * t) / 2 + .5 end
+    if t < b2 then return (7.5625 * (t - b3) * (t - b3) + .75) / 2 + .5 end
+    if t < b4 then return (7.5625 * (t - b5) * (t - b5) + .9375) / 2 + .5 end
+    return (7.5625 * (t - b6) * (t - b6) + .984375) / 2 + .5
   end
 end
 

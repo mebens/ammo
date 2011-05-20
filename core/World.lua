@@ -49,6 +49,7 @@ function World:update(dt)
   -- remove
   for _, v in pairs(self._remove) do
     if v.removed then v:removed() end
+    if v._children then v:removeAll() end
     self._updates:remove(v)    
     v._world = nil
     self._classCounts[v.class.name] = self._classCounts[v.class.name] - 1
