@@ -151,5 +151,5 @@ function World:_setLayer(e, prev)
     self._layers[e._layer] = SpecialLinkedList:new('_drawNext', '_drawPrev')
   end
   
-  self._layers[e._layer]:push(e)
+  self._layers[e._layer]:unshift(e)
 end
