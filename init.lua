@@ -13,7 +13,7 @@ local imports = {
     'lib',
     
     'middleclass',
-    'strong'
+    'strong',
   },
   
   {
@@ -56,6 +56,9 @@ for _, v in ipairs(imports) do
     require(path .. '.' .. v[1] .. '.' .. v[i])
   end
 end
+
+-- inspect.lua requries us to catch the return value
+table.inspect = require(path .. '.lib.inspect.inspect')
 
 -- RESOURCES.INIT AUTOLOAD --
 

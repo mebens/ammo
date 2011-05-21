@@ -50,9 +50,8 @@ function TextInput:draw()
     local pos1 = math.min(self._cursor - 1, self._cursor - 1 + self._selection)
     local pos2 = math.max(self._cursor - 1, self._cursor - 1 + self._selection)
     local startX = ax + self.padding + self.style.fontSmall:getWidth(self.text:sub(1, pos1 - 1))
-    local startY = ay + self.padding
     love.graphics.pushColor(self.style.selection)
-    love.graphics.rectangle("fill", startX, startY, startX + self.style.fontSmall:getWidth(self.text:sub(pos1, po2)), startY + self._fontHeight)
+    love.graphics.rectangle("fill", startX, ay + self.padding, startX + self.style.fontSmall:getWidth(self.text:sub(pos1, pos2)), self._fontHeight)
     love.graphics.popColor()
   end
   
@@ -74,43 +73,52 @@ function TextInput:deleteSelection()
     if pos1 ~= 1 then str = str .. self.text:sub(1, pos1 - 1) end
     if pos2 ~= #self.text then str = str .. self.text:sub(pos2 + 1) end
     self.text = str
+    self._cursor = self._cursor - 1
   elseif self._cursor > 1 then
     local str = ""
-    if self._cursor > 2 then str = str .. self.text:sub(1, self._cursor - 1) end
-    if self._cursor <= #self.text then str = str .. self.text:sub(self._cursor + 1) end
+    if self._cursor > 2 then str = str .. self.text:sub(1, self._cursor - 2) end
+    if self._cursor <= #self.text + 1 then str = str .. self.text:sub(self._cursor + 1) end
     self.text = str
+    self._cursor = self._cursor - 1
   end
 end
 
-function TextInput:keyPressed(key, unicode)
+function TextInput:keyPressed(k, unicode)
   if self.activated then
-    if key == 'left' then
+    if k == 'left' then
       if (key.down.lshift or key.down.rshift) and self._cursor + self._selection > 1 then
-        self._selection = self._section - 1
+        self._selection = self._selection - 1
       elseif self._cursor > 1 then
         self._cursor = self._cursor - 1
       end
-    elseif key == 'right' then
+    elseif k == 'right' then
       if (key.down.lshift or key.down.rshift) and self._cursor + self._selection < #self.text then
-        self._selection = self._section + 1
+        self._selection = self._selection + 1
       elseif self._cursor <= #self.text then
         self._cursor = self._cursor + 1
       end
-    elseif key == 'backspace' then
+    elseif k == 'backspace' then
       self:deleteSelection()
-    elseif key == 'delete' then
+    elseif k == 'delete' then
       if self._selection ~= 0 then
         self:deleteSelection()
       elseif self._cursor > 0 then
         -- not sure whether this works, we'll have to see
         local str = ""
         if self._cursor > 1 then str = str .. self.text:sub(1, self._cursor - 1) end
-        if self._cursor < #self.text then str = str .. self.text:sub(self._cursor + 1) end
+        if self._cursor <= #self.text then str = str .. self.text:sub(self._cursor + 1) end
         self.text = str
+        self._cursor = self._cursor - 1
       end
     elseif unicode ~= 0 and unicode < 1000 then
       self.text = self.text:insert(self._cursor, string.char(unicode))
       self._cursor = self._cursor + 1
     end
+    
+    print('cursor', self._cursor)
+    print('selection', self._selection)
+    print('text', self.text)
+    print()
+    
   end
 end
