@@ -14,8 +14,12 @@ function Control:update()
     self.x = self._mouseDown.ox + (mouse.x - self._mouseDown.x)
     self.y = self._mouseDown.oy + (mouse.y - self._mouseDown.y)
   end
-  
+
   self:updateMouse()
+  
+  if self.activated and mouse.pressed.l and self._mouseState ~= 'down' then
+    gui.active = nil
+  end
 end
 
 function Control:mouseDown(x, y)
@@ -24,6 +28,8 @@ function Control:mouseDown(x, y)
     -- oy = original self.y
     self._mouseDown = { ox = self.x, oy = self.y, x = x, y = y }
   end
+  
+  if not self.activated then gui.active = self end
 end
 
 function Control:mouseUp()

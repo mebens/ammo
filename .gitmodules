@@ -4,3 +4,6 @@
 [submodule "lib/strong"]
 	path = lib/strong
 	url = git://github.com/BlackBulletIV/strong.git
+[submodule "lib/inspect"]
+	path = lib/inspect
+	url = git://github.com/kikito/inspect.lua.git
