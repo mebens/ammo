@@ -1,6 +1,9 @@
 -- X MODULE --
 
-x = setmetatable({}, {
+-- x is most likely defined by init.lua
+if not x then x = {} end
+
+setmetatable(x, {
   __index = function(self, key) return rawget(self, '_' .. key) end,
   
   __newindex = function(self, key, value)

@@ -1,13 +1,10 @@
--- SETUP RANDOM NUMBERS --
+-- X AND X.PATH --
 
-math.randomseed(os.time())
-math.random()
-math.random()
-math.random()
+x = {}
+x.path = ({...})[1]:gsub("%.init", "")
 
 -- IMPORTS --
 
-local path = ({...})[1]:gsub("%.init", "")
 local imports = {
   {
     'lib',
@@ -53,12 +50,19 @@ end
 
 for _, v in ipairs(imports) do
   for i = 2, #v do
-    require(path .. '.' .. v[1] .. '.' .. v[i])
+    require(x.path .. '.' .. v[1] .. '.' .. v[i])
   end
 end
 
 -- inspect.lua requries us to catch the return value
-table.inspect = require(path .. '.lib.inspect.inspect')
+table.inspect = require(x.path .. '.lib.inspect.inspect')
+
+-- SETUP RANDOM NUMBERS --
+
+math.randomseed(os.time())
+math.random()
+math.random()
+math.random()
 
 -- RESOURCES.INIT AUTOLOAD --
 
