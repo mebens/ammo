@@ -18,18 +18,29 @@ TextInput:enableAccessors()
 
 function TextInput:initialize(x, y, width, rows)
   Control.initialize(self, x, y)
+  
+  -- private/needed properties
   self.padding = 3
   self._rows = rows or 1
   self._fontHeight = self.style.fontSmall:getHeight()
+  self._cursor = 1
+  self._selection = 0
   
+  -- dimensions/text/settings
   self.width = width
   self.height = self._fontHeight * self._rows + self.padding * 2
   self.text = ""
-  self.color = table.copy(self.style.medBg)
-  self._cursor = 1
-  self._selection = 0
-  self:applyAccessors()
+  self.editable = true
+  self.blinkDelay = .5
   
+  -- colors
+  self.color = table.copy(self.style.medBg)
+  self.cursorColor = table.copy(self.style.darkBg)
+  self.cursorColor[4] = 255
+  
+  -- other setup calls
+  self:applyAccessors()
+  self:_tweenCursor(false)
   table.insert(gui._onKeyPressed, self)
 end
 
@@ -57,7 +68,7 @@ function TextInput:draw()
   
   -- cursor
   local width = self.style.fontSmall:getWidth(self.text:sub(1, self._cursor - 1))
-  love.graphics.pushColor(self.style.darkBg)
+  love.graphics.pushColor(self.cursorColor)
   love.graphics.rectangle("fill", ax + math.min(width, self.width - self.padding * 2) + self.padding, ay + self.padding, 2, self._fontHeight)
   love.graphics.popColor()
   
@@ -77,7 +88,7 @@ function TextInput:deleteSelection()
   elseif self._cursor > 1 then
     local str = ""
     if self._cursor > 2 then str = str .. self.text:sub(1, self._cursor - 2) end
-    if self._cursor <= #self.text + 1 then str = str .. self.text:sub(self._cursor + 1) end
+    if self._cursor <= #self.text + 1 then str = str .. self.text:sub(self._cursor) end
     self.text = str
     self._cursor = self._cursor - 1
   end
@@ -91,28 +102,33 @@ function TextInput:keyPressed(k, unicode)
       elseif self._cursor > 1 then
         self._cursor = self._cursor - 1
       end
+      
+      self.cursorColor[4] = 255
     elseif k == 'right' then
       if (key.down.lshift or key.down.rshift) and self._cursor + self._selection < #self.text then
         self._selection = self._selection + 1
       elseif self._cursor <= #self.text then
         self._cursor = self._cursor + 1
       end
-    elseif k == 'backspace' then
-      self:deleteSelection()
-    elseif k == 'delete' then
-      if self._selection ~= 0 then
+
+      self.cursorColor[4] = 255
+    elseif self.editable then
+      if k == 'backspace' then
         self:deleteSelection()
-      elseif self._cursor > 0 then
-        -- not sure whether this works, we'll have to see
-        local str = ""
-        if self._cursor > 1 then str = str .. self.text:sub(1, self._cursor - 1) end
-        if self._cursor <= #self.text then str = str .. self.text:sub(self._cursor + 1) end
-        self.text = str
-        self._cursor = self._cursor - 1
+      elseif k == 'delete' then
+        if self._selection ~= 0 then
+          self:deleteSelection()
+        elseif self._cursor > 0 then
+          -- not sure whether this works, we'll have to see
+          local str = ""
+          if self._cursor > 1 then str = str .. self.text:sub(1, self._cursor - 1) end
+          if self._cursor <= #self.text then str = str .. self.text:sub(self._cursor + 1) end
+          self.text = str
+        end
+      elseif unicode ~= 0 and unicode < 1000 then
+        self.text = self.text:insert(self._cursor, string.char(unicode))
+        self._cursor = self._cursor + 1
       end
-    elseif unicode ~= 0 and unicode < 1000 then
-      self.text = self.text:insert(self._cursor, string.char(unicode))
-      self._cursor = self._cursor + 1
     end
     
     print('cursor', self._cursor)
@@ -121,4 +137,11 @@ function TextInput:keyPressed(k, unicode)
     print()
     
   end
+end
+
+function TextInput:_tweenCursor(on)
+  delay(self.blinkDelay, function()
+    self.cursorColor[4] = (on and 255 or 0)
+    self:_tweenCursor(not on)
+  end)
 end
