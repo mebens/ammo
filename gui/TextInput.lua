@@ -129,11 +129,6 @@ function TextInput:keyPressed(k, unicode)
         self._cursor = self._cursor + 1
       end
     end
-    
-    print('cursor', self._cursor)
-    print('selection', self._selection)
-    print('text', self.text)
-    print()
   end
 end
 
