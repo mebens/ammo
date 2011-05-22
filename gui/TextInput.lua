@@ -35,12 +35,11 @@ function TextInput:initialize(x, y, width, rows)
   
   -- colors
   self.color = table.copy(self.style.medBg)
-  self.cursorColor = table.copy(self.style.darkBg)
-  self.cursorColor[4] = 255
+  self.cursorColor = table.copy(self.style.lightBg)
+  self.cursorColor[4] = 0
   
   -- other setup calls
   self:applyAccessors()
-  self:_tweenCursor(false)
   table.insert(gui._onKeyPressed, self)
 end
 
@@ -69,7 +68,7 @@ function TextInput:draw()
   -- cursor
   local width = self.style.fontSmall:getWidth(self.text:sub(1, self._cursor - 1))
   love.graphics.pushColor(self.cursorColor)
-  love.graphics.rectangle("fill", ax + math.min(width, self.width - self.padding * 2) + self.padding, ay + self.padding, 2, self._fontHeight)
+  love.graphics.rectangle("fill", ax + math.min(width, self.width - self.padding * 2) + self.padding, ay + self.padding, 1, self._fontHeight)
   love.graphics.popColor()
   
   --love.graphics.setScissor()
@@ -135,13 +134,25 @@ function TextInput:keyPressed(k, unicode)
     print('selection', self._selection)
     print('text', self.text)
     print()
-    
   end
+end
+
+function TextInput:onActivate()
+  self.cursorColor[4] = 255
+  self:_tweenCursor(false)
+end
+
+function TextInput:onDeactivate()
+  self.cursorColor[4] = 0
 end
 
 function TextInput:_tweenCursor(on)
   delay(self.blinkDelay, function()
-    self.cursorColor[4] = (on and 255 or 0)
-    self:_tweenCursor(not on)
+    if self.activated then
+      self.cursorColor[4] = (on and 255 or 0)
+      self:_tweenCursor(not on)
+    end
   end)
+
+  self.cursorColor[4] = 0
 end
