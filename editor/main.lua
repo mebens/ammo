@@ -3,6 +3,7 @@ require('x.gui.init')
 require('utils')
 require('editor')
 require('Editable')
+require('Filter')
 
 function love.load(args)
   if args[2] then editor.config.path = args[2] end
