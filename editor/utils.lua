@@ -15,8 +15,8 @@ function loadClasses(obj, clsType)
       
       if clsType then
         table.insert(
-          Editor[clsType == 'entity' and 'entities' or 'worlds'],
-          Editor.config.className(filename, clsType)
+          editor[clsType == 'entity' and 'entities' or 'worlds'],
+          editor.config.getClass(filename, clsType)
         )
       end
     end

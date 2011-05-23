@@ -1,16 +1,18 @@
-require('x')
-require('x.gui')
+require('x.init')
+require('x.gui.init')
 require('utils')
-require('Editor')
+require('editor')
+require('Editable')
 
 function love.load(args)
-  if args[2] then Editor.config.path = args[2] end
-  setIdentity(Editor.config.path)
+  if args[2] then editor.config.path = args[2] end
+  setIdentity(editor.config.path)
   
   -- requires
-  if Editor.config.resources then require(Editor.config.resources) end
-  if Editor.include then loadClasses(Editor.include) end
-  if Editor.entities then loadClasses(Editor.entities, 'entities') end
-  if Editor.worlds then loadClasses(Editor.worlds, 'worlds') end
+  if editor.config.resources then require(editor.config.resources) end
+  if editor.include then loadClasses(editor.include) end
+  if editor.entities then loadClasses(editor.entities, 'entities') end
+  if editor.worlds then loadClasses(editor.worlds, 'worlds') end
 end
 
+love.keypressed = gui.keyPressed

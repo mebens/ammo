@@ -46,32 +46,7 @@ function World:update(dt)
     end
   end
   
-  -- remove
-  for _, v in pairs(self._remove) do
-    if v.removed then v:removed() end
-    if v._children then v:removeAll() end
-    self._updates:remove(v)    
-    v._world = nil
-    self._classCounts[v.class.name] = self._classCounts[v.class.name] - 1
-    
-    if v._layer then
-      self._layers[v._layer]:remove(v)
-    end
-  end
-  
-  -- add
-  for _, v in pairs(self._add) do
-    self._updates:push(v)
-    v._world = self
-    self._classCounts[v.class.name] = (self._classCounts[v.class.name] or 0) + 1
-    
-    if v._layer then self:_setLayer(v) end
-    if v.added then v:added() end
-  end
-  
-  -- empty tables
-  self._add = {}
-  self._remove = {}
+  self:_updateLists()
 end
 
 function World:draw()
@@ -142,6 +117,35 @@ end
 
 function World:getIterator()
   return self._updates:getIterator()
+end
+
+function World:_updateLists()
+  -- remove
+  for _, v in pairs(self._remove) do
+    if v.removed then v:removed() end
+    if v._children then v:removeAll() end
+    self._updates:remove(v)    
+    v._world = nil
+    self._classCounts[v.class.name] = self._classCounts[v.class.name] - 1
+    
+    if v._layer then
+      self._layers[v._layer]:remove(v)
+    end
+  end
+  
+  -- add
+  for _, v in pairs(self._add) do
+    self._updates:push(v)
+    v._world = self
+    self._classCounts[v.class.name] = (self._classCounts[v.class.name] or 0) + 1
+    
+    if v._layer then self:_setLayer(v) end
+    if v.added then v:added() end
+  end
+  
+  -- empty tables
+  self._add = {}
+  self._remove = {}
 end
 
 function World:_setLayer(e, prev)

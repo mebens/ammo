@@ -44,7 +44,7 @@ gui.style = {
 
 gui._onKeyPressed = {}
 
-function gui:keyPressed(key, unicode)
+function gui.keyPressed(key, unicode)
   for _, v in pairs(self._onKeyPressed) do
     v:keyPressed(key, unicode)
   end

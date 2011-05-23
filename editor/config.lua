@@ -5,5 +5,5 @@ return {
   resources = 'resources',
   include = 'mixins',
   
-  className = function(file, type) return file end
+  getClass = function(file, type) return _G[file] end
 }
