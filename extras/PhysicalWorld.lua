@@ -9,7 +9,7 @@ function PhysicalWorld._mt:__index(key)
   if result then
     return result
   elseif self._world[key] then
-    self[key] = function(self, ...) self._world[key](self._world, ...) end
+    self[key] = function(self, ...) return self._world[key](self._world, ...) end
     return self[key]
   end
 end 
