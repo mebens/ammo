@@ -32,11 +32,12 @@ function Camera:initialize(x, y, zoom, rotation)
   self:applyAccessors()
 end
 
-function Camera:set()
+function Camera:set(scale)
+  scale = scale or 1
   love.graphics.push()
   love.graphics.scale(self.zoom)
   love.graphics.rotate(self.rotation)
-  love.graphics.translate(-self.x, -self.y)
+  love.graphics.translate(-self.x * scale, -self.y * scale)
 end
 
 function Camera:unset()

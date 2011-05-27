@@ -51,8 +51,12 @@ end
 
 function World:draw()
   for i = #self._layers, 1, -1 do
-    if self._layers[i] then
-      for v in self._layers[i]:getIterator(true) do -- reverse
+    local layer = self._layers[i]
+    
+    if layer then
+      if x._camera then x._camera:set(layer.scale) end
+      
+      for v in layer:getIterator(true) do -- reverse
         if v.visible then
           if v.color then love.graphics.pushColor(v.color) end
           v:draw()
@@ -64,6 +68,8 @@ function World:draw()
           filter:drawFilter(v)
         end
       end
+      
+      if x._camera then x.camera:unset() end
     end
   end
 end
@@ -104,6 +110,17 @@ end
 function World:addFilter(filter, type)
   if type ~= 'draw' then self._updateFilters[#self._updateFilters + 1] = filter end
   if type ~= 'update' then self._drawFilters[#self._drawFilters + 1] = filter end
+end
+
+function World:addLayer(index, scale)
+  local layer = SpecialLinkedList:new('_drawNext', '_drawPrev')
+  layer._scale = scale or 1
+  self._layers[index] = layer
+  return layer
+end
+
+function World:setupLayers(t)
+  for k, v in pairs(t) do self:addLayer(k, v) end
 end
 
 function World:classCount(cls)
@@ -150,10 +167,6 @@ end
 
 function World:_setLayer(e, prev)
   if self._layers[prev] then self._layers[prev]:remove(e) end
-
-  if not self._layers[e._layer] then
-    self._layers[e._layer] = SpecialLinkedList:new('_drawNext', '_drawPrev')
-  end
-  
+  if not self._layers[e._layer] then self:addLayer(e._layer) end
   self._layers[e._layer]:unshift(e)
 end

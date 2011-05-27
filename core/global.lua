@@ -36,11 +36,7 @@ function x.update(dt)
 end
 
 function x.draw()
-  if x._world then
-    if x._camera then x._camera:set() end
-    x._world:draw()
-    if x._camera then x._camera:unset() end
-  end
+  if x._world then x._world:draw() end
 end
 
 -- LOVE.RUN --
