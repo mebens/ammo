@@ -18,7 +18,7 @@ function Music:initialize(file, volume, pan)
   table.insert(love.audio._sounds, self)
 end
 
-function Music:play(x, y, volume, pan)
+function Music:play(volume, pan)
   local source = love.audio.newSource(self._file, 'stream')
   source:setVolume(volume or self.defaultVolume)
   source:setPosition(pan or self.defaultPan, 0, 0)

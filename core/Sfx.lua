@@ -21,7 +21,7 @@ function Sfx:initialize(file, volume, pan)
   table.insert(love.audio._sounds, self)
 end
 
-function Sfx:play(x, y, volume, pan)
+function Sfx:play(volume, pan)
   local source = love.audio.newSource(self._data, 'stream')
   source:setVolume(volume or self.defaultVolume)
   source:setPosition(pan or self.defaultPan, 0, 0)
