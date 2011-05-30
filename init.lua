@@ -34,6 +34,7 @@ local imports = {
     'World',
     'Entity',
     'Sfx',
+    'Music',
     'Tween',
     'AttrTween',
   }
