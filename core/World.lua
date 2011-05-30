@@ -59,7 +59,7 @@ function World:draw()
       for v in layer:getIterator(true) do -- reverse
         if v.visible then
           if v.color then love.graphics.pushColor(v.color) end
-          v:draw()
+          v:draw(v.absX, v.absY)
           if v.color then love.graphics.popColor() end
         end
         
