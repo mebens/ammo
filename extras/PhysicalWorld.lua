@@ -20,15 +20,7 @@ function PhysicalWorld:initialize(...)
   World.initialize(self)
   self.physicsActive = true
   self._world = love.physics.newWorld(...)
-  
-  self._world:setCallbacks(function(a, b, collision)
-    if b.self == self.player then
-      b.self:collided(b.shape, a.self, a.shape, collision)
-    else
-      a.self:collided(a.shape, b.self, b.shape, collision)
-    end
-  end)
-  
+  self._world:setCallbacks(PhysicalWorld._onCollide)
   self:applyAccessors()
 end
 
@@ -65,4 +57,8 @@ function PhysicalWorld:sleepAll()
       v._body:putToSleep()
     end
   end
+end
+
+function PhysicalWorld._onCollide(a, b, collision)
+  a.self:collided(a.shape, b.self, b.shape, collision)
 end

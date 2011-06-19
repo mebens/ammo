@@ -33,8 +33,7 @@ local imports = {
     'Camera',
     'World',
     'Entity',
-    'Sfx',
-    'Music',
+    'Sound',
     'Tween',
     'AttrTween',
   }
