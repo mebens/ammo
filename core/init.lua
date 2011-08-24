@@ -1,9 +1,20 @@
--- X MODULE --
+-- IMPORTS --
 
--- x is most likely defined by init.lua
-if not x then x = {} end
+require(ammo.path .. ".core.extensions")
+require(ammo.path .. ".core.input")
+require(ammo.path .. ".core.camera")
+require(ammo.path .. ".core.SpecialLinkedList")
+require(ammo.path .. ".core.Vector")
+require(ammo.path .. ".core.World")
+require(ammo.path .. ".core.Entity")
+require(ammo.path .. ".core.Sound")
 
-setmetatable(x, {
+-- AMMO MODULE --
+
+-- ammo is most likely defined the main init.lua
+if not ammo then ammo = {} end
+
+setmetatable(ammo, {
   __index = function(self, key) return rawget(self, '_' .. key) end,
   
   __newindex = function(self, key, value)
@@ -15,24 +26,24 @@ setmetatable(x, {
   end
 })
 
-function x.update(dt)
+function ammo.update(dt)
   -- update
   camera.update(dt)
-  if x._world then x._world:update(dt) end
+  if ammo._world then ammo._world:update(dt) end
   love.audio._update()
   input._update()
   
   -- world switch
-  if x._goto then
-    if x._world then x._world:stop() end
-    x._world = x._goto
-    x._goto = nil
-    if x._world then x._world:start() end
+  if ammo._goto then
+    if ammo._world then ammo._world:stop() end
+    ammo._world = ammo._goto
+    ammo._goto = nil
+    if ammo._world then ammo._world:start() end
   end
 end
 
-function x.draw()
-  if x._world then x._world:draw() end
+function ammo.draw()
+  if ammo._world then ammo._world:draw() end
 end
 
 -- LOVE.RUN --
@@ -45,11 +56,11 @@ function love.run()
   while true do
     love.timer.step()
     dt = love.timer.getDelta()
-    x.update(dt)
+    ammo.update(dt)
     if love.update then love.update(dt) end
     
     love.graphics.clear()
-    x.draw()
+    ammo.draw()
     if love.draw then love.draw() end -- love.draw will be on-top of everything else
 
     -- Process events.
@@ -69,4 +80,3 @@ function love.run()
     love.graphics.present()
   end
 end
-
