@@ -81,19 +81,11 @@ end
 -- love.mouse
 
 function love.mouse.getX()
-  if x._camera then
-    return old.mouseGetX() * x._camera.zoom + x._camera.x
-  else
-    return old.mouseGetX()
-  end
+  return old.mouseGetX() * camera.zoom + camera.x
 end
 
 function love.mouse.getY()
-  if x._camera then
-    return old.mouseGetY() * x._camera.zoom + x._camera.y
-  else
-    return old.mouseGetY()
-  end
+  return old.mouseGetY() * camera.zoom + camera.y
 end
 
 function love.mouse.getPosition()

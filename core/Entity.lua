@@ -118,19 +118,6 @@ function Entity:move(dx, dy)
   self.y = self.y + dy
 end
 
-function Entity:animate(duration, t)
-  if not self._world then return end
-  
-  local ease = t.ease
-  local onComplete = t.onComplete
-  t.ease = nil
-  t.onComplete = nil
-  
-  local tween = AttrTween:new(self, duration, t, Tween.ONESHOT, onComplete, ease)
-  self._world:add(tween)
-  return tween:start()
-end
-
 function Entity:collides(with, ...)
   args = {...}
   

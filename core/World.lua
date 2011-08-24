@@ -54,7 +54,7 @@ function World:draw()
     local layer = self._layers[i]
     
     if layer then
-      if x._camera then x._camera:set(layer.scale) end
+      camera.set(layer.scale) end
       
       for v in layer:getIterator(true) do -- reverse
         if v.visible then
@@ -69,7 +69,7 @@ function World:draw()
         end
       end
       
-      if x._camera then x.camera:unset() end
+      camera.unset()
     end
   end
 end

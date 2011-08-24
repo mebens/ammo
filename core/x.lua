@@ -9,10 +9,6 @@ setmetatable(x, {
   __newindex = function(self, key, value)
     if key == 'world' then
       self._goto = value
-    elseif key == 'camera' then
-      if self._camera then self._camera:unset() end
-      if value then value:set() end
-      self._camera = value
     else
       rawset(self, key, value)
     end
@@ -21,7 +17,7 @@ setmetatable(x, {
 
 function x.update(dt)
   -- update
-  if x._camera then x._camera:update(dt) end
+  camera.update(dt)
   if x._world then x._world:update(dt) end
   love.audio._update()
   input._update()
@@ -74,32 +70,3 @@ function love.run()
   end
 end
 
--- GLOBAL FUNCTIONS --
-
-function delay(secs, func)
-  if not x._world then return end
-  local t = Tween:new(secs, Tween.ONESHOT, func)
-  x._world:add(t)
-  return t:start()
-end
-
-function delayFrames(frames, func)
-  if not x._world then return end
-  local t = Tween:new(secs, Tween.ONESHOT, func)
-  x._world:add(t)
-  t.useFrames = true
-  return t:start()
-end
-
-function tween(obj, duration, t)
-  if not x._world then return end
-  
-  local ease = t.ease
-  local onComplete = t.onComplete
-  t.ease = nil
-  t.onComplete = nil
-  
-  local t = AttrTween:new(obj, duration, t, Tween.ONESHOT, onComplete, ease)
-  x._world:add(t)
-  return t:start()
-end
