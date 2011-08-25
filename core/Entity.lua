@@ -118,42 +118,6 @@ function Entity:move(dx, dy)
   self.y = self.y + dy
 end
 
-function Entity:collides(with, ...)
-  args = {...}
-  
-  if self.type == 'circle' then
-    -- circle collision currently doesn't work with points or rectanglular entities
-    local dx = with.x - self.x
-    local dy = with.y - self.y
-    local radii = self.width / 2 + with.width / 2
-    return dx * dx + dy * dy < radii * radii
-  else
-    if type(with) == 'number' then
-      local px = with
-      local py = args[1]
-      local x = args[2] or self.x
-      local y = args[3] or self.y
-    
-      return px >= x - self.originX and px < x - self.originX + self.width
-         and py >= y - self.originY and py < y - self.originY + self.height
-    elseif instanceOf(Entity, with) then
-      local x = args[1] or self.x
-      local y = args[2] or self.y
-    
-      return x - self.originX + self.width > with.x + with.originX
-         and x - self.originX < with.x - with.originX + with.width
-         and y - self.originY + self.height > with.y + with.originY
-         and y - self.originY < with.y - with.originY + with.height
-    end
-  end
-  
-  return false
-end
-
--- distanceTo
--- distanceToPoint
--- distanceToRect
-
 function Entity:getPosition()
   return self.x, self.y
 end

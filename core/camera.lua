@@ -21,11 +21,24 @@ camera.zoom = 1
 camera.rotation = 0
 
 function camera.set(scale)
-  scale = scale or 1
+  local x, y
+  
+  if scale ~= 1 then 
+    x = camera.x
+    y = camera.y
+    camera.x = camera.x * scale
+    camera.y = camera.y * scale
+  end
+  
   love.graphics.push()
-  love.graphics.scale(self.zoom)
-  love.graphics.rotate(self.rotation)
-  love.graphics.translate(-self.x * scale, -self.y * scale)
+  love.graphics.scale(camera.zoom)
+  love.graphics.rotate(camera.rotation)
+  love.graphics.translate(-camera.x, -camera.y)
+  
+  if scale ~= 1 then
+    camera.x = x
+    camera.y = y
+  end
 end
 
 function camera.unset()
