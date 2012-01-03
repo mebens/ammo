@@ -26,12 +26,8 @@ function World:initialize(t)
   self._classCounts = {}
  
   self:applyAccessors()
-  
-  if t then
-    for k, v in pairs(t) do
-      self[k] = v
-    end
-  end
+  if not t then return end
+  for k, v in pairs(t) do self[k] = v end
 end
 
 function World:update(dt)
