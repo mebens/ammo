@@ -1,6 +1,6 @@
 camera = setmetatable({}, {
   __index = function(self, key)
-    (key == "x" or key == "y") and self._pos[key] or rawget(self, "_" .. key)
+    return (key == "x" or key == "y") and self._pos[key] or rawget(self, "_" .. key)
   end,
   
   __newindex = function(self, key, value)

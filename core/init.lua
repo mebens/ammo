@@ -1,10 +1,10 @@
 -- IMPORTS --
 
+require(ammo.path .. ".core.SpecialLinkedList")
+require(ammo.path .. ".core.Vector")
 require(ammo.path .. ".core.extensions")
 require(ammo.path .. ".core.input")
 require(ammo.path .. ".core.camera")
-require(ammo.path .. ".core.SpecialLinkedList")
-require(ammo.path .. ".core.Vector")
 require(ammo.path .. ".core.World")
 require(ammo.path .. ".core.Entity")
 require(ammo.path .. ".core.Sound")

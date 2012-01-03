@@ -11,6 +11,8 @@ function World._mt:__index(key)
   end
 end
 
+World:enableAccessors()
+
 function World:initialize(t)
   -- settings
   self.active = true
@@ -45,12 +47,12 @@ function World:update(dt)
   self:_updateLists()
 end
 
-function World:draw()
+function World:draw()  
   for i = #self._layers, 1, -1 do
     local layer = self._layers[i]
     
     if layer then
-      camera.set(layer.scale) end
+      camera.set(layer.scale)
       
       for v in layer:getIterator(true) do -- reverse
         if v.visible then
