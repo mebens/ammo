@@ -77,17 +77,13 @@ function World:stop() end
 
 function World:add(...)
   for _, v in pairs{...} do
-    if not v._world then
-      self._add[#self._add + 1] = v
-    end
+    if not v._world then self._add[#self._add + 1] = v end
   end
 end
 
 function World:remove(...)
   for _, v in pairs{...} do
-    if v._world == self then
-      self._remove[#self._remove + 1] = v
-    end
+    if v._world == self then self._remove[#self._remove + 1] = v end
   end
 end
 
@@ -141,7 +137,7 @@ function World:_updateLists()
     if v._children then v:removeAll() end
     self._updates:remove(v)    
     v._world = nil
-    self._classCounts[v.class.name] = self._classCounts[v.class.name] - 1
+    if v.class then self._classCounts[v.class.name] = self._classCounts[v.class.name] - 1 end
     
     if v._layer then
       self._layers[v._layer]:remove(v)
@@ -152,7 +148,7 @@ function World:_updateLists()
   for _, v in pairs(self._add) do
     self._updates:push(v)
     v._world = self
-    self._classCounts[v.class.name] = (self._classCounts[v.class.name] or 0) + 1
+    if v.class then self._classCounts[v.class.name] = (self._classCounts[v.class.name] or 0) + 1 end
     
     if v._layer then self:_setLayer(v) end
     if v.added then v:added() end
