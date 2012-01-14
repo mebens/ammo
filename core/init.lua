@@ -29,13 +29,13 @@ setmetatable(ammo, {
 function ammo.update(dt)
   -- update
   camera.update(dt)
-  if ammo._world then ammo._world:update(dt) end
+  if ammo._world and ammo._world.active then ammo._world:update(dt) end
   love.audio._update()
   input._update()
   
   -- world switch
   if ammo._goto then
-    if ammo._world then ammo._world:stop() end
+    if ammo._world and ammo._world.visible then ammo._world:stop() end
     ammo._world = ammo._goto
     ammo._goto = nil
     if ammo._world then ammo._world:start() end
