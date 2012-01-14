@@ -55,16 +55,8 @@ function World:draw()
       camera.set(layer.scale)
       
       for v in layer:getIterator(true) do -- reverse
-        if v.visible then
-          if v.color then love.graphics.pushColor(v.color) end
-          v:draw(v.absX, v.absY)
-          if v.color then love.graphics.popColor() end
-        end
-        
-        -- we should apply draw filters even if the actually entity isn't visible
-        for _, filter in pairs(self._drawFilters) do
-          filter:drawFilter(v)
-        end
+        if v.visible then v:draw(v.absX, v.absY) end
+        for _, filter in pairs(self._drawFilters) do filter:drawFilter(v) end -- we should apply draw filters even if the actually entity isn't visible
       end
       
       camera.unset()
