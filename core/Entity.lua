@@ -31,6 +31,16 @@ function Entity._mt:__newindex(key, value)
     else
       self._layer = value
     end
+  elseif key == 'name' then
+    if self._name == value then return end
+    
+    if self._world then
+      local prev = self._name
+      self._name = value
+      self._world:_setName(self, prev)
+    else
+      self._name = value
+    end
   elseif key == 'world' then
     if self._world == value then return end
     if self._world then self._world:remove(self) end
@@ -47,26 +57,13 @@ Entity:enableAccessors()
 -- METHODS --
 
 function Entity:initialize(t)
-  -- position/dimensions
   self._pos = Vector(0, 0)
   self.width = 0
   self.height = 0
   self.collidable = true
-  
-  -- settings
   self.active = true
   self.visible = true
-  
-  -- private stuff
-  self._layer = 1
-  
-  -- Entities will also have the following properties once added to a world:
-  -- self._world
-  -- self._updateNext
-  -- self._updatePrev
-  -- self._drawNext
-  -- self._drawPrev
-  
+  self._layer = 1  
   self:applyAccessors()
   
   if t then

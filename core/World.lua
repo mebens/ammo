@@ -20,13 +20,14 @@ function World:initialize(t)
   
   -- lists
   self._updates = SpecialLinkedList:new('_updateNext', '_updatePrev')
+  self._layers = {}
   self._updateFilters = {}
   self._drawFilters = {}
-  self._layers = {}
   self._add = {}
   self._remove = {}
   self._classCounts = {}
- 
+  self.names = {}
+  
   self:applyAccessors()
   if not t then return end
   for k, v in pairs(t) do self[k] = v end
@@ -131,6 +132,7 @@ function World:_updateLists()
     v._world = nil
     if v.class then self._classCounts[v.class.name] = self._classCounts[v.class.name] - 1 end
     if v.layer then self._layers[v._layer]:remove(v) end
+    if v.name then self.names[v.name] = nil end 
   end
   
   -- add
@@ -138,8 +140,8 @@ function World:_updateLists()
     self._updates:push(v)
     v._world = self
     if v.class then self._classCounts[v.class.name] = (self._classCounts[v.class.name] or 0) + 1 end
-    
     if v.layer then self:_setLayer(v) end
+    if v.name then self:_setName(v) end
     if v.added then v:added() end
   end
   
@@ -152,4 +154,9 @@ function World:_setLayer(e, prev)
   if self._layers[prev] then self._layers[prev]:remove(e) end
   if not self._layers[e.layer] then self:addLayer(e.layer) end
   self._layers[e.layer]:unshift(e)
+end
+
+function World:_setName(e, prev)
+  if prev then self.names[prev] = nil end
+  self.names[e.name] = e
 end
