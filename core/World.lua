@@ -130,10 +130,7 @@ function World:_updateLists()
     self._updates:remove(v)    
     v._world = nil
     if v.class then self._classCounts[v.class.name] = self._classCounts[v.class.name] - 1 end
-    
-    if v._layer then
-      self._layers[v._layer]:remove(v)
-    end
+    if v.layer then self._layers[v._layer]:remove(v) end
   end
   
   -- add
@@ -142,7 +139,7 @@ function World:_updateLists()
     v._world = self
     if v.class then self._classCounts[v.class.name] = (self._classCounts[v.class.name] or 0) + 1 end
     
-    if v._layer then self:_setLayer(v) end
+    if v.layer then self:_setLayer(v) end
     if v.added then v:added() end
   end
   
@@ -153,6 +150,6 @@ end
 
 function World:_setLayer(e, prev)
   if self._layers[prev] then self._layers[prev]:remove(e) end
-  if not self._layers[e._layer] then self:addLayer(e._layer) end
-  self._layers[e._layer]:unshift(e)
+  if not self._layers[e.layer] then self:addLayer(e.layer) end
+  self._layers[e.layer]:unshift(e)
 end
