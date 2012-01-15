@@ -51,8 +51,6 @@ function Entity:initialize(t)
   self._pos = Vector(0, 0)
   self.width = 0
   self.height = 0
-  self.originX = 0
-  self.originY = 0
   self.collidable = true
   
   -- settings
