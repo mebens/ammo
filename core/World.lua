@@ -37,10 +37,7 @@ function World:update(dt)
   for v in self._updates:getIterator() do
     if v.active then
       v:update(dt)
-      
-      for _, filter in pairs(self._updateFilters) do
-        filter:updateFilter(v, dt)
-      end
+      for _, filter in pairs(self._updateFilters) do filter(v, dt) end
     end
   end
   
@@ -56,7 +53,7 @@ function World:draw()
       
       for v in layer:getIterator(true) do -- reverse
         if v.visible then v:draw(v.absX, v.absY) end
-        for _, filter in pairs(self._drawFilters) do filter:drawFilter(v) end -- we should apply draw filters even if the actually entity isn't visible
+        for _, filter in pairs(self._drawFilters) do filter(v) end -- we should apply draw filters even if the actually entity isn't visible
       end
       
       camera.unset()
@@ -93,9 +90,12 @@ function World:removeAll(entitiesOnly)
   end
 end
 
-function World:addFilter(filter, type)
-  if type ~= 'draw' then self._updateFilters[#self._updateFilters + 1] = filter end
-  if type ~= 'update' then self._drawFilters[#self._drawFilters + 1] = filter end
+function World:addUpdateFilter(func)
+  self._updateFilters[#self._updateFilters + 1] = func
+end
+
+function World:addDrawFilter(func)
+  self._drawFilters[#self._drawFilters + 1] = func
 end
 
 function World:addLayer(index, scale)
