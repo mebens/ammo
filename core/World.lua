@@ -157,6 +157,7 @@ function World:_setLayer(e, prev)
 end
 
 function World:_setName(e, prev)
+  assert(not self.names[e.name], "An entity already has the name '" .. e.name .. "' in this world.")
   if prev then self.names[prev] = nil end
   self.names[e.name] = e
 end
