@@ -1,10 +1,10 @@
 -- SOUND --
 
-Sound = class('Sound')
+Sound = class("Sound")
 Sound._mt = {}
 
 function Sound._mt:__index(key)
-  if key == 'file' then
+  if key == "file" then
     return self._file
   else
     return self.class.__classDict[key]
@@ -39,7 +39,7 @@ function Sound:play(volume, pan)
   return source
 end
 
-for _, v in pairs{'pause', 'resume', 'rewind', 'stop'} do
+for _, v in pairs{"pause", "resume", "rewind", "stop"} do
   Sound[v] = function(self, last)
     if last and self._sources[#self._sources] then
       self._sources[#self._sources][v]()

@@ -1,27 +1,27 @@
-Entity = class('Entity')
+Entity = class("Entity")
 
 -- METATABLE --
 
 Entity._mt = {}
 
 function Entity._mt:__index(key)
-  local result = rawget(self, '_' .. key) or self.class.__classDict[key]
+  local result = rawget(self, "_" .. key) or self.class.__classDict[key]
 
   if result then
     return result
-  elseif key == 'x' or key == 'y' then
+  elseif key == "x" or key == "y" then
     return self._pos[key]
-  elseif key == 'absX' then
+  elseif key == "absX" then
     return self._pos.x + (self._parent and self._parent.absX or 0)
-  elseif key == 'absY' then
+  elseif key == "absY" then
     return self._pos.y + (self._parent and self._parent.absY or 0) 
   end
 end
 
 function Entity._mt:__newindex(key, value)
-  if key == 'x' or key == 'y' then
+  if key == "x" or key == "y" then
     self._pos[key] = value
-  elseif key == 'layer' then
+  elseif key == "layer" then
     if self._layer == value then return end
     
     if self._world then
@@ -31,7 +31,7 @@ function Entity._mt:__newindex(key, value)
     else
       self._layer = value
     end
-  elseif key == 'name' then
+  elseif key == "name" then
     if self._name == value then return end
     
     if self._world then
@@ -41,11 +41,11 @@ function Entity._mt:__newindex(key, value)
     else
       self._name = value
     end
-  elseif key == 'world' then
+  elseif key == "world" then
     if self._world == value then return end
     if self._world then self._world:remove(self) end
     if value then value:add(self) end
-  elseif key == 'parent' then
+  elseif key == "parent" then
     value:add(self)
   else
     rawset(self, key, value)
@@ -81,7 +81,7 @@ function Entity:removed() end
 function Entity:add(...)
   if not self._world then return end
   if not self._children then
-    self._children = SpecialLinkedList:new('_childNext', '_childPrev')
+    self._children = SpecialLinkedList:new("_childNext", "_childPrev")
   end
   
   for _, v in pairs{...} do

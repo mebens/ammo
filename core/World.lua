@@ -1,10 +1,10 @@
-World = class('World')
+World = class("World")
 World._mt = {}
 
 function World._mt:__index(key)
-  if key == 'count' then
+  if key == "count" then
     return self._updates._length
-  elseif key == 'all' then
+  elseif key == "all" then
     return self._updates:getAll()
   else
     return self.class.__classDict[key]
@@ -19,7 +19,7 @@ function World:initialize(t)
   self.visible = true
   
   -- lists
-  self._updates = SpecialLinkedList:new('_updateNext', '_updatePrev')
+  self._updates = SpecialLinkedList:new("_updateNext", "_updatePrev")
   self._layers = {}
   self._updateFilters = {}
   self._drawFilters = {}
@@ -100,7 +100,7 @@ function World:addDrawFilter(func)
 end
 
 function World:addLayer(index, scale)
-  local layer = SpecialLinkedList:new('_drawNext', '_drawPrev')
+  local layer = SpecialLinkedList:new("_drawNext", "_drawPrev")
   layer._scale = scale or 1
   self._layers[index] = layer
   return layer
@@ -111,7 +111,7 @@ function World:setupLayers(t)
 end
 
 function World:classCount(cls)
-  if type(cls) == 'table' then cls = cls.name end
+  if type(cls) == "table" then cls = cls.name end
   return self._classCounts[cls]
 end
 
@@ -157,7 +157,7 @@ function World:_setLayer(e, prev)
 end
 
 function World:_setName(e, prev)
-  assert(not self.names[e.name], "An entity already has the name '" .. e.name .. "' in this world.")
+  assert(not self.names[e.name], "An entity already has the name "" .. e.name .. "" in this world.")
   if prev then self.names[prev] = nil end
   self.names[e.name] = e
 end

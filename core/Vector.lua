@@ -1,8 +1,8 @@
 -- based on hump.vector
-Vector = class('Vector')
+Vector = class("Vector")
 
 function Vector:initialize(x, y)
-  if type(x) == 'table' then
+  if type(x) == "table" then
     self.x = x[1]
     self.y = x[2]
   else
@@ -62,7 +62,7 @@ function Vector:len()
 end
 
 function Vector:__tostring()
-  return '(' .. self.x .. ',' .. self.y ..')'
+  return "(" .. self.x .. "," .. self.y ..")"
 end
 
 function Vector.__unm(a)
@@ -70,9 +70,9 @@ function Vector.__unm(a)
 end
 
 function Vector.__add(a, b)
-  if type(a) == 'number' then
+  if type(a) == "number" then
     return Vector(a + b.x, a + b.y)
-  elseif type(b) == 'number' then
+  elseif type(b) == "number" then
     return Vector(b + a.x, b + a.y)
   else
     return Vector(a.x + b.x, a.y + b.y)
@@ -80,9 +80,9 @@ function Vector.__add(a, b)
 end
 
 function Vector.__sub(a, b)
-  if type(a) == 'number' then
+  if type(a) == "number" then
     return Vector(a - b.x, a - b.y)
-  elseif type(b) == 'number' then
+  elseif type(b) == "number" then
     return Vector(b - a.x, b - a.y)
   else
     return Vector(a.x - b.x, a.y - b.y)

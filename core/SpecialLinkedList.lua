@@ -1,17 +1,17 @@
-SpecialLinkedList = class('SpecialLinkedList')
+SpecialLinkedList = class("SpecialLinkedList")
 
 local mt = {}
 
 function mt:__index(key)
-  return rawget(self, '_' .. key) or SpecialLinkedList.__classDict[key]
+  return rawget(self, "_" .. key) or SpecialLinkedList.__classDict[key]
 end
 
 function SpecialLinkedList:initialize(nextProp, prevProp, ...)
   -- attributes
   self._first = nil
   self._last = nil
-  self._np = nextProp or '_next'
-  self._pp = prevProp or '_prev'
+  self._np = nextProp or "_next"
+  self._pp = prevProp or "_prev"
   self._length = 0
   
   -- enabled getter functionality
@@ -34,7 +34,7 @@ function SpecialLinkedList:push(...)
     end
   end
   
-  self._length = self._length + select('#', ...)
+  self._length = self._length + select("#", ...)
 end
 
 function SpecialLinkedList:unshift(...)
@@ -49,7 +49,7 @@ function SpecialLinkedList:unshift(...)
     end
   end
   
-  self._length = self._length + select('#', ...)
+  self._length = self._length + select("#", ...)
 end
 
 function SpecialLinkedList:insert(node, after)

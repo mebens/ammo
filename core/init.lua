@@ -15,10 +15,10 @@ require(ammo.path .. ".core.Sound")
 if not ammo then ammo = {} end
 
 setmetatable(ammo, {
-  __index = function(self, key) return rawget(self, '_' .. key) end,
+  __index = function(self, key) return rawget(self, "_" .. key) end,
   
   __newindex = function(self, key, value)
-    if key == 'world' then
+    if key == "world" then
       self._goto = value
     else
       rawset(self, key, value)
