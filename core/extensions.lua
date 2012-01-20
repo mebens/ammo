@@ -1,12 +1,4 @@
 --------------------------------
--- old stuff
-
-local old = {
-  mouseGetX = love.mouse.getX,
-  mouseGetY = love.mouse.getY
-}
-
---------------------------------
 -- math
 
 math.tau = math.pi * 2 -- the proper circle constant
@@ -80,12 +72,19 @@ end
 --------------------------------
 -- love.mouse
 
+love.mouse.getRawX = love.mouse.getX
+love.mouse.getRawY = love.mouse.getX
+
+function love.mouse.getRawPosition()
+  return love.mouse.getRawX(), love.mouse.getRawY()
+end
+
 function love.mouse.getX()
-  return old.mouseGetX() * camera.zoom + camera.x
+  return love.mouse.getRawX() * camera.zoom + camera.x
 end
 
 function love.mouse.getY()
-  return old.mouseGetY() * camera.zoom + camera.y
+  return love.mouse.getRawY() * camera.zoom + camera.y
 end
 
 function love.mouse.getPosition()
