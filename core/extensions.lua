@@ -3,8 +3,8 @@
 
 math.tau = math.pi * 2 -- the proper circle constant
 
-function math.scale(v, min1, max1, min2, max2)
-  return min2 + ((v - min1) / (max1 - min1)) * (max2 - min2)
+function math.scale(x, min1, max1, min2, max2)
+  return min2 + ((x - min1) / (max1 - min1)) * (max2 - min2)
 end
 
 function math.lerp(a, b, t)
