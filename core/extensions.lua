@@ -71,10 +71,14 @@ function love.graphics.popColor()
 end
 
 function love.graphics.setMode(width, height, fullscreen, vsync, fsaa)
-  if oldSetMode(width, height, fullscreen, vsync, fsaa) then
+  local result = oldSetMode(width, height, fullscreen, vsync, fsaa)
+  
+  if result then
     love.graphics.width = width
     love.graphics.height = height
   end
+  
+  return result
 end
 
 --------------------------------
