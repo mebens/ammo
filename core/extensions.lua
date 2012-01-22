@@ -55,18 +55,26 @@ end
 --------------------------------
 -- love.graphics
 
-local _colorStack = {}
+local colorStack = {}
+local oldSetMode = love.graphics.setMode
 love.graphics.width = love.graphics.getWidth()   -- keeping these in variables will make things faster
 love.graphics.height = love.graphics.getHeight() -- however, they won't be updated on size change
 
 function love.graphics.pushColor(...)
   local r, g, b, a = love.graphics.getColor()
-  _colorStack[#_colorStack + 1] = { r, g, b, a }
+  colorStack[#colorStack + 1] = { r, g, b, a }
   love.graphics.setColor(...)
 end
 
 function love.graphics.popColor()
-  love.graphics.setColor(table.remove(_colorStack))
+  love.graphics.setColor(table.remove(colorStack))
+end
+
+function love.graphics.setMode(width, height, fullscreen, vsync, fsaa)
+  if oldSetMode(width, height, fullscreen, vsync, fsaa) then
+    love.graphics.width = width
+    love.graphics.height = height
+  end
 end
 
 --------------------------------
