@@ -46,8 +46,8 @@ function t.getPosition()
 end
 
 function t.setPosition(x, y)
-  t.x = x
-  t.y = y
+  if x then t.x = x end
+  if y then t.y = y end
 end
 
 function t.setBounds(x1, y1, x2, y2)
