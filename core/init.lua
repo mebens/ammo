@@ -28,7 +28,6 @@ setmetatable(ammo, {
 
 function ammo.update(dt)
   -- update
-  camera.update(dt)
   if ammo._world and ammo._world.active then ammo._world:update(dt) end
   love.audio._update()
   input._update()

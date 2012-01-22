@@ -21,32 +21,15 @@ t.zoom = 1
 t.rotation = 0
 
 function t.set(scale)
-  local x, y
-  
-  if scale ~= 1 then 
-    x = t.x
-    y = t.y
-    t.x = t.x * scale
-    t.y = t.y * scale
-  end
-  
+  scale = scale or 1
   love.graphics.push()
   love.graphics.scale(t.zoom)
   love.graphics.rotate(t.rotation)
-  love.graphics.translate(-t.x, -t.y)
-  
-  if scale ~= 1 then
-    t.x = x
-    t.y = y
-  end
+  love.graphics.translate(-t.x * scale, -t.y * scale)
 end
 
 function t.unset()
   love.graphics.pop()
-end
-
-function t.update(dt)
-  
 end
 
 function t.move(dx, dy)
