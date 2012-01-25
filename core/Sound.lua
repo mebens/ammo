@@ -4,23 +4,19 @@ Sound = class("Sound")
 Sound._mt = {}
 
 function Sound._mt:__index(key)
-  if key == "file" then
-    return self._file
-  else
-    return self.class.__classDict[key]
-  end
+  return rawget(self, "_" .. key) or self.class.__classDict[key]
 end
 
 Sound:enableAccessors()
 
-function Sound:initialize(file, type, volume, pan)
+function Sound:initialize(file, long, volume, pan)
   self._file = file
-  self._type = type or "short"
+  self._long = not not long -- conversion to boolean
   self._sources = {}
   self.defaultVolume = volume or 1
   self.defaultPan = pan or 0
   
-  if self._type == "short" then
+  if self._long == "short" then
     self._data = love.sound.newSoundData(file)
   else
     self._data = file
