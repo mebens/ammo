@@ -2,13 +2,8 @@
 Vector = class("Vector")
 
 function Vector:initialize(x, y)
-  if type(x) == "table" then
-    self.x = x[1]
-    self.y = x[2]
-  else
-    self.x = x
-    self.y = y
-  end
+  self.x = x or 0
+  self.y = y or 0
 end
 
 function Vector:unpack()
@@ -16,8 +11,8 @@ function Vector:unpack()
 end
 
 function Vector:set(x, y)
-  self.x = x or self.x
-  self.y = y or self.y
+  if x then self.x = x end
+  if y then self.y = y end
 end
 
 function Vector:normalize()
@@ -30,15 +25,15 @@ function Vector:normalized()
   return self / self:len()
 end
 
-function Vector:rotate(phi)
-  local c, s = math.cos(phi), math.sin(phi)
+function Vector:rotate(by)
+  local c, s = math.cos(by), math.sin(by)
   self.x = c * self.x - s * self.y
   self.y = s * self.x + c * self.y
   return self
 end
 
-function Vector:rotated(phi)
-  return Vector(self.x, self.y):rotate(phi)
+function Vector:rotated(by)
+  return Vector(self.x, self.y):rotate(by)
 end
 
 function Vector:perpendicular()
@@ -49,8 +44,16 @@ function Vector:projectOn(v)
   return (self * v) * v / v:lenSq()
 end
 
-function Vector:cross(other)
-  return self.x * other.y - self.y * other.x
+function Vector:cross(v)
+  return self.x * v.y - self.y * v.x
+end
+
+function Vector:permul(v)
+  return Vector(self.x * v.x, self.y * v.y)
+end
+
+function Vector:dist(v)
+  return (v - self):len()
 end
 
 function Vector:lenSq()
@@ -65,60 +68,50 @@ function Vector:__tostring()
   return "(" .. self.x .. "," .. self.y ..")"
 end
 
-function Vector.__unm(a)
-  return Vector(-a.x, -a.y)
+function Vector:__unm()
+  return Vector(-self.x, -self.y)
 end
 
-function Vector.__add(a, b)
-  if type(a) == "number" then
-    return Vector(a + b.x, a + b.y)
-  elseif type(b) == "number" then
-    return Vector(b + a.x, b + a.y)
+function Vector:__add(v)
+  if type(b) == "number" then
+    return Vector(self.x + v, self.y + v)
   else
-    return Vector(a.x + b.x, a.y + b.y)
+    return Vector(self.x + v.x, self.y + v.y)
   end
 end
 
-function Vector.__sub(a, b)
-  if type(a) == "number" then
-    return Vector(a - b.x, a - b.y)
-  elseif type(b) == "number" then
-    return Vector(b - a.x, b - a.y)
+function Vector:__sub(v)
+  if type(v) == "number" then
+    return Vector(self.x - v, self.y - v)
   else
-    return Vector(a.x - b.x, a.y - b.y)
+    return Vector(self.x - v.x, self.y - v.y)
   end
 end
 
-function Vector.__mul(a, b)
-  if type(a) == "number" then
-    return Vector(a * b.x, a * b.y)
-  elseif type(b) == "number" then
-    return Vector(b * a.x, b * a.y)
+function Vector:__mul(v)
+  if type(v) == "number" then
+    return Vector(self.x * v, self.y * v)
   else
-    return a.x * b.x + a.y * b.y
+    return self.x * v.x + self.y * v.y
   end
 end
 
-function Vector.__div(a, b)
-  return Vector(a.x / b, a.y / b)
+function Vector:__div(v)
+  if type(v) == "number" then
+    return Vector(self.x / v, self.y / v)
+  else
+    return Vector(self.x / v.x, self.y / v.y)
+  end
 end
 
-function Vector.__eq(a, b)
-  return a.x == b.x and a.y == b.y
+function Vector:__eq(v)
+  return self.x == v.x and self.y == v.y
 end
 
-function Vector.__lt(a, b)
-  return a.x < b.x or (a.x == b.x and a.y < b.y)
+function Vector:__lt(v)
+  return self.x < v.x or (self.x == v.x and self.y < v.y)
 end
 
-function Vector.__le(a, b)
-  return a.x <= b.x and a.y <= b.y
-end
-
-function Vector.permul(a, b)
-  return Vector(a.x * b.x, a.y * b.y)
-end
-
-function Vector.dist(a, b)
-  return (b - a):len()
+function Vector:__le(v)
+  return self.x <= v.x and self.y <= v.y
 end
