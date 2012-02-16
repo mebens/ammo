@@ -28,7 +28,3 @@ math.randomseed(os.time())
 math.random()
 math.random()
 math.random()
-
--- RESOURCES.INIT AUTOLOAD --
-
-if love.filesystem.exists("resources/init.lua") then require("resources.init") end
