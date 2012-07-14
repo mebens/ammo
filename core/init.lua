@@ -4,8 +4,6 @@ if not ammo then
   ammo.path = ({...})[1]:gsub("%.core%.init", "")
 end
 
--- IMPORTS --
-
 require(ammo.path .. ".core.LinkedList")
 require(ammo.path .. ".core.Vector")
 require(ammo.path .. ".core.extensions")
@@ -13,8 +11,6 @@ camera = require(ammo.path .. ".core.camera")
 require(ammo.path .. ".core.World")
 require(ammo.path .. ".core.Entity")
 require(ammo.path .. ".core.Sound")
-
--- AMMO MODULE --
 
 setmetatable(ammo, {
   __index = function(self, key) return rawget(self, "_" .. key) end,
@@ -45,3 +41,6 @@ end
 function ammo.draw()
   if ammo._world then ammo._world:draw() end
 end
+
+if not love.update then love.update = ammo.update end
+if not love.draw then love.draw = ammo.draw end

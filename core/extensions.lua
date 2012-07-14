@@ -57,8 +57,8 @@ end
 
 local colorStack = {}
 local oldSetMode = love.graphics.setMode
-love.graphics.width = love.graphics.getWidth()   -- keeping these in variables will make things faster
-love.graphics.height = love.graphics.getHeight() -- however, they won't be updated on size change
+love.graphics.width = love.graphics.getWidth()
+love.graphics.height = love.graphics.getHeight()
 
 function love.graphics.pushColor(...)
   local r, g, b, a = love.graphics.getColor()
