@@ -1,9 +1,3 @@
 [submodule "lib/middleclass"]
 	path = lib/middleclass
 	url = git://github.com/BlackBulletIV/middleclass.git
-[submodule "lib/strong"]
-	path = lib/strong
-	url = git://github.com/BlackBulletIV/strong.git
-[submodule "lib/inspect"]
-	path = lib/inspect
-	url = git://github.com/kikito/inspect.lua.git

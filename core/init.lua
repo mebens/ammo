@@ -1,3 +1,9 @@
+-- ammo is most likely defined the main init.lua
+if not ammo then
+  ammo = {}
+  ammo.path = ({...})[1]:gsub("%.core%.init", "")
+end
+
 -- IMPORTS --
 
 require(ammo.path .. ".core.LinkedList")
@@ -9,9 +15,6 @@ require(ammo.path .. ".core.Entity")
 require(ammo.path .. ".core.Sound")
 
 -- AMMO MODULE --
-
--- ammo is most likely defined the main init.lua
-if not ammo then ammo = {} end
 
 setmetatable(ammo, {
   __index = function(self, key) return rawget(self, "_" .. key) end,
