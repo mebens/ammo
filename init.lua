@@ -21,10 +21,3 @@ end
 if love.filesystem.exists(filepath .. "/tweens") then
   require(ammo.path .. ".tweens.init")
 end
-
--- SETUP RANDOM NUMBERS --
-
-math.randomseed(os.time())
-math.random()
-math.random()
-math.random()

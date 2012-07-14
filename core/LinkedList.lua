@@ -1,12 +1,12 @@
-SpecialLinkedList = class("SpecialLinkedList")
+LinkedList = class("LinkedList")
 
 local mt = {}
 
 function mt:__index(key)
-  return rawget(self, "_" .. key) or SpecialLinkedList.__classDict[key]
+  return rawget(self, "_" .. key) or LinkedList.__classDict[key]
 end
 
-function SpecialLinkedList:initialize(nextProp, prevProp, ...)
+function LinkedList:initialize(nextProp, prevProp, ...)
   -- attributes
   self._first = nil
   self._last = nil
@@ -22,7 +22,7 @@ function SpecialLinkedList:initialize(nextProp, prevProp, ...)
   self:push(...)
 end
 
-function SpecialLinkedList:push(...)
+function LinkedList:push(...)
   for _, v in ipairs{...} do
     if not self._first then
       self._first = v
@@ -37,7 +37,7 @@ function SpecialLinkedList:push(...)
   self._length = self._length + select("#", ...)
 end
 
-function SpecialLinkedList:unshift(...)
+function LinkedList:unshift(...)
   for _, v in ipairs{...} do
     if not self._first then
       self._first = v
@@ -52,7 +52,7 @@ function SpecialLinkedList:unshift(...)
   self._length = self._length + select("#", ...)
 end
 
-function SpecialLinkedList:insert(node, after)
+function LinkedList:insert(node, after)
   if after[self._np] then
     after[self._np][self._pp] = node
   else
@@ -64,7 +64,7 @@ function SpecialLinkedList:insert(node, after)
   return node
 end
 
-function SpecialLinkedList:pop()
+function LinkedList:pop()
   if self._last then
     ret = self._last
     ret[self._pp][self._np] = nil
@@ -75,7 +75,7 @@ function SpecialLinkedList:pop()
   end
 end
 
-function SpecialLinkedList:shift()
+function LinkedList:shift()
   if self._first then
     ret = self._first
     ret[self._np][self._pp] = nil
@@ -86,7 +86,7 @@ function SpecialLinkedList:shift()
   end
 end
 
-function SpecialLinkedList:remove(...)
+function LinkedList:remove(...)
   for _, v in ipairs{...} do
     if v[self._np] then
       if v[self._pp] then
@@ -110,7 +110,7 @@ function SpecialLinkedList:remove(...)
   end
 end
 
-function SpecialLinkedList:clear(complete)
+function LinkedList:clear(complete)
   complete = complete or false
   self._first = nil
   self._last = nil
@@ -124,7 +124,7 @@ function SpecialLinkedList:clear(complete)
   end
 end
 
-function SpecialLinkedList:bringForward(node)
+function LinkedList:bringForward(node)
   if node[self._np] then
     if node[self._pp] then
       node[self._np][self._pp] = node[self._pp]
@@ -146,7 +146,7 @@ function SpecialLinkedList:bringForward(node)
   end
 end
 
-function SpecialLinkedList:sendBackward(node)
+function LinkedList:sendBackward(node)
   if node[self._pp] then
     if node[self._np] then
       node[self._pp][self._np] = node[self._np]
@@ -168,7 +168,7 @@ function SpecialLinkedList:sendBackward(node)
   end
 end
 
-function SpecialLinkedList:bringToFront(node)
+function LinkedList:bringToFront(node)
   if node[self._pp] then
     if node[self._np] then
       node[self._np][self._pp] = node[self._pp]
@@ -185,7 +185,7 @@ function SpecialLinkedList:bringToFront(node)
   end
 end
 
-function SpecialLinkedList:sendToBack(node)
+function LinkedList:sendToBack(node)
   if node[self._np] then
     if node[self._pp] then
       node[self._pp][self._np] = node[self._np]
@@ -202,7 +202,7 @@ function SpecialLinkedList:sendToBack(node)
   end
 end
 
-function SpecialLinkedList:getAll()
+function LinkedList:getAll()
   local ret = {}
   local v = self._first
   
@@ -234,6 +234,6 @@ local function reverseIterate(self, current)
   return current
 end
 
-function SpecialLinkedList:getIterator(reverse)
+function LinkedList:getIterator(reverse)
   return (reverse and reverseIterate or iterate), self, nil
 end

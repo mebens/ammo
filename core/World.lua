@@ -19,7 +19,7 @@ function World:initialize(t)
   self.visible = true
   
   -- lists
-  self._updates = SpecialLinkedList:new("_updateNext", "_updatePrev")
+  self._updates = LinkedList:new("_updateNext", "_updatePrev")
   self._layers = {}
   self._updateFilters = {}
   self._drawFilters = {}
@@ -100,7 +100,7 @@ function World:addDrawFilter(func)
 end
 
 function World:addLayer(index, scale)
-  local layer = SpecialLinkedList:new("_drawNext", "_drawPrev")
+  local layer = LinkedList:new("_drawNext", "_drawPrev")
   layer._scale = scale or 1
   self._layers[index] = layer
   return layer
@@ -157,7 +157,7 @@ function World:_setLayer(e, prev)
 end
 
 function World:_setName(e, prev)
-  assert(not self.names[e.name], "An entity already has the name "" .. e.name .. "" in this world.")
+  assert(not self.names[e.name], "An entity already has the name \"" .. e.name .. "\" in this world.")
   if prev then self.names[prev] = nil end
   self.names[e.name] = e
 end
