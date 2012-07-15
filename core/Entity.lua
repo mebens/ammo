@@ -75,7 +75,7 @@ function Entity:removed() end
 function Entity:add(...)
   if not self._world then return end
   if not self._children then
-    self._children = SpecialLinkedList:new("_childNext", "_childPrev")
+    self._children = LinkedList:new("_childNext", "_childPrev")
   end
   
   for _, v in pairs{...} do
