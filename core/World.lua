@@ -13,7 +13,7 @@ end
 
 World:enableAccessors()
 
-function World:initialize(t)
+function World:initialize()
   -- settings
   self.active = true
   self.visible = true
@@ -29,8 +29,6 @@ function World:initialize(t)
   self.names = {}
   
   self:applyAccessors()
-  if not t then return end
-  for k, v in pairs(t) do self[k] = v end
 end
 
 function World:update(dt)
@@ -157,7 +155,7 @@ function World:_setLayer(e, prev)
 end
 
 function World:_setName(e, prev)
-  assert(not self.names[e.name], "An entity already has the name "" .. e.name .. "" in this world.")
+  assert(not self.names[e.name], "An entity already has the name \"" .. e.name .. "\" in this world.")
   if prev then self.names[prev] = nil end
   self.names[e.name] = e
 end

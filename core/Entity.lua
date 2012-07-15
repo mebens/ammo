@@ -56,21 +56,15 @@ Entity:enableAccessors()
 
 -- METHODS --
 
-function Entity:initialize(t)
-  self._pos = Vector(0, 0)
-  self.width = 0
-  self.height = 0
+function Entity:initialize(x, y, width, height)
+  self._pos = Vector(x or 0, y or 0)
+  self.width = width or 0
+  self.height = height or 0
   self.collidable = true
   self.active = true
   self.visible = true
   self._layer = 1  
   self:applyAccessors()
-  
-  if t then
-    for k, v in pairs(t) do
-      self[k] = v
-    end
-  end
 end
 
 function Entity:update(dt) end
