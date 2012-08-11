@@ -58,12 +58,12 @@ Entity:enableAccessors()
 
 function Entity:initialize(x, y, width, height)
   self._pos = Vector(x or 0, y or 0)
-  self.width = width or 0
-  self.height = height or 0
   self.collidable = true
   self.active = true
   self.visible = true
   self._layer = 1  
+  if width or not self.width then self.width = width or 0 end
+  if height or not self.height then self.height = height or 0 end
   self:applyAccessors()
 end
 
