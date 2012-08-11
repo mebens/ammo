@@ -85,7 +85,7 @@ end
 -- love.mouse
 
 love.mouse.getRawX = love.mouse.getX
-love.mouse.getRawY = love.mouse.getX
+love.mouse.getRawY = love.mouse.getY
 
 function love.mouse.getRawPosition()
   return love.mouse.getRawX(), love.mouse.getRawY()
