@@ -67,30 +67,34 @@ function Entity:initialize(x, y, width, height)
   self:applyAccessors()
 end
 
+function Entity:added()
+  if self._children then
+    for v in self._children:getIterator() do self._world:add(v) end
+  end
+end
+
 function Entity:update(dt) end
 function Entity:draw() end
-function Entity:added() end
 function Entity:removed() end
 
 function Entity:add(...)
-  if not self._world then return end
   if not self._children then
     self._children = LinkedList:new("_childNext", "_childPrev")
   end
   
   for _, v in pairs{...} do
-    self._world:add(v)
+    if self._world then self._world:add(v) end
     self._children:push(v)
     v._parent = self
   end
 end
 
 function Entity:remove(...)
-  if not self._world or not self._children then return end
+  if not self._children then return end
   
   for _, v in pairs{...} do
     if v._parent == self then
-      self._world:remove(v)
+      if self._world then self._world:remove(v) end
       self._children:remove(v)
       v._parent = nil
     end

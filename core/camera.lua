@@ -1,4 +1,4 @@
-local t = setmetatable({}, {
+local camera = setmetatable({}, {
   __index = function(self, key)
     return (key == "x" or key == "y") and self._pos[key] or rawget(self, "_" .. key)
   end,
@@ -16,46 +16,46 @@ local t = setmetatable({}, {
   end
 })
 
-t._pos = Vector(0, 0)
-t.zoom = 1
-t.rotation = 0
+camera._pos = Vector(0, 0)
+camera.zoom = 1
+camera.rotation = 0
 
-function t.set(scale)
+function camera.set(scale)
   scale = scale or 1
   love.graphics.push()
-  love.graphics.scale(t.zoom)
-  love.graphics.rotate(t.rotation)
-  love.graphics.translate(-t.x * scale, -t.y * scale)
+  love.graphics.scale(camera.zoom)
+  love.graphics.rotate(camera.rotation)
+  love.graphics.translate(-camera.x * scale, -camera.y * scale)
 end
 
-function t.unset()
+function camera.unset()
   love.graphics.pop()
 end
 
-function t.move(dx, dy)
-  t.x = t.x + dx
-  t.y = t.y + dy
+function camera.move(dx, dy)
+  camera.x = camera.x + dx
+  camera.y = camera.y + dy
 end
 
-function t.rotate(dr)
-  t.rotation = t.rotation + dr
+function camera.rotate(dr)
+  camera.rotation = camera.rotation + dr
 end
 
-function t.getPosition()
-  return t.x, t.y
+function camera.getPosition()
+  return camera.x, camera.y
 end
 
-function t.setPosition(x, y)
-  if x then t.x = x end
-  if y then t.y = y end
+function camera.setPosition(x, y)
+  if x then camera.x = x end
+  if y then camera.y = y end
 end
 
-function t.setBounds(x1, y1, x2, y2)
-  t.bounds = { x1 = x1, y1 = y1, x2 = x2, y2 = y2 }
+function camera.setBounds(x1, y1, x2, y2)
+  camera.bounds = { x1 = x1, y1 = y1, x2 = x2, y2 = y2 }
 end
 
-function t.processCoordinate(axis, value)
-  return t.bounds and math.clamp(value, t.bounds[axis .. "1"], t.bounds[axis .. "2"]) or value
+function camera.processCoordinate(axis, value)
+  return camera.bounds and math.clamp(value, camera.bounds[axis .. "1"], camera.bounds[axis .. "2"]) or value
 end
 
-return t
+return camera
