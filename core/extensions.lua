@@ -111,30 +111,36 @@ end
 -- Object
 
 function Object:enableAccessors()
-  assert(self._mt, "This class has no _mt property.")
-  self._fullMt = { __index = self._mt.__index, __newindex = self._mt.__newindex }
+  if not self._mt then self._mt = {} end
   
   for _, v in pairs(Object.__metamethods) do
-    self._fullMt[v] = self.__classDict[v]
+    self._mt[v] = self.__classDict[v]
   end
   
-  local c = self.superclass
-  while c and c._mt do
-    if not self._fullMt.__index then
-      self._fullMt.__index = c._mt.__index
+  local super = self.superclass
+  local done = 0
+  
+  while super do
+    if super._mt then
+      if not self._mt.__index then
+        self._mt.__index = super._mt.__index
+        done = done + 1
+      end
+      
+      if not self._mt.__newindex then
+        self._mt.__newindex = super._mt.__newindex
+        done = done + 1
+      end
     end
     
-    if not self._fullMt.__newindex then
-      self._fullMt.__newindex = c._mt.__newindex
-    end
-    
-    c = c.superclass
+    if done == 2 then break end
+    super = super.superclass
   end
   
   return self
 end
 
 function Object:applyAccessors()
-  if not self._fullMt then return end
-  setmetatable(self, self._fullMt)
+  if not self._mt then return end
+  setmetatable(self, self._mt)
 end
