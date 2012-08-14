@@ -48,14 +48,14 @@ function World:draw()
     local layer = self._layers[i]
     
     if layer then
-      camera.set(layer.scale)
+      ammo.camera:set(layer.scale)
       
       for v in layer:getIterator(true) do -- reverse
         if v.visible then v:draw(v.absX, v.absY) end
         for _, filter in pairs(self._drawFilters) do filter(v) end -- we should apply draw filters even if the actually entity isn't visible
       end
       
-      camera.unset()
+      ammo.camera:unset()
     end
   end
 end

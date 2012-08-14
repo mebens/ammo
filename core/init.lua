@@ -7,7 +7,7 @@ end
 require(ammo.path .. ".core.LinkedList")
 require(ammo.path .. ".core.Vector")
 require(ammo.path .. ".core.extensions")
-camera = require(ammo.path .. ".core.camera")
+require(ammo.path .. ".core.Camera")
 require(ammo.path .. ".core.World")
 require(ammo.path .. ".core.Entity")
 require(ammo.path .. ".core.Sound")
@@ -24,9 +24,12 @@ setmetatable(ammo, {
   end
 })
 
+ammo.camera = Camera:new()
+
 function ammo.update(dt)
   -- update
   if ammo._world and ammo._world.active then ammo._world:update(dt) end
+  ammo.camera:update(dt)
   love.audio._update()
   
   -- world switch

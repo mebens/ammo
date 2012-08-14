@@ -96,11 +96,11 @@ function love.mouse.getRawPosition()
 end
 
 function love.mouse.getX()
-  return love.mouse.getRawX() * camera.zoom + camera.x
+  return love.mouse.getRawX() * ammo.camera.zoom + ammo.camera.x
 end
 
 function love.mouse.getY()
-  return love.mouse.getRawY() * camera.zoom + camera.y
+  return love.mouse.getRawY() * ammo.camera.zoom + ammo.camera.y
 end
 
 function love.mouse.getPosition()
