@@ -4,7 +4,7 @@ Sound = class("Sound")
 Sound._mt = {}
 
 function Sound._mt:__index(key)
-  return rawget(self, "_" .. key) or self.class.__classDict[key]
+  return rawget(self, "_" .. key) or self.class.__instanceDict[key]
 end
 
 Sound:enableAccessors()

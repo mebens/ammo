@@ -5,7 +5,7 @@ Entity = class("Entity")
 Entity._mt = {}
 
 function Entity._mt:__index(key)
-  local result = rawget(self, "_" .. key) or self.class.__classDict[key]
+  local result = rawget(self, "_" .. key) or self.class.__instanceDict[key]
 
   if result then
     return result

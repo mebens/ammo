@@ -7,7 +7,7 @@ function World._mt:__index(key)
   elseif key == "all" then
     return self._updates:getAll()
   else
-    return self.class.__classDict[key]
+    return self.class.__instanceDict[key]
   end
 end
 

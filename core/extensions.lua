@@ -114,7 +114,7 @@ function Object:enableAccessors()
   if not self._mt then self._mt = {} end
   
   for _, v in pairs(Object.__metamethods) do
-    self._mt[v] = self.__classDict[v]
+    self._mt[v] = self.__instanceDict[v]
   end
   
   local super = self.super

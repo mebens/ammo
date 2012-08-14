@@ -3,7 +3,7 @@ LinkedList = class("LinkedList")
 local mt = {}
 
 function mt:__index(key)
-  return rawget(self, "_" .. key) or LinkedList.__classDict[key]
+  return rawget(self, "_" .. key) or LinkedList.__instanceDict[key]
 end
 
 function LinkedList:initialize(nextProp, prevProp, ...)
