@@ -117,7 +117,7 @@ function Object:enableAccessors()
     self._mt[v] = self.__classDict[v]
   end
   
-  local super = self.superclass
+  local super = self.super
   local done = 0
   
   while super do
@@ -134,7 +134,7 @@ function Object:enableAccessors()
     end
     
     if done == 2 then break end
-    super = super.superclass
+    super = super.super
   end
   
   return self

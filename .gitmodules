@@ -1,3 +1,3 @@
 [submodule "lib/middleclass"]
 	path = lib/middleclass
-	url = git://github.com/BlackBulletIV/middleclass.git
+	url = git://github.com/kikito/middleclass.git
