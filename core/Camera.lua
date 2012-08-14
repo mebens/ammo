@@ -23,20 +23,24 @@ end
 
 Camera:enableAccessors()
 
-function Camera:initialize(x, y, zoom, rotation)
-  self._pos = Vector(x or 0, y or 0)
+function Camera:initialize(x, y, zoom, angle)
+  self._pos = Vector(x or love.graphics.width / 2, y or love.graphics.height / 2)
   self.zoom = zoom or 1
-  self.rotation = rotation or 0
+  self.angle = angle or 0
   self:applyAccessors()
 end
 
 function Camera:update(dt) end
 
 function Camera:set(scale)
+  local width = love.graphics.width / self.zoom / 2
+  local height = love.graphics.height / self.zoom / 2
   scale = scale or 1
+  
   love.graphics.push()
   love.graphics.scale(self.zoom)
-  love.graphics.rotate(self.rotation)
+  love.graphics.translate(width, height)
+  love.graphics.rotate(self.angle)
   love.graphics.translate(-self.x * scale, -self.y * scale)
 end
 
@@ -50,7 +54,7 @@ function Camera:move(dx, dy)
 end
 
 function Camera:rotate(dr)
-  self.rotation = self.rotation + dr
+  self.angle = self.angle + dr
 end
 
 function Camera:getPosition()
