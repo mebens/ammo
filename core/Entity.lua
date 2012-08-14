@@ -116,8 +116,8 @@ function Entity:getPosition()
 end
 
 function Entity:setPosition(x, y)
-  if x then self.x = x end
-  if y then self.y = y end
+  self.x = x
+  self.y = y
 end
 
 function Entity:absPosition()
@@ -129,6 +129,6 @@ function Entity:getSize()
 end
 
 function Entity:setSize(width, height)
-  if width then self.width = width end
-  if height then self.height = height end
+  self.width = width
+  self.height = height
 end
