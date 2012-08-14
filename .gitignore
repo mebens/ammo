@@ -1,6 +1,6 @@
 _*
-*.tmproj
 .DS_STORE
 .DS_Store
 tweens/
 physics/
+input/
