@@ -143,8 +143,10 @@ function Object:enableAccessors()
   
   local super = self.super
   local done = 0
+  if self._mt.__index then done = done + 1 end
+  if self._mt.__newindex then done = done + 1 end
   
-  while super do
+  while super and done ~= 2 do
     if super._mt then
       if not self._mt.__index then
         self._mt.__index = super._mt.__index
@@ -157,7 +159,6 @@ function Object:enableAccessors()
       end
     end
     
-    if done == 2 then break end
     super = super.super
   end
   
