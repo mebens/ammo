@@ -71,7 +71,10 @@ end
 
 function World:remove(...)
   for _, v in pairs{...} do
-    if v._world == self then self._remove[#self._remove + 1] = v end
+    if v._world == self and not v._removalQueued then
+      self._remove[#self._remove + 1] = v
+      v._removalQueued = true
+    end
   end
 end
 
@@ -126,7 +129,8 @@ function World:_updateLists()
   for _, v in pairs(self._remove) do
     if v.removed then v:removed() end
     if v._children then v:removeAll() end
-    self._updates:remove(v)    
+    self._updates:remove(v)
+    v._removalQueued = false
     v._world = nil
     if v.class then self._classCounts[v.class.name] = self._classCounts[v.class.name] - 1 end
     if v.layer then self._layers[v._layer]:remove(v) end
