@@ -1,5 +1,3 @@
--- SOUND --
-
 Sound = class("Sound")
 Sound._mt = {}
 
@@ -11,15 +9,14 @@ Sound:enableAccessors()
 
 function Sound:initialize(file, long, volume, pan)
   self._file = file
-  self._long = not not long -- conversion to boolean
-  self._sources = {}
+  self._long = long or false
   self.defaultVolume = volume or 1
   self.defaultPan = pan or 0
   
-  if self._long == "short" then
-    self._data = love.sound.newSoundData(file)
-  else
+  if self._long then
     self._data = file
+  else
+    self._data = love.sound.newSoundData(file)
   end
   
   self:applyAccessors()
