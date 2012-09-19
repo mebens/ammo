@@ -83,11 +83,13 @@ function World:removeAll(entitiesOnly)
     for e in self._updates:getIterator() do
       if instanceOf(Entity, e) then
         self._remove[#self._remove + 1] = v
+        v._removalQueued = true
       end
     end
   else
     for e in self._updates:getIterator() do
       self._remove[#self._remove + 1] = v
+      v._removeQueued = true
     end
   end
 end
