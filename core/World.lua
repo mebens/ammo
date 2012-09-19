@@ -51,7 +51,7 @@ function World:draw()
       ammo.camera:set(layer.scale)
       
       for v in layer:getIterator(true) do -- reverse
-        if v.visible then v:draw(v.absX, v.absY) end
+        if v.visible then v:draw() end
         for _, filter in pairs(self._drawFilters) do filter(v) end -- we should apply draw filters even if the actually entity isn't visible
       end
       
@@ -130,7 +130,6 @@ function World:_updateLists()
   -- remove
   for _, v in pairs(self._remove) do
     if v.removed then v:removed() end
-    if v._children then v:removeAll() end
     self._updates:remove(v)
     v._removalQueued = false
     v._world = nil

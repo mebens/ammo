@@ -5,16 +5,10 @@ Entity = class("Entity")
 Entity._mt = {}
 
 function Entity._mt:__index(key)
-  local result = rawget(self, "_" .. key) or self.class.__instanceDict[key]
-
-  if result then
-    return result
-  elseif key == "x" or key == "y" then
+  if key == "x" or key == "y" then
     return self._pos[key]
-  elseif key == "absX" then
-    return self._pos.x + (self._parent and self._parent.absX or 0)
-  elseif key == "absY" then
-    return self._pos.y + (self._parent and self._parent.absY or 0) 
+  else
+    return rawget(self, "_" .. key) or self.class.__instanceDict[key]
   end
 end
 
@@ -45,8 +39,6 @@ function Entity._mt:__newindex(key, value)
     if self._world == value then return end
     if self._world then self._world:remove(self) end
     if value then value:add(self) end
-  elseif key == "parent" then
-    value:add(self)
   else
     rawset(self, key, value)
   end
@@ -67,44 +59,10 @@ function Entity:initialize(x, y, width, height)
   self:applyAccessors()
 end
 
-function Entity:added()
-  if self._children then
-    for v in self._children:getIterator() do self._world:add(v) end
-  end
-end
-
+function Entity:added() end
 function Entity:update(dt) end
 function Entity:draw() end
 function Entity:removed() end
-
-function Entity:add(...)
-  if not self._children then
-    self._children = LinkedList:new("_childNext", "_childPrev")
-  end
-  
-  for _, v in pairs{...} do
-    if self._world then self._world:add(v) end
-    self._children:push(v)
-    v._parent = self
-  end
-end
-
-function Entity:remove(...)
-  if not self._children then return end
-  
-  for _, v in pairs{...} do
-    if v._parent == self then
-      if self._world then self._world:remove(v) end
-      self._children:remove(v)
-      v._parent = nil
-    end
-  end
-end
-
-function Entity:removeAll()
-  if not self._children then return end
-  for v in self._children:getIterator() do self:remove(v) end
-end
 
 function Entity:move(dx, dy)
   self.x = self.x + dx
@@ -118,10 +76,6 @@ end
 function Entity:setPosition(x, y)
   self.x = x
   self.y = y
-end
-
-function Entity:absPosition()
-  return self.absX, self.absY
 end
 
 function Entity:getSize()
