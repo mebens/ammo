@@ -20,7 +20,7 @@ function World:initialize()
   
   -- lists
   self._updates = LinkedList:new("_updateNext", "_updatePrev")
-  self._layers = {}
+  self._layers = { min = 0, max = 0 }
   self._updateFilters = {}
   self._drawFilters = {}
   self._add = {}
@@ -44,7 +44,7 @@ function World:update(dt)
 end
 
 function World:draw()  
-  for i = #self._layers, 1, -1 do
+  for i = self._layers.max, self._layers.min, -1 do
     local layer = self._layers[i]
     
     if layer then
@@ -104,6 +104,8 @@ function World:addLayer(index, scale)
   local layer = LinkedList:new("_drawNext", "_drawPrev")
   layer._scale = scale or 1
   self._layers[index] = layer
+  self._layers.min = math.min(index, self._layers.min)
+  self._layers.max = math.max(index, self._layers.max)
   return layer
 end
 
