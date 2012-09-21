@@ -65,7 +65,10 @@ function World:stop() end
 
 function World:add(...)
   for _, v in pairs{...} do
-    if not v._world then self._add[#self._add + 1] = v end
+    if not v._world then
+      self._add[#self._add + 1] = v
+      self._additionQueued = true
+    end
   end
 end
 
@@ -78,19 +81,10 @@ function World:remove(...)
   end
 end
 
-function World:removeAll(entitiesOnly)
-  if entitiesOnly then
-    for e in self._updates:getIterator() do
-      if instanceOf(Entity, e) then
-        self._remove[#self._remove + 1] = v
-        v._removalQueued = true
-      end
-    end
-  else
-    for e in self._updates:getIterator() do
-      self._remove[#self._remove + 1] = v
-      v._removeQueued = true
-    end
+function World:removeAll()
+  for e in self._updates:getIterator() do
+    self._remove[#self._remove + 1] = v
+    v._removeQueued = true
   end
 end
 
@@ -143,6 +137,7 @@ function World:_updateLists()
   -- add
   for _, v in pairs(self._add) do
     self._updates:push(v)
+    v._additionQueued = false
     v._world = self
     if v.class then self._classCounts[v.class.name] = (self._classCounts[v.class.name] or 0) + 1 end
     if v.layer then self:_setLayer(v) end
