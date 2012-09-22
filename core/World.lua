@@ -14,9 +14,9 @@ end
 World:enableAccessors()
 
 function World:initialize()
-  -- settings
   self.active = true
   self.visible = true
+  self.camera = Camera:new()
   
   -- lists
   self._updates = LinkedList:new("_updateNext", "_updatePrev")
@@ -40,6 +40,7 @@ function World:update(dt)
     end
   end
   
+  self.camera:update(dt)
   self:_updateLists()
 end
 
@@ -48,14 +49,14 @@ function World:draw()
     local layer = self._layers[i]
     
     if layer then
-      ammo.camera:set(layer.scale)
+      self.camera:set(layer.scale)
       
       for v in layer:getIterator(true) do -- reverse
         if v.visible then v:draw() end
         for _, filter in pairs(self._drawFilters) do filter(v) end -- we should apply draw filters even if the actually entity isn't visible
       end
       
-      ammo.camera:unset()
+      self.camera:unset()
     end
   end
 end

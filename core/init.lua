@@ -24,14 +24,11 @@ setmetatable(ammo, {
   end
 })
 
-ammo.camera = Camera:new()
-
 function ammo.update(dt)
   _G.dt = dt
   
   -- update
   if ammo._world and ammo._world.active then ammo._world:update(dt) end
-  ammo.camera:update(dt)
   love.audio._update()
   
   -- world switch

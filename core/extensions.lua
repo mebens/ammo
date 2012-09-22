@@ -95,34 +95,36 @@ function love.mouse.getRawPosition()
   return love.mouse.getRawX(), love.mouse.getRawY()
 end
 
-function love.mouse.getX()
-  return love.mouse.getRawX() / ammo.camera.zoom + ammo.camera.x
+function love.mouse.getX(camera)
+  camera = camera or ammo.world.camera
+  return love.mouse.getRawX() / camera.zoom + camera.x
 end
 
-function love.mouse.getY()
-  return love.mouse.getRawY() / ammo.camera.zoom + ammo.camera.y
+function love.mouse.getY(camera)
+  camera = camera or ammo.world.camera
+  return love.mouse.getRawY() / camera.zoom + camera.y
 end
 
-function love.mouse.getPosition()
-  return love.mouse.getX(), love.mouse.getY()
+function love.mouse.getPosition(camera)
+  return love.mouse.getX(camera), love.mouse.getY(camera)
 end
 
-function love.mouse.getRotatedX()
-  local cam = ammo.camera
-  local x = love.mouse.getRawX() - love.graphics.width / 2
-  local y = love.mouse.getRawY() - love.graphics.height / 2
-  return math.cos(-cam.angle) * (x / cam.zoom) - math.sin(-cam.angle) * (y / cam.zoom) + cam.x
+function love.mouse.getRotatedX(camera)
+  camera = camera or ammo.world.camera
+  local x = love.mouse.getRawX()
+  local y = love.mouse.getRawY()
+  return math.cos(-camera.angle) * (x / camera.zoom) - math.sin(-camera.angle) * (y / camera.zoom) + camera.x
 end
 
-function love.mouse.getRotatedY()
-  local cam = ammo.camera
-  local x = love.mouse.getRawX() - love.graphics.width / 2
-  local y = love.mouse.getRawY() - love.graphics.height / 2
-  return math.sin(-cam.angle) * (x / cam.zoom) + math.cos(-cam.angle) * (y / cam.zoom) + cam.y
+function love.mouse.getRotatedY(camera)
+  camera = camera or ammo.world.camera
+  local x = love.mouse.getRawX()
+  local y = love.mouse.getRawY()
+  return math.sin(-camera.angle) * (x / camera.zoom) + math.cos(-camera.angle) * (y / camera.zoom) + camera.y
 end
 
-function love.mouse.getRotatedPosition()
-  return love.mouse.getRotatedX(), love.mouse.getRotatedY()
+function love.mouse.getRotatedPosition(camera)
+  return love.mouse.getRotatedX(camera), love.mouse.getRotatedY(camera)
 end
 
 function love.mouse.switchToRotated()
