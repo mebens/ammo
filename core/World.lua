@@ -15,9 +15,9 @@ end
 
 function World._mt:__newindex(key, value)
   if key == "camera" then
-    if self._camera then
+    if rawget(self, "_camera") then
       self._camera:stop()
-      self._camera.world = nil
+      self._camera._world = nil
     end
     
     self._camera = value and value or Camera:new()
@@ -131,10 +131,6 @@ function World:classCount(cls)
   if type(cls) == "table" then cls = cls.name end
   return self._classCounts[cls]
 end
-
--- isAt*
--- send|bring*
--- nearest*
 
 function World:getIterator()
   return self._updates:getIterator()
