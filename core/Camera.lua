@@ -31,6 +31,8 @@ function Camera:initialize(x, y, zoom, angle)
 end
 
 function Camera:update(dt) end
+function Camera:start() end
+function Camera:stop() end
 
 function Camera:set(scale)
   local width = love.graphics.width / self.zoom / 2

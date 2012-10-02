@@ -4,10 +4,27 @@ World._mt = {}
 function World._mt:__index(key)
   if key == "count" then
     return self._updates._length
+  elseif key == "camera" then
+    return self._camera
   elseif key == "all" then
     return self._updates:getAll()
   else
     return self.class.__instanceDict[key]
+  end
+end
+
+function World._mt:__newindex(key, value)
+  if key == "camera" then
+    if self._camera then
+      self._camera:stop()
+      self._camera.world = nil
+    end
+    
+    self._camera = value and value or Camera:new()
+    self._camera._world = self
+    self._camera:start()
+  else
+    rawset(self, key, value)
   end
 end
 
@@ -16,7 +33,6 @@ World:enableAccessors()
 function World:initialize()
   self.active = true
   self.visible = true
-  self.camera = Camera:new()
   
   -- lists
   self._updates = LinkedList:new("_updateNext", "_updatePrev")
@@ -29,6 +45,7 @@ function World:initialize()
   self.names = {}
   
   self:applyAccessors()
+  self.camera = nil -- set off the default behaviour
 end
 
 function World:update(dt)
@@ -44,7 +61,7 @@ function World:update(dt)
   self:_updateLists()
 end
 
-function World:draw()  
+function World:draw()
   for i = self._layers.max, self._layers.min, -1 do
     local layer = self._layers[i]
     
