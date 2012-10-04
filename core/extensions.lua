@@ -19,8 +19,8 @@ function math.round(x)
   return math.floor(x + .5)
 end
 
-function math.clamp(x, min, max)
-  return x < min and min or (x > max and max or x)
+function math.clamp(a, b, c)
+  return math.min(math.max(b, a), c)
 end
 
 function math.angle(x1, y1, x2, y2)
