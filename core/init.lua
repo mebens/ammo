@@ -12,6 +12,9 @@ require(ammo.path .. ".core.World")
 require(ammo.path .. ".core.Entity")
 require(ammo.path .. ".core.Sound")
 
+-- table for extensions
+ammo.ext = {}
+
 setmetatable(ammo, {
   __index = function(self, key) return rawget(self, "_" .. key) end,
   
