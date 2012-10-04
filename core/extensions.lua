@@ -95,18 +95,18 @@ function love.mouse.getRawPosition()
   return love.mouse.getRawX(), love.mouse.getRawY()
 end
 
-function love.mouse.getX(camera)
+function love.mouse.getWorldX(camera)
   camera = camera or ammo.world.camera
   return love.mouse.getRawX() / camera.zoom + camera.x
 end
 
-function love.mouse.getY(camera)
+function love.mouse.getWorldY(camera)
   camera = camera or ammo.world.camera
   return love.mouse.getRawY() / camera.zoom + camera.y
 end
 
-function love.mouse.getPosition(camera)
-  return love.mouse.getX(camera), love.mouse.getY(camera)
+function love.mouse.getWorldPosition(camera)
+  return love.mouse.getWorldX(camera), love.mouse.getWorldY(camera)
 end
 
 function love.mouse.getRotatedX(camera)
@@ -127,11 +127,25 @@ function love.mouse.getRotatedPosition(camera)
   return love.mouse.getRotatedX(camera), love.mouse.getRotatedY(camera)
 end
 
+function love.mouse.switchToWorld()
+  love.mouse.getX = love.mouse.getWorldX
+  love.mouse.getY = love.mouse.getWorldY
+  love.mouse.getPosition = love.mouse.getWorldPosition
+end
+
 function love.mouse.switchToRotated()
   love.mouse.getX = love.mouse.getRotatedX
   love.mouse.getY = love.mouse.getRotatedY
   love.mouse.getPosition = love.mouse.getRotatedPosition
 end
+
+function love.mouse.switchToRaw()
+  love.mouse.getX = love.mouse.getRawX
+  love.mouse.getY = love.mouse.getRawY
+  love.mouse.getPosition = love.mouse.getRawPosition
+end
+
+love.mouse.switchToWorld()
 
 --------------------------------
 -- Object

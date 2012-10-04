@@ -4,6 +4,9 @@ if not ammo then
   ammo.path = ({...})[1]:gsub("%.core%.init", "")
 end
 
+ammo.version = 010
+ammo.ext = {}
+
 require(ammo.path .. ".core.LinkedList")
 require(ammo.path .. ".core.Vector")
 require(ammo.path .. ".core.extensions")
@@ -11,9 +14,6 @@ require(ammo.path .. ".core.Camera")
 require(ammo.path .. ".core.World")
 require(ammo.path .. ".core.Entity")
 require(ammo.path .. ".core.Sound")
-
--- table for extensions
-ammo.ext = {}
 
 setmetatable(ammo, {
   __index = function(self, key) return rawget(self, "_" .. key) end,
