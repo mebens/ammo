@@ -36,7 +36,7 @@ function ammo.update(dt)
   
   -- world switch
   if ammo._goto then
-    if ammo._world and ammo._world.visible then ammo._world:stop() end
+    if ammo._world then ammo._world:stop() end
     ammo._world = ammo._goto
     ammo._goto = nil
     if ammo._world then ammo._world:start() end
@@ -44,7 +44,7 @@ function ammo.update(dt)
 end
 
 function ammo.draw()
-  if ammo._world then ammo._world:draw() end
+  if ammo._world and ammo._world.visible then ammo._world:draw() end
 end
 
 if not love.update then love.update = ammo.update end
