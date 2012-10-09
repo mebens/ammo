@@ -73,35 +73,25 @@ function Vector:__unm()
 end
 
 function Vector:__add(v)
-  if type(b) == "number" then
-    return Vector(self.x + v, self.y + v)
-  else
-    return Vector(self.x + v.x, self.y + v.y)
-  end
+  return Vector(self.x + v.x, self.y + v.y)
 end
 
 function Vector:__sub(v)
-  if type(v) == "number" then
-    return Vector(self.x - v, self.y - v)
-  else
-    return Vector(self.x - v.x, self.y - v.y)
-  end
+  return Vector(self.x - v.x, self.y - v.y)
 end
 
-function Vector:__mul(v)
-  if type(v) == "number" then
-    return Vector(self.x * v, self.y * v)
+function Vector.__mul(a, b)
+  if type(b) == "number" then
+    return Vector(a.x * b, a.y * b)
+  elseif type(a) == "number" then
+    return Vector(b.x * a, b.y * a)
   else
-    return self.x * v.x + self.y * v.y
+    return a.x * b.x + a.y * b.y
   end
 end
 
 function Vector:__div(v)
-  if type(v) == "number" then
-    return Vector(self.x / v, self.y / v)
-  else
-    return Vector(self.x / v.x, self.y / v.y)
-  end
+  return Vector(self.x / v, self.y / v)
 end
 
 function Vector:__eq(v)
