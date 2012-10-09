@@ -4,7 +4,7 @@ if not ammo then
   ammo.path = ({...})[1]:gsub("%.core%.init", "")
 end
 
-ammo.version = 010
+ammo.version = "0.1.2"
 ammo.ext = {}
 
 require(ammo.path .. ".core.LinkedList")
