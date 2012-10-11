@@ -7,9 +7,9 @@ end
 ammo.version = "0.1.2"
 ammo.ext = {}
 
+require(ammo.path .. ".core.extensions")
 require(ammo.path .. ".core.LinkedList")
 require(ammo.path .. ".core.Vector")
-require(ammo.path .. ".core.extensions")
 require(ammo.path .. ".core.Camera")
 require(ammo.path .. ".core.World")
 require(ammo.path .. ".core.Entity")

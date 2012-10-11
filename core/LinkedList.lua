@@ -1,35 +1,31 @@
 LinkedList = class("LinkedList")
+LinkedList._mt = {}
 
-local mt = {}
-
-function mt:__index(key)
+function LinkedList._mt:__index(key)
   return rawget(self, "_" .. key) or LinkedList.__instanceDict[key]
 end
 
+LinkedList:enableAccessors()
+
 function LinkedList:initialize(nextProp, prevProp, ...)
-  -- attributes
   self._first = nil
   self._last = nil
   self._np = nextProp or "_next"
   self._pp = prevProp or "_prev"
   self._length = 0
   
-  -- enabled getter functionality
-  local old = getmetatable(self)
-  old.__index = mt.__index
-  
-  -- push elements, if any
   self:push(...)
+  self:applyAccessors()
 end
 
 function LinkedList:push(...)
   for _, v in ipairs{...} do
-    if not self._first then
-      self._first = v
-      self._last = v
-    else
+    if self._first then
       self._last[self._np] = v
       v[self._pp] = self._last
+      self._last = v
+    else
+      self._first = v
       self._last = v
     end
   end
@@ -39,13 +35,13 @@ end
 
 function LinkedList:unshift(...)
   for _, v in ipairs{...} do
-    if not self._first then
-      self._first = v
-      self._last = v
-    else
+    if self._first then
       self._first[self._pp] = v
       v[self._np] = self._first
       self._first = v
+    else
+      self._first = v
+      self._last = v
     end
   end
   
@@ -67,9 +63,17 @@ end
 function LinkedList:pop()
   if self._last then
     ret = self._last
-    ret[self._pp][self._np] = nil
-    self._last = ret[self._pp]
-    ret[self._pp] = nil
+    
+    if ret[self._pp] then
+      ret[self._pp][self._np] = nil
+      self._last = ret[self._pp]
+      ret[self._pp] = nil
+    else
+      -- this was the only element
+      self._first = nil
+      self._last = nil
+    end
+    
     self._length = self._length - 1
     return ret
   end
@@ -78,9 +82,17 @@ end
 function LinkedList:shift()
   if self._first then
     ret = self._first
-    ret[self._np][self._pp] = nil
-    self._first = ret[self._np]
-    ret[self._np] = nil
+    
+    if ret[self._np] then
+      ret[self._np][self._pp] = nil
+      self._first = ret[self._np]
+      ret[self._np] = nil
+    else
+      -- this was the only element
+      self._first = nil
+      self._last = nil
+    end
+    
     self._length = self._length - 1
     return ret
   end
@@ -111,7 +123,6 @@ function LinkedList:remove(...)
 end
 
 function LinkedList:clear(complete)
-  complete = complete or false
   self._first = nil
   self._last = nil
   self._length = 0
