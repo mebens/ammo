@@ -17,7 +17,7 @@ function Sound:initialize(file, long, volume, pan)
   if self._long then
     self._data = file
   else
-    self._data = love.sound.newSoundData(file)
+    self._data = type(file) == "string" and love.sound.newSoundData(file) or file
   end
   
   self:applyAccessors()
