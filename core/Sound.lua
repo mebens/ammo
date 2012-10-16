@@ -12,7 +12,8 @@ function Sound:initialize(file, long, volume, pan)
   self._long = long or false
   self.defaultVolume = volume or 1
   self.defaultPan = pan or 0
-  
+  self._sources = {}
+
   if self._long then
     self._data = file
   else
