@@ -16,8 +16,8 @@ function Vector:set(x, y)
 end
 
 function Vector:normalize()
-  local l = self:len()
-  self.x, self.y = self.x / l, self.y / l
+  local len = self:len()
+  self.x, self.y = self.x / len, self.y / len
   return self
 end
 
