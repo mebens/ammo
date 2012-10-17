@@ -33,12 +33,19 @@ function Sound:play(volume, pan)
   return source
 end
 
+function Sound:loop(volume, pan)
+  local source = self:play(volume, pan)
+  source:setLooping(true)
+  return source
+end
+
 for _, v in pairs{"pause", "resume", "rewind", "stop"} do
-  Sound[v] = function(self, last)
+  Sound[v] = function(self, last)    
     if last and self._sources[#self._sources] then
-      self._sources[#self._sources][v]()
+      local source = self._sources[#self._sources]
+      source[v](source)
     else
-      for _, s in pairs(self._sources) do s[v]() end
+      for _, s in pairs(self._sources) do s[v](s) end
     end
   end
 end
