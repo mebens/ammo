@@ -46,21 +46,6 @@ function table.copy(t)
 end
 
 --------------------------------
--- love.audio
-
-love.audio._sounds = {}
-
-function love.audio._update()
-  for _, v in pairs(love.audio._sounds) do
-    for k, s in pairs(v._sources) do
-      if s:isStopped() then
-        table.remove(v._sources, k)
-      end
-    end
-  end
-end
-
---------------------------------
 -- love.graphics
 
 local colorStack = {}

@@ -4,7 +4,7 @@ if not ammo then
   ammo.path = ({...})[1]:gsub("%.core%.init", "")
 end
 
-ammo.version = "0.1.2"
+ammo.version = "0.2.0"
 ammo.ext = {}
 
 require(ammo.path .. ".core.extensions")
@@ -31,8 +31,9 @@ function ammo.update(dt)
   _G.dt = dt
   
   -- update
-  if ammo._world and ammo._world.active then ammo._world:update(dt) end
-  love.audio._update()
+  if ammo._world and ammo._world.active then
+    ammo._world:update(dt)
+  end
   
   -- world switch
   if ammo._goto then
@@ -44,7 +45,9 @@ function ammo.update(dt)
 end
 
 function ammo.draw()
-  if ammo._world and ammo._world.visible then ammo._world:draw() end
+  if ammo._world and ammo._world.visible then
+    ammo._world:draw()
+  end
 end
 
 if not love.update then love.update = ammo.update end
