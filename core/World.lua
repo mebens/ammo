@@ -42,13 +42,12 @@ function World:initialize()
   self._add = {}
   self._remove = {}
   self._classCounts = {}
-  self._names = setmetatable({}, { __newindex = function(s, k, v) print(k, v); rawset(s, k, v) end })
+  self._names = setmetatable({}, { __newindex = function(s, k, v) rawset(s, k, v) end })
   
   -- interface to _names
   self.names = setmetatable({}, { __index = self._names, __newindex = function(_, name, entity)
     if self._names[name] then self._names[name]._name = nil end
     self._names[name] = entity
-    --print(name, entity, self._names)
     if entity then entity._name = name end
   end })
   
