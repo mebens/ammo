@@ -42,7 +42,15 @@ function World:initialize()
   self._add = {}
   self._remove = {}
   self._classCounts = {}
-  self.names = {}
+  self._names = setmetatable({}, { __newindex = function(s, k, v) print(k, v); rawset(s, k, v) end })
+  
+  -- interface to _names
+  self.names = setmetatable({}, { __index = self._names, __newindex = function(_, name, entity)
+    if self._names[name] then self._names[name]._name = nil end
+    self._names[name] = entity
+    --print(name, entity, self._names)
+    if entity then entity._name = name end
+  end })
   
   self:applyAccessors()
   self.camera = nil -- set off the default behaviour
@@ -162,8 +170,8 @@ function World:_updateLists()
     v._removalQueued = false
     v._world = nil
     if v.class then self._classCounts[v.class.name] = self._classCounts[v.class.name] - 1 end
-    if v.layer then self._layers[v._layer]:remove(v) end
-    if v.name then self.names[v.name] = nil end 
+    if v._layer then self._layers[v._layer]:remove(v) end
+    if v._name then self._names[v._name] = nil end 
   end
   
   -- add
@@ -172,8 +180,8 @@ function World:_updateLists()
     v._additionQueued = false
     v._world = self
     if v.class then self._classCounts[v.class.name] = (self._classCounts[v.class.name] or 0) + 1 end
-    if v.layer then self:_setLayer(v) end
-    if v.name then self:_setName(v) end
+    if v._layer then self:_setLayer(v) end
+    if v._name then self.names[v._name] = v end
     if v.added then v:added() end
   end
   
@@ -186,10 +194,4 @@ function World:_setLayer(e, prev)
   if self._layers[prev] then self._layers[prev]:remove(e) end
   if not self._layers[e.layer] then self:addLayer(e.layer) end
   self._layers[e.layer]:unshift(e)
-end
-
-function World:_setName(e, prev)
-  assert(not self.names[e.name], "An entity already has the name \"" .. e.name .. "\" in this world.")
-  if prev then self.names[prev] = nil end
-  self.names[e.name] = e
 end

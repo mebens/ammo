@@ -40,7 +40,11 @@ function ammo.update(dt)
     if ammo._world then ammo._world:stop() end
     ammo._world = ammo._goto
     ammo._goto = nil
-    if ammo._world then ammo._world:start() end
+    
+    if ammo._world then
+      ammo._world:_updateLists() -- make sure all entities are added (or removed) beforehand
+      ammo._world:start()
+    end
   end
 end
 
