@@ -58,7 +58,7 @@ end
 
 function World:update(dt)
   -- update
-  for v in self._updates:getIterator() do
+  for v in self._updates:iterate() do
     if v.active then
       v:update(dt)
       for _, filter in pairs(self._updateFilters) do filter(v, dt) end
@@ -77,7 +77,7 @@ function World:draw()
       if layer.pre then layer.pre() end
       self.camera:set(layer.scale)
       
-      for v in layer:getIterator(true) do -- reverse
+      for v in layer:iterate(true) do -- reverse
         if v.visible then v:draw() end
         for _, filter in pairs(self._drawFilters) do filter(v) end -- we should apply draw filters even if the actually entity isn't visible
       end
@@ -110,7 +110,7 @@ function World:remove(...)
 end
 
 function World:removeAll()
-  for e in self._updates:getIterator() do
+  for e in self._updates:iterate() do
     self._remove[#self._remove + 1] = v
     v._removeQueued = true
   end
@@ -158,8 +158,8 @@ function World:classCount(cls)
   return self._classCounts[cls]
 end
 
-function World:getIterator()
-  return self._updates:getIterator()
+function World:iterate()
+  return self._updates:iterate()
 end
 
 function World:_updateLists()

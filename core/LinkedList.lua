@@ -2,7 +2,21 @@ LinkedList = class("LinkedList")
 LinkedList._mt = {}
 
 function LinkedList._mt:__index(key)
-  return rawget(self, "_" .. key) or LinkedList.__instanceDict[key]
+  local result = rawget(self, "_" .. key) or LinkedList.__instanceDict[key]
+  
+  if result then
+    return result
+  elseif key == "all" then
+    local ret = {}
+    local v = self._first
+    
+    while v do
+      table.insert(ret, v)
+      v = v[self._np]
+    end
+    
+    return ret
+  end
 end
 
 LinkedList:enableAccessors()
@@ -128,7 +142,7 @@ function LinkedList:clear(complete)
   self._length = 0
   
   if complete then
-    for v in self:getIterator() do
+    for v in self:iterate() do
       v[self._np] = nil
       v[self._pp] = nil
     end
@@ -213,18 +227,6 @@ function LinkedList:sendToBack(node)
   end
 end
 
-function LinkedList:getAll()
-  local ret = {}
-  local v = self._first
-  
-  while v do
-    table.insert(ret, v)
-    v = v[self._np]
-  end
-  
-  return ret
-end
-
 local function iterate(self, current)
   if not current then
     current = self._first
@@ -245,6 +247,6 @@ local function reverseIterate(self, current)
   return current
 end
 
-function LinkedList:getIterator(reverse)
+function LinkedList:iterate(reverse)
   return (reverse and reverseIterate or iterate), self, nil
 end
