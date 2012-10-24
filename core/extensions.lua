@@ -49,6 +49,25 @@ function table.copy(t)
   return setmetatable(ret, getmetatable(t))
 end
 
+
+function table.merge(a, b, overwrite)
+  for k,v in pairs(b) do
+		if a[k] and overwrite then
+			a[k] = v
+		elseif not a[k] then
+			a[k] = v
+		end
+	end
+end
+
+function table.size(t)
+	local n = 0
+	for _ in pairs(t) do
+		n = n + 1
+	end
+	return n
+end
+
 --------------------------------
 -- love.graphics
 
