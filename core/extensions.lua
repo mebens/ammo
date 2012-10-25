@@ -1,4 +1,3 @@
---------------------------------
 -- math
 
 math.tau = math.pi * 2 -- the proper circle constant
@@ -40,16 +39,6 @@ function math.dot(x1, y1, x2, y2)
   return x1 * x2 + y1 * y2
 end
 
---------------------------------
--- table
-
-function table.copy(t)
-  local ret = {}
-  for k, v in pairs(t) do ret[k] = v end
-  return setmetatable(ret, getmetatable(t))
-end
-
---------------------------------
 -- love.graphics
 
 local colorStack = {}
@@ -78,7 +67,6 @@ function love.graphics.setMode(width, height, fullscreen, vsync, fsaa)
   return result
 end
 
---------------------------------
 -- love.mouse
 
 love.mouse.getRawX = love.mouse.getX
@@ -140,7 +128,6 @@ end
 
 love.mouse.switchToWorld()
 
---------------------------------
 -- Object
 
 function Object:enableAccessors()
