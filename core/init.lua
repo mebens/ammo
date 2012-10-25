@@ -4,7 +4,7 @@ if not ammo then
   ammo.path = ({...})[1]:gsub("%.core%.init", "")
 end
 
-ammo.version = "0.2.0"
+ammo.version = "0.2.1"
 ammo.ext = {}
 
 require(ammo.path .. ".core.extensions")
