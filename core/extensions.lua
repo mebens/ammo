@@ -41,19 +41,17 @@ end
 
 -- love.graphics
 
-local colorStack = {}
+local r, g, b, a = love.graphics.getColor()
 local oldSetMode = love.graphics.setMode
 love.graphics.width = love.graphics.getWidth()
 love.graphics.height = love.graphics.getHeight()
 
-function love.graphics.pushColor(...)
-  local r, g, b, a = love.graphics.getColor()
-  colorStack[#colorStack + 1] = { r, g, b, a }
-  love.graphics.setColor(...)
+function love.graphics.storeColor()
+  r, g, b, a = love.graphics.getColor()
 end
 
-function love.graphics.popColor()
-  love.graphics.setColor(table.remove(colorStack))
+function love.graphics.resetColor()
+  love.graphics.setColor(r, g, b, a)
 end
 
 function love.graphics.setMode(width, height, fullscreen, vsync, fsaa)

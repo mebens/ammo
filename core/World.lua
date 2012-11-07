@@ -1,6 +1,10 @@
 World = class("World")
 World._mt = {}
 
+-- for speed
+local storeColor = love.graphics.storeColor
+local resetColor = love.graphics.resetColor
+
 function World._mt:__index(key)
   if key == "count" then
     return self._updates._length
@@ -77,7 +81,10 @@ function World:draw()
       self.camera:set(layer.scale)
       
       for v in layer:iterate(true) do -- reverse
+        storeColor()
         if v.visible then v:draw() end
+        resetColor()
+        
         for _, filter in pairs(self._drawFilters) do filter(v) end -- we should apply draw filters even if the actually entity isn't visible
       end
       
