@@ -76,7 +76,7 @@ end
 
 function LinkedList:pop()
   if self._last then
-    ret = self._last
+    local ret = self._last
     
     if ret[self._pp] then
       ret[self._pp][self._np] = nil
@@ -95,7 +95,7 @@ end
 
 function LinkedList:shift()
   if self._first then
-    ret = self._first
+    local ret = self._first
     
     if ret[self._np] then
       ret[self._np][self._pp] = nil
