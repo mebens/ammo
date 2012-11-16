@@ -12,7 +12,7 @@ require(ammo.path .. ".core.World")
 require(ammo.path .. ".core.Entity")
 require(ammo.path .. ".core.Sound")
 
-ammo.version = "0.2.2"
+ammo.version = "0.2.3"
 ammo.ext = {}
 ammo._world = World:new()
 
