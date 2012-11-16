@@ -28,50 +28,52 @@ function LinkedList:initialize(nextProp, prevProp, ...)
   self._pp = prevProp or "_prev"
   self._length = 0
   
-  self:push(...)
+  for _, v in ipairs{...} do self:push(v) end
   self:applyAccessors()
 end
 
-function LinkedList:push(...)
-  for _, v in ipairs{...} do
-    if self._first then
-      self._last[self._np] = v
-      v[self._pp] = self._last
-      self._last = v
-    else
-      self._first = v
-      self._last = v
-    end
+function LinkedList:push(node)
+  if self._first then
+    self._last[self._np] = node
+    node[self._pp] = self._last
+    self._last = node
+  else
+    self._first = node
+    self._last = node
   end
   
-  self._length = self._length + select("#", ...)
+  self._length = self._length + 1
 end
 
-function LinkedList:unshift(...)
-  for _, v in ipairs{...} do
-    if self._first then
-      self._first[self._pp] = v
-      v[self._np] = self._first
-      self._first = v
-    else
-      self._first = v
-      self._last = v
-    end
+function LinkedList:unshift(node)
+  if self._first then
+    self._first[self._pp] = node
+    node[self._np] = self._first
+    self._first = node
+  else
+    self._first = node
+    self._last = node
   end
   
-  self._length = self._length + select("#", ...)
+  self._length = self._length + 1
 end
 
 function LinkedList:insert(node, after)
-  if after[self._np] then
-    after[self._np][self._pp] = node
-  else
+  if after then
+    if after[self._np] then
+      after[self._np][self._pp] = node
+      node[self._np] = after[self._np]
+    else
+      self._last = node
+    end
+    
+    node[self._pp] = after    
+    after[self._np] = node
+    self.length = self.length + 1
+  elseif not self._first then
+    self._first = node
     self._last = node
   end
-
-  after[self._np] = node
-  self._length = self._length + 1
-  return node
 end
 
 function LinkedList:pop()
@@ -112,28 +114,26 @@ function LinkedList:shift()
   end
 end
 
-function LinkedList:remove(...)
-  for _, v in ipairs{...} do
-    if v[self._np] then
-      if v[self._pp] then
-        v[self._np][self._pp] = v[self._pp]
-        v[self._pp][self._np] = v[self._np]
-      else
-        v[self._np][self._pp] = nil
-        self._first = v[self._np]
-      end
-    elseif v[self._pp] then
-      v[self._pp][self._np] = nil
-      self._last = v[self._pp]
+function LinkedList:remove(node)
+  if node[self._np] then
+    if node[self._pp] then
+      node[self._np][self._pp] = node[self._pp]
+      node[self._pp][self._np] = node[self._np]
     else
-      self._first = nil
-      self._last = nil
+      node[self._np][self._pp] = nil
+      self._first = node[self._np]
     end
-
-    v[self._np] = nil
-    v[self._pp] = nil
-    self._length = self._length - 1
+  elseif node[self._pp] then
+    node[self._pp][self._np] = nil
+    self._last = node[self._pp]
+  else
+    self._first = nil
+    self._last = nil
   end
+
+  node[self._np] = nil
+  node[self._pp] = nil
+  self._length = self._length - 1
 end
 
 function LinkedList:clear(complete)
