@@ -53,8 +53,8 @@ function Entity:initialize(x, y, width, height)
   self.active = true
   self.visible = true
   self._layer = 1  
-  if width or not self.width then self.width = width or 0 end
-  if height or not self.height then self.height = height or 0 end
+  if not self.width then self.width = width end
+  if not self.height then self.height = height end
   self:applyAccessors()
 end
 
