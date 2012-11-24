@@ -1,7 +1,4 @@
 Entity = class("Entity")
-
--- METATABLE --
-
 Entity._mt = {}
 
 function Entity._mt:__index(key)
@@ -44,8 +41,6 @@ function Entity._mt:__newindex(key, value)
 end
 
 Entity:enableAccessors()
-
--- METHODS --
 
 function Entity:initialize(x, y)
   self._pos = Vector(x or 0, y or 0)
