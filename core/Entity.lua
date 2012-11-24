@@ -47,14 +47,12 @@ Entity:enableAccessors()
 
 -- METHODS --
 
-function Entity:initialize(x, y, width, height)
+function Entity:initialize(x, y)
   self._pos = Vector(x or 0, y or 0)
   self.collidable = true
   self.active = true
   self.visible = true
-  self._layer = 1  
-  if not self.width then self.width = width end
-  if not self.height then self.height = height end
+  self._layer = 1
   self:applyAccessors()
 end
 
@@ -62,26 +60,3 @@ function Entity:added() end
 function Entity:update(dt) end
 function Entity:draw() end
 function Entity:removed() end
-
-function Entity:move(dx, dy)
-  self.x = self.x + dx
-  self.y = self.y + dy
-end
-
-function Entity:getPosition()
-  return self.x, self.y
-end
-
-function Entity:setPosition(x, y)
-  self.x = x
-  self.y = y
-end
-
-function Entity:getSize()
-  return self.width, self.height
-end
-
-function Entity:setSize(width, height)
-  self.width = width
-  self.height = height
-end
