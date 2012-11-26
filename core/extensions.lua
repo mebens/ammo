@@ -55,9 +55,11 @@ function love.graphics.resetColor()
 end
 
 function love.graphics.setMode(width, height, fullscreen, vsync, fsaa)
-  local result = oldSetMode(width, height, fullscreen, vsync, fsaa)
-  
-  if result then
+  local success, result = pcall(oldSetMode, width, height, fullscreen, vsync, fsaa)
+  if not success then
+    error(result, 2)
+    return
+  elseif result then
     love.graphics.width = width
     love.graphics.height = height
   end
