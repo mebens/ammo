@@ -56,15 +56,17 @@ end
 
 function love.graphics.setMode(width, height, fullscreen, vsync, fsaa)
   local success, result = pcall(oldSetMode, width, height, fullscreen, vsync, fsaa)
-  if not success then
-    error(result, 2)
-    return
-  elseif result then
-    love.graphics.width = width
-    love.graphics.height = height
-  end
   
-  return result
+  if success then
+    if result then
+      love.graphics.width = width
+      love.graphics.height = height
+    end
+    
+    return result
+  else
+    error(result, 2)
+  end
 end
 
 -- love.mouse
