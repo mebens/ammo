@@ -42,7 +42,6 @@ end
 -- love.graphics
 
 local r, g, b, a = love.graphics.getColor()
-local oldSetMode = love.graphics.setMode
 love.graphics.width = love.graphics.getWidth()
 love.graphics.height = love.graphics.getHeight()
 
@@ -54,19 +53,24 @@ function love.graphics.resetColor()
   love.graphics.setColor(r, g, b, a)
 end
 
+local oldAssert = assert
+function assert(result, message, level)
+  if result then return end
+  level = (tonumber(level) or 1) + 1
+  error(message, level)
+end
+
+local oldSetMode = love.graphics.setMode
 function love.graphics.setMode(width, height, fullscreen, vsync, fsaa)
   local success, result = pcall(oldSetMode, width, height, fullscreen, vsync, fsaa)
+  assert(success, result, 2)
   
-  if success then
-    if result then
-      love.graphics.width = width
-      love.graphics.height = height
-    end
-    
-    return result
-  else
-    error(result, 2)
+  if result then
+    love.graphics.width = width
+    love.graphics.height = height
   end
+    
+  return result
 end
 
 -- love.mouse
