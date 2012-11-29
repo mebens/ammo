@@ -41,8 +41,6 @@ function World:initialize()
   -- lists
   self._updates = LinkedList:new("_updateNext", "_updatePrev")
   self._layers = { min = 0, max = 0 }
-  self._updateFilters = {}
-  self._drawFilters = {}
   self._add = {}
   self._remove = {}
   self._classCounts = {}
@@ -64,7 +62,6 @@ function World:update(dt)
   for v in self._updates:iterate() do
     if v.active then
       v:update(dt)
-      for _, filter in pairs(self._updateFilters) do filter(v, dt) end
     end
   end
   
@@ -84,8 +81,6 @@ function World:draw()
         storeColor()
         if v.visible then v:draw() end
         resetColor()
-        
-        for _, filter in pairs(self._drawFilters) do filter(v) end -- we should apply draw filters even if the actually entity isn't visible
       end
       
       self.camera:unset()
@@ -120,14 +115,6 @@ function World:removeAll()
     self._remove[#self._remove + 1] = v
     v._removeQueued = true
   end
-end
-
-function World:addUpdateFilter(func)
-  self._updateFilters[#self._updateFilters + 1] = func
-end
-
-function World:addDrawFilter(func)
-  self._drawFilters[#self._drawFilters + 1] = func
 end
 
 function World:addLayer(index, scale, pre, post)
