@@ -21,6 +21,9 @@ setmetatable(ammo, {
   
   __newindex = function(self, key, value)
     if key == "world" then
+      if not value then
+        value = World:new()
+      end
       self._goto = value
     else
       rawset(self, key, value)
