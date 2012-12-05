@@ -14,14 +14,15 @@ require(ammo.path .. ".core.Sound")
 
 ammo.version = "0.2.3"
 ammo.ext = {}
-ammo._world = World:new()
+ammo.default = World:new()
+ammo._world = ammo.default
 
 setmetatable(ammo, {
   __index = function(self, key) return rawget(self, "_" .. key) end,
   
   __newindex = function(self, key, value)
     if key == "world" then
-      self._goto = value
+      self._goto = value or ammo.default
     else
       rawset(self, key, value)
     end
@@ -30,29 +31,20 @@ setmetatable(ammo, {
 
 function ammo.update(dt)
   _G.dt = dt
-  
-  -- update
-  if ammo._world and ammo._world.active then
-    ammo._world:update(dt)
-  end
+  if ammo._world.active then ammo._world:update(dt) end
   
   -- world switch
   if ammo._goto then
-    if ammo._world then ammo._world:stop() end
+    ammo._world:stop()
     ammo._world = ammo._goto
     ammo._goto = nil
-    
-    if ammo._world then
-      ammo._world:_updateLists() -- make sure all entities are added (or removed) beforehand
-      ammo._world:start()
-    end
+    ammo._world:_updateLists() -- make sure all entities are added (or removed) beforehand
+    ammo._world:start()
   end
 end
 
 function ammo.draw()
-  if ammo._world and ammo._world.visible then
-    ammo._world:draw()
-  end
+  if ammo._world.visible then ammo._world:draw() end
 end
 
 if not love.update then love.update = ammo.update end
