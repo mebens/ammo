@@ -13,15 +13,17 @@ require(ammo.path .. ".core.Entity")
 require(ammo.path .. ".core.Sound")
 
 ammo.ext = {}
-ammo.default = World:new()
-ammo._world = ammo.default
+ammo._default = World:new()
+ammo._world = ammo._default
 
 setmetatable(ammo, {
   __index = function(self, key) return rawget(self, "_" .. key) end,
   
   __newindex = function(self, key, value)
     if key == "world" then
-      self._goto = value or ammo.default
+      self._goto = value or ammo._default
+    elseif key == "default" then
+      self._default = value or World:new()
     else
       rawset(self, key, value)
     end
