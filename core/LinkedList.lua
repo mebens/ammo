@@ -137,16 +137,16 @@ function LinkedList:remove(node)
 end
 
 function LinkedList:clear(complete)
-  self._first = nil
-  self._last = nil
-  self._length = 0
-  
   if complete then
     for v in self:iterate() do
       v[self._np] = nil
       v[self._pp] = nil
     end
   end
+  
+  self._first = nil
+  self._last = nil
+  self._length = 0
 end
 
 function LinkedList:bringForward(node)
