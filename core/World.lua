@@ -137,11 +137,26 @@ function World:addLayer(index, scale, pre, post)
 end
 
 function World:setupLayers(t)
+  local func, last
+  
   for k, v in pairs(t) do
-    if type(v) == "table" then
-      self:addLayer(k, v[1] or v.scale, v.pre, v.post)
+    if type(v) == "function" then
+      if last then
+        last.pre = v
+      else
+        func = v
+      end
     else
-      self:addLayer(k, v)
+      if type(v) == "table" then
+        last = self:addLayer(k, v[1] or v.scale, v.pre, v.post)
+      else
+        last = self:addLayer(k, v)
+      end
+      
+      if func then
+        last.post = func
+        func = nil
+      end
     end
   end
 end
