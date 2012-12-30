@@ -31,7 +31,6 @@ setmetatable(ammo, {
 })
 
 function ammo.update(dt)
-  _G.dt = dt
   if ammo._world.active then ammo._world:update(dt) end
   
   -- world switch
