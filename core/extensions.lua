@@ -42,7 +42,7 @@ end
 -- love.graphics
 
 local r, g, b, a = love.graphics.getColor()
-local oldSetMode = love.graphics.setMode
+love.graphics.oldSetMode = love.graphics.setMode
 love.graphics.width = love.graphics.getWidth()
 love.graphics.height = love.graphics.getHeight()
 
