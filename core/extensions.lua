@@ -42,9 +42,6 @@ end
 -- love.graphics
 
 local r, g, b, a = love.graphics.getColor()
-love.graphics.oldSetMode = love.graphics.setMode
-love.graphics.width = love.graphics.getWidth()
-love.graphics.height = love.graphics.getHeight()
 
 function love.graphics.storeColor()
   r, g, b, a = love.graphics.getColor()
@@ -54,20 +51,29 @@ function love.graphics.resetColor()
   love.graphics.setColor(r, g, b, a)
 end
 
-function love.graphics.setMode(width, height, fullscreen, vsync, fsaa)
-  local success, result = pcall(oldSetMode, width, height, fullscreen, vsync, fsaa)
+-- love.window
+
+local oldSetMode = love.window.setMode
+
+local function setWindowConstants()
+  love.window.width, love.window.height = love.window.getDimensions()
+  love.graphics.width = love.window.width
+  love.graphics.height = love.window.height
+end
+
+function love.window.setMode(width, height, flags)
+  local success, result = pcall(oldSetMode, width, height, flags)
   
   if success then
-    if result then
-      love.graphics.width = width
-      love.graphics.height = height
-    end
-    
+    if result then setWindowConstants() end
     return result
   else
     error(result, 2)
+    return false
   end
 end
+
+setWindowConstants()
 
 -- love.mouse
 
