@@ -1,3 +1,11 @@
+-- table
+
+function table.copy(t)
+  local ret = {}
+  for k, v in pairs(t) do ret[k] = v end
+  return setmetatable(ret, getmetatable(t))
+end
+
 -- math
 
 math.tau = math.pi * 2 -- the proper circle constant
