@@ -1,16 +1,14 @@
--- ammo is most likely defined the main init.lua
+-- ammo is most likely defined in init.lua
 if not ammo then
   ammo = {}
-  ammo.path = ({...})[1]:gsub("%.core%.init", "")
+  ammo.path = ({...})[1]:gsub("%.ammo$", "")
 end
 
-require(ammo.path .. ".core.extensions")
-require(ammo.path .. ".core.LinkedList")
-require(ammo.path .. ".core.Vector")
-require(ammo.path .. ".core.Camera")
-require(ammo.path .. ".core.World")
-require(ammo.path .. ".core.Entity")
-require(ammo.path .. ".core.Sound")
+require(ammo.path .. ".extensions")
+require(ammo.path .. ".LinkedList")
+require(ammo.path .. ".Vector")
+require(ammo.path .. ".Camera")
+require(ammo.path .. ".World")
 
 ammo.ext = {}
 ammo._default = World:new()

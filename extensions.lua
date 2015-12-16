@@ -146,10 +146,10 @@ love.mouse.switchToWorld()
 
 -- Object
 
-function Object:enableAccessors()
+function class.Object:enableAccessors()
   if not self._mt then self._mt = {} end
   
-  for _, v in pairs(Object.__metamethods) do
+  for _, v in pairs(class.Object.__metamethods) do
     self._mt[v] = self.__instanceDict[v]
   end
   
@@ -177,7 +177,7 @@ function Object:enableAccessors()
   return self
 end
 
-function Object:applyAccessors()
+function class.Object:applyAccessors()
   if not self._mt then return end
   setmetatable(self, self._mt)
 end
