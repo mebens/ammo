@@ -1,5 +1,5 @@
 ammo = {}
-ammo.path = ({...}):gsub("%.init$", "")
+ammo.path = ({...})[1]:gsub("%.init$", "")
 
 -- only include middleclass if it's not already there or if it's not v3.x
 if not (class and class.Object) then
