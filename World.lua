@@ -43,15 +43,6 @@ function World:initialize()
   self._layers = { min = 0, max = 0 }
   self._add = {}
   self._remove = {}
-  self._classCounts = {}
-  self._names = setmetatable({}, { __newindex = function(s, k, v) rawset(s, k, v) end })
-  
-  -- interface to _names
-  self.names = setmetatable({}, { __index = self._names, __newindex = function(_, name, entity)
-    if self._names[name] then self._names[name]._name = nil end
-    self._names[name] = entity
-    if entity then entity._name = name end
-  end })
   
   self:applyAccessors()
   self.camera = nil -- set off the default behaviour
@@ -146,11 +137,6 @@ function World:setupLayers(t)
   end
 end
 
-function World:classCount(cls)
-  if type(cls) == "table" then cls = cls.name end
-  return self._classCounts[cls]
-end
-
 function World:iterate()
   return self._updates:iterate()
 end
@@ -162,7 +148,6 @@ function World:_updateLists()
     self._updates:remove(v)
     v._removalQueued = false
     v._world = nil
-    if v.class then self._classCounts[v.class.name] = self._classCounts[v.class.name] - 1 end
     if v._layer then self._layers[v._layer]:remove(v) end
     if v._name then self._names[v._name] = nil end 
   end
@@ -172,7 +157,6 @@ function World:_updateLists()
     self._updates:push(v)
     v._additionQueued = false
     v._world = self
-    if v.class then self._classCounts[v.class.name] = (self._classCounts[v.class.name] or 0) + 1 end
     if v._layer then self:_setLayer(v) end
     if v._name then self.names[v._name] = v end
     if v.added then v:added() end
