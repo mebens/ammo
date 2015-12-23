@@ -51,7 +51,7 @@ end
 function World:update(dt)
   -- update
   for v in self._updates:iterate() do
-    if v.active then
+    if v.active ~= false then
       v:update(dt)
     end
   end
