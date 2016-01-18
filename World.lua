@@ -1,11 +1,10 @@
 World = class("World")
-World._mt = {}
 
 -- for speed
 local storeColor = love.graphics.storeColor
 local resetColor = love.graphics.resetColor
 
-function World._mt:__index(key)
+function World:__index(key)
   if key == "count" then
     return self._updates._length
   elseif key == "camera" then
@@ -17,7 +16,7 @@ function World._mt:__index(key)
   end
 end
 
-function World._mt:__newindex(key, value)
+function World:__newindex(key, value)
   if key == "camera" then
     if rawget(self, "_camera") then
       self._camera:stop()
@@ -32,8 +31,6 @@ function World._mt:__newindex(key, value)
   end
 end
 
-World:enableAccessors()
-
 function World:initialize()
   self.active = true
   self.visible = true
@@ -44,7 +41,6 @@ function World:initialize()
   self._add = {}
   self._remove = {}
   
-  self:applyAccessors()
   self.camera = nil -- set off the default behaviour
 end
 

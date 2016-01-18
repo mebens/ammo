@@ -1,7 +1,6 @@
 Entity = class("Entity")
-Entity._mt = {}
 
-function Entity._mt:__index(key)
+function Entity:__index(key)
   if key == "x" or key == "y" then
     return self._pos[key]
   else
@@ -9,7 +8,7 @@ function Entity._mt:__index(key)
   end
 end
 
-function Entity._mt:__newindex(key, value)
+function Entity:__newindex(key, value)
   if key == "x" or key == "y" then
     self._pos[key] = value
   elseif key == "layer" then
@@ -40,15 +39,12 @@ function Entity._mt:__newindex(key, value)
   end
 end
 
-Entity:enableAccessors()
-
 function Entity:initialize(x, y)
   self._pos = Vector(x or 0, y or 0)
   self.collidable = true
   self.active = true
   self.visible = true
   self._layer = 1
-  self:applyAccessors()
 end
 
 function Entity:added() end

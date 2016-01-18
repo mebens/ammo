@@ -1,7 +1,6 @@
 LinkedList = class("LinkedList")
-LinkedList._mt = {}
 
-function LinkedList._mt:__index(key)
+function LinkedList:__index(key)
   local result = rawget(self, "_" .. key) or LinkedList.__instanceDict[key]
   
   if result then
@@ -19,7 +18,6 @@ function LinkedList._mt:__index(key)
   end
 end
 
-LinkedList:enableAccessors()
 
 function LinkedList:initialize(nextProp, prevProp, ...)
   self._first = nil
@@ -27,9 +25,7 @@ function LinkedList:initialize(nextProp, prevProp, ...)
   self._np = nextProp or "_next"
   self._pp = prevProp or "_prev"
   self._length = 0
-  
   for _, v in ipairs{...} do self:push(v) end
-  self:applyAccessors()
 end
 
 function LinkedList:push(node)

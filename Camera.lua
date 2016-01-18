@@ -1,7 +1,6 @@
 Camera = class("Camera")
-Camera._mt = {}
 
-function Camera._mt:__index(key)
+function Camera:__index(key)
   if key == "x" or key == "y" then
     return self._pos[key]
   else
@@ -9,7 +8,7 @@ function Camera._mt:__index(key)
   end
 end
 
-function Camera._mt:__newindex(key, value)
+function Camera:__newindex(key, value)
   if key == "x" or key == "y" then
     self._pos[key] = self:processCoordinate(key, value)
   elseif key == "pos" then
@@ -21,13 +20,10 @@ function Camera._mt:__newindex(key, value)
   end
 end
 
-Camera:enableAccessors()
-
 function Camera:initialize(x, y, zoom, angle)
   self._pos = Vector(x or 0, y or 0)
   self.zoom = zoom or 1
   self.angle = angle or 0
-  self:applyAccessors()
 end
 
 function Camera:update(dt) end

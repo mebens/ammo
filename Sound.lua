@@ -1,7 +1,6 @@
 Sound = class("Sound")
-Sound._mt = {}
 
-function Sound._mt:__index(key)
+function Sound:__index(key)
   local result = rawget(self, "_" .. key) or self.class.__instanceDict[key]
   
   if result then
@@ -10,8 +9,6 @@ function Sound._mt:__index(key)
     return #self._sources
   end
 end
-
-Sound:enableAccessors()
 
 function Sound:initialize(file, long, volume, pan)
   self._file = file
@@ -25,8 +22,6 @@ function Sound:initialize(file, long, volume, pan)
   else
     self._data = type(file) == "string" and love.sound.newSoundData(file) or file
   end
-  
-  self:applyAccessors()
 end
 
 function Sound:play(volume, pan)
