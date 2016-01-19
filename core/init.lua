@@ -10,6 +10,10 @@ require(ammo.path .. ".Vector")
 require(ammo.path .. ".Camera")
 require(ammo.path .. ".World")
 
+-- these two are not crucial, but included anyway
+require(ammo.path .. ".Entity")
+require(ammo.path .. ".Sound")
+
 ammo.ext = {}
 ammo._default = World:new()
 ammo._world = ammo._default
