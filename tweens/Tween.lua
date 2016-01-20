@@ -1,10 +1,6 @@
 Tween = class('Tween')
 
--- METATABLE --
-
-Tween._mt = {}
-
-function Tween._mt:__index(key)
+function Tween:__index(key)
   local result = rawget(self, "_" .. key) or self.class.__instanceDict[key]
   
   if result then
@@ -22,7 +18,7 @@ function Tween._mt:__index(key)
   end
 end
 
-function Tween._mt:__newindex(key, value)
+function Tween:__newindex(key, value)
   if key == 'percent' then
     self._time = self._target * value -- value is a 0 - 1 value
   elseif key == 'duration' then
@@ -33,10 +29,6 @@ function Tween._mt:__newindex(key, value)
     rawset(self, key, value)
   end
 end
-
-Tween:enableAccessors()
-
--- METHODS --
 
 function Tween:initialize(duration, ease, complete, ...)
   self.active = false
@@ -54,8 +46,6 @@ function Tween:initialize(duration, ease, complete, ...)
     self._target = tonumber(tweenTime)
     self._delay = tonumber(delayTime)
   end
-  
-  self:applyAccessors()
 end
 
 function Tween:update(dt)

@@ -1,9 +1,8 @@
 PhysicalWorld = class("PhysicalWorld", World)
 PhysicalWorld.static.maxDelta = .03
-PhysicalWorld._mt = {}
 
-function PhysicalWorld._mt:__index(key)
-  local result = World._mt.__index(self, key)
+function PhysicalWorld:__index(key)
+  local result = World.__index(self, key)
   
   if result then
     return result
@@ -13,14 +12,11 @@ function PhysicalWorld._mt:__index(key)
   end
 end 
 
-PhysicalWorld:enableAccessors()
-
 function PhysicalWorld:initialize(...)
   World.initialize(self)
   self.physicsActive = true
   self._world = love.physics.newWorld(...)
   self._world:setCallbacks(PhysicalWorld._onCollide)
-  self:applyAccessors()
 end
 
 function PhysicalWorld:update(dt)

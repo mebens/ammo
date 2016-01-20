@@ -1,13 +1,12 @@
 PhysicalEntity = class("PhysicalEntity", Entity)
-PhysicalEntity._mt = {}
 
-function PhysicalEntity._mt:__index(key)
+function PhysicalEntity:__index(key)
   if key == "velx" then
     return self._velocity.x
   elseif key == "vely" then
     return self._velocity.y
   else
-    local result = Entity._mt.__index(self, key)
+    local result = Entity.__index(self, key)
     
     if result then
       return result
@@ -18,7 +17,7 @@ function PhysicalEntity._mt:__index(key)
   end
 end
 
-function PhysicalEntity._mt:__newindex(key, value)
+function PhysicalEntity:__newindex(key, value)
   if key == "x" then
     self._pos.x = value
     if self._body then self._body:setX(value) end
@@ -41,18 +40,15 @@ function PhysicalEntity._mt:__newindex(key, value)
     self._velocity = value
     if self._body then self._body:setLinearVelocity(value.x, value.y) end
   else
-    Entity._mt.__newindex(self, key, value)
+    Entity.__newindex(self, key, value)
   end
 end
-
-PhysicalEntity:enableAccessors()
 
 function PhysicalEntity:initialize(x, y, type)
   Entity.initialize(self, x, y)
   self._velocity = Vector(0, 0)
   self._angle = 0
   self.bodyType = type or "static"
-  self:applyAccessors()
 end
 
 function PhysicalEntity:update(dt)
