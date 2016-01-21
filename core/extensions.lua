@@ -100,30 +100,37 @@ function love.mouse.getWorldY(camera)
 end
 
 function love.mouse.getWorldPosition(camera)
-  return love.mouse.getWorldX(camera), love.mouse.getWorldY(camera)
+  camera = camera or ammo.world.camera
+  return (love.mouse.getRawX() - love.graphics.width / 2) / camera.zoom + camera.x,
+         (love.mouse.getRawY() - love.graphics.height / 2) / camera.zoom + camera.y
 end
 
---[[function love.mouse.getRotatedX(camera)
+function love.mouse.getRotatedX(camera)
   camera = camera or ammo.world.camera
-  local worldX = (love.mouse.getRawX() - love.graphics.width / 2) / camera.zoom
-  local worldY = (love.mouse.getRawY() - love.graphics.width / 2) / camera.zoom
-  local angle = math.angle(love.graphics.width / 2 / camera.zoom, love.graphics.height / 2 / camera.zoom, worldX, worldY) - camera.angle
-  local dist = math.distance(love.graphics.width / 2 / camera.zoom, love.graphics.height / 2 / camera.zoom, worldX, worldY)
-  return camera.x + math.cos(angle) * dist
+  local x, y = love.mouse.getRawPosition()
+  local cos = math.cos(-camera.angle)
+  local sin = math.sin(-camera.angle)
+  x, y = (x - love.graphics.width / 2) / camera.zoom, (y - love.graphics.height / 2) / camera.zoom
+  return (x * cos - y * sin) + camera.x
 end
 
 function love.mouse.getRotatedY(camera)
   camera = camera or ammo.world.camera
-  local worldX = (love.mouse.getRawX() - love.graphics.width / 2) / camera.zoom
-  local worldY = (love.mouse.getRawY() - love.graphics.width / 2) / camera.zoom
-  local angle = math.angle(love.graphics.width / 2 / camera.zoom, love.graphics.height / 2 / camera.zoom, worldX, worldY) - camera.angle
-  local dist = math.distance(love.graphics.width / 2 / camera.zoom, love.graphics.height / 2 / camera.zoom, worldX, worldY)
-  return camera.y + math.sin(angle) * dist
+  local x, y = love.mouse.getRawPosition()
+  local cos = math.cos(-camera.angle)
+  local sin = math.sin(-camera.angle)
+  x, y = (x - love.graphics.width / 2) / camera.zoom, (y - love.graphics.height / 2) / camera.zoom
+  return (x * sin + y * cos) + camera.y
 end
 
 function love.mouse.getRotatedPosition(camera)
-  return love.mouse.getRotatedX(camera), love.mouse.getRotatedY(camera)
-end]]
+  camera = camera or ammo.world.camera
+  local x, y = love.mouse.getRawPosition()
+  local cos = math.cos(-camera.angle)
+  local sin = math.sin(-camera.angle)
+  x, y = (x - love.graphics.width / 2) / camera.zoom, (y - love.graphics.height / 2) / camera.zoom
+  return (x * cos - y * sin) + camera.x, (x * sin + y * cos) + camera.y
+end
 
 function love.mouse.switchToWorld()
   love.mouse.getX = love.mouse.getWorldX
