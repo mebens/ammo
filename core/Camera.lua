@@ -10,11 +10,14 @@ end
 
 function Camera:__newindex(key, value)
   if key == "x" or key == "y" then
-    self._pos[key] = self:processCoordinate(key, value)
+    self._pos[key] = self.bounds and self:bindCoordinate(key, value) or value
   elseif key == "pos" then
     self._pos = value
-    value.x = self:processCoordinate("x", value.x)
-    value.y = self:processCoordinate("y", value.y)
+    
+    if self.bounds then
+      value.x = self:bindCoordinate("x", value.x)
+      value.y = self:bindCoordinate("y", value.y)
+    end
   else
     rawset(self, key, value)
   end
@@ -31,15 +34,12 @@ function Camera:start() end
 function Camera:stop() end
 
 function Camera:set(scale)
-  local width = love.graphics.width / self.zoom / 2
-  local height = love.graphics.height / self.zoom / 2
   scale = scale or 1
-  
   love.graphics.push()
   love.graphics.scale(self.zoom)
-  love.graphics.translate(width, height)
+  love.graphics.translate(love.graphics.width / self.zoom / 2, love.graphics.height / self.zoom / 2)
   love.graphics.rotate(self.angle)
-  love.graphics.translate(-self.x * scale - width, -self.y * scale - height)
+  love.graphics.translate(-self._pos.x * scale, -self._pos.y * scale)
 end
 
 function Camera:unset()
@@ -68,6 +68,7 @@ function Camera:setBounds(x1, y1, x2, y2)
   self.bounds = { x1 = x1, y1 = y1, x2 = x2, y2 = y2 }
 end
 
-function Camera:processCoordinate(axis, value)
-  return self.bounds and math.clamp(value, self.bounds[axis .. "1"], self.bounds[axis .. "2"]) or value
+function Camera:bindCoordinate(axis, value)
+  addition = axis == "x" and "width" or "height"
+  return math.clamp(value, self.bounds[axis .. "1"] + love.graphics[addition] / 2, self.bounds[axis .. "2"] - love.graphics[additon] / 2)
 end
