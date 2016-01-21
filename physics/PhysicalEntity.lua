@@ -95,7 +95,14 @@ function PhysicalEntity:addShape(shape, density)
   return fixture
 end
 
-function PhysicalEntity:rotate(dr)
-  self.angle = self.angle + dr
+function PhysicalEntity:drawShape(fixture)
+  local shape = fixture:getShape()
+  local shapeType = shape:getType()
+  
+  if shapeType == 'polygon' then
+    love.graphics.polygon("line", self:getWorldPoints(shape:getPoints()))
+  elseif shapeType == 'circle' then
+    local x, y = self:getWorldPoint(shape:getPoint())
+    love.graphics.circle("line", x, y, shape:getRadius())
+  end
 end
-
