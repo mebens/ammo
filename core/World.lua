@@ -145,7 +145,6 @@ function World:_updateLists()
     v._removalQueued = false
     v._world = nil
     if v._layer then self._layers[v._layer]:remove(v) end
-    if v._name then self._names[v._name] = nil end 
   end
   
   -- add
@@ -154,7 +153,6 @@ function World:_updateLists()
     v._additionQueued = false
     v._world = self
     if v._layer then self:_setLayer(v) end
-    if v._name then self.names[v._name] = v end
     if v.added then v:added() end
   end
   
