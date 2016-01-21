@@ -10,14 +10,18 @@ end
 
 function Camera:__newindex(key, value)
   if key == "x" or key == "y" then
-    self._pos[key] = self.bounds and self:bindCoordinate(key, value) or value
-  elseif key == "pos" then
-    self._pos = value
+    self._pos[key] = value
     
     if self.bounds then
-      value.x = self:bindCoordinate("x", value.x)
-      value.y = self:bindCoordinate("y", value.y)
+      if key == "x" then
+        self:bindX()
+      else
+        self:bindY()
+      end
     end
+  elseif key == "pos" then
+    self._pos = value
+    if self.bounds then self:bindPosition() end
   else
     rawset(self, key, value)
   end
@@ -65,10 +69,18 @@ function Camera:setPosition(x, y)
 end
 
 function Camera:setBounds(x1, y1, x2, y2)
-  self.bounds = { x1 = x1, y1 = y1, x2 = x2, y2 = y2 }
+  self.bounds = { x1, y1, x2, y2 }
 end
 
-function Camera:bindCoordinate(axis, value)
-  addition = axis == "x" and "width" or "height"
-  return math.clamp(value, self.bounds[axis .. "1"] + love.graphics[addition] / 2, self.bounds[axis .. "2"] - love.graphics[additon] / 2)
+function Camera:bindX()
+  self._pos.x = math.clamp(self._pos.x, self.bounds[1] + love.graphics.width / 2 / self.zoom, self.bounds[3] - love.graphics.width / 2 / self.zoom)
+end
+
+function Camera:bindY()
+  self._pos.y = math.clamp(self._pos.y, self.bounds[2] + love.graphics.height / 2 / self.zoom, self.bounds[4] - love.graphics.height / 2 / self.zoom)
+end
+
+function Camera:bindPosition()
+  self._pos.x = math.clamp(self._pos.x, self.bounds[1] + love.graphics.width / 2 / self.zoom, self.bounds[3] - love.graphics.width / 2 / self.zoom)
+  self._pos.y = math.clamp(self._pos.y, self.bounds[2] + love.graphics.height / 2 / self.zoom, self.bounds[4] - love.graphics.height / 2 / self.zoom)
 end
