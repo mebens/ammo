@@ -11,17 +11,8 @@ end
 function Camera:__newindex(key, value)
   if key == "x" or key == "y" then
     self._pos[key] = value
-    
-    if self.bounds then
-      if key == "x" then
-        self:bindX()
-      else
-        self:bindY()
-      end
-    end
   elseif key == "pos" then
     self._pos = value
-    if self.bounds then self:bindPosition() end
   else
     rawset(self, key, value)
   end
@@ -80,7 +71,7 @@ function Camera:bindY()
   self._pos.y = math.clamp(self._pos.y, self.bounds[2] + love.graphics.height / 2 / self.zoom, self.bounds[4] - love.graphics.height / 2 / self.zoom)
 end
 
-function Camera:bindPosition()
+function Camera:bind()
   self._pos.x = math.clamp(self._pos.x, self.bounds[1] + love.graphics.width / 2 / self.zoom, self.bounds[3] - love.graphics.width / 2 / self.zoom)
   self._pos.y = math.clamp(self._pos.y, self.bounds[2] + love.graphics.height / 2 / self.zoom, self.bounds[4] - love.graphics.height / 2 / self.zoom)
 end
