@@ -1,18 +1,20 @@
 input = {}
 input.key = {}
 input.mouse = {}
+input.wheel = {}
 input._maps = {}
 
 -- a couple of shortcuts
 key = input.key
 mouse = input.mouse
+wheel = input.wheel
 
 function input.define(t, ...)
   if type(t) == "string" then
     input._maps[t] = { key = { ... } }
   else
     if type(t.key) == "string" then t.key = { t.key } end
-    if type(t.mouse) == "string" then t.mouse = { t.mouse } end
+    if type(t.mouse) == "number" then t.mouse = { t.mouse } end
     input._maps[t[1]] = t
   end
 end
@@ -56,6 +58,7 @@ function input.check(name, type)
     end
   end
   
+  if map.wheel and type ~= "released" and wheel[map.wheel] then return true end
   return false
 end
 
@@ -71,6 +74,7 @@ function input.update()
   key.released = { count = 0 }
   mouse.pressed = { count = 0 }
   mouse.released = { count = 0 }
+  for key, _ in pairs(wheel) do wheel[key] = nil end
   mouse.x = love.mouse.getX()
   mouse.y = love.mouse.getY()
 end
@@ -103,6 +107,13 @@ function input.mousereleased(x, y, button)
   mouse.down.count = mouse.down.count - 1
 end
 
+function input.wheelmoved(x, y)
+  if x < 0 then wheel.moved.left = true end
+  if x > 0 then wheel.moved.right = true end
+  if y > 0 then wheel.moved.up = true end
+  if y < 0 then wheel.moved.down = true end
+end
+
 key.down = { count = 0 }
 mouse.down = { count = 0 }
 input.update()
@@ -111,3 +122,4 @@ if not love.keypressed then love.keypressed = input.keypressed end
 if not love.keyreleased then love.keyreleased = input.keyreleased end
 if not love.mousepressed then love.mousepressed = input.mousepressed end
 if not love.mousereleased then love.mousereleased = input.mousereleased end
+if not love.wheelmoved then love.wheelmoved = input.wheelmoved end
