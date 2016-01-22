@@ -62,7 +62,10 @@ function World:draw()
     
     if layer then
       if layer.pre then layer.pre() end
-      self.camera:set(layer.scale)
+      
+      if layer.camera ~= false then
+        self.camera:set(layer.scale)
+      end
       
       for v in layer:iterate(true) do -- reverse
         storeColor()
@@ -70,7 +73,7 @@ function World:draw()
         resetColor()
       end
       
-      self.camera:unset()
+      if layer.camera ~= false then self.camera:unset() end
       if layer.post then layer.post() end
     end
   end
@@ -104,19 +107,22 @@ function World:removeAll()
   end
 end
 
-function World:addLayer(index, scale, pre, post)
+function World:addLayer(index, scale, pre, post, camera)
   local layer = LinkedList:new("_drawNext", "_drawPrev")
   
   if type(index) == "table" then
+    index = index[1] or index.index
     scale = index[2] or index.scale
     pre = index.pre
     post = index.post
-    index = index[1] or index.index
+    camera = index.camera
   end
   
+  if camera ~= false then camera = true end
   layer.scale = scale or 1
   layer.pre = pre
   layer.post = post
+  layer.camera = camera
   self._layers[index] = layer
   self._layers.min = math.min(index, self._layers.min)
   self._layers.max = math.max(index, self._layers.max)
@@ -126,7 +132,7 @@ end
 function World:setupLayers(t)
   for k, v in pairs(t) do
     if type(v) == "table" then
-      last = self:addLayer(k, v[1] or v.scale, v.pre, v.post)
+      last = self:addLayer(k, v[1] or v.scale, v.pre, v.post, v.camera)
     else
       last = self:addLayer(k, v)
     end

@@ -64,7 +64,7 @@ end
 local oldSetMode = love.window.setMode
 
 local function setWindowConstants()
-  love.window.width, love.window.height = love.window.getDimensions()
+  love.window.width, love.window.height = love.graphics.getDimensions()
   love.graphics.width = love.window.width
   love.graphics.height = love.window.height
 end

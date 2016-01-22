@@ -30,11 +30,19 @@ function Camera:stop() end
 
 function Camera:set(scale)
   scale = scale or 1
+  local xCentre = love.graphics.width / self.zoom / 2
+  local yCentre = love.graphics.height / self.zoom / 2
+  
   love.graphics.push()
   love.graphics.scale(self.zoom)
-  love.graphics.translate(love.graphics.width / self.zoom / 2, love.graphics.height / self.zoom / 2)
+  love.graphics.translate(xCentre, yCentre)
   love.graphics.rotate(self.angle)
-  love.graphics.translate(-self._pos.x * scale, -self._pos.y * scale)
+  
+  if scale == 0 then
+    love.graphics.translate(-xCentre, -yCentre)
+  else
+    love.graphics.translate(-self._pos.x * scale, -self._pos.y * scale)
+  end
 end
 
 function Camera:unset()
