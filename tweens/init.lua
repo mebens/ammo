@@ -1,6 +1,5 @@
 local path = ({...})[1]:gsub("%.init", "")
 require(path .. ".Tween")
-require(path .. ".AttrTween")
+require(path .. ".Delay")
 ease = require(path .. ".ease")
-require(path .. ".tweens")
 ammo.ext.tweens = true
