@@ -108,10 +108,10 @@ function input.mousereleased(x, y, button)
 end
 
 function input.wheelmoved(x, y)
-  if x < 0 then wheel.moved.left = true end
-  if x > 0 then wheel.moved.right = true end
-  if y > 0 then wheel.moved.up = true end
-  if y < 0 then wheel.moved.down = true end
+  if x < 0 then wheel.left = true end
+  if x > 0 then wheel.right = true end
+  if y > 0 then wheel.up = true end
+  if y < 0 then wheel.down = true end
 end
 
 key.down = { count = 0 }

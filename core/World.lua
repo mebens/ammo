@@ -68,9 +68,11 @@ function World:draw()
       end
       
       for v in layer:iterate(true) do -- reverse
-        storeColor()
-        if v.visible then v:draw() end
-        resetColor()
+        if v.visible then
+          storeColor()
+          v:draw()
+          resetColor()
+        end
       end
       
       if layer.camera ~= false then self.camera:unset() end
@@ -145,26 +147,30 @@ end
 
 function World:_updateLists()
   -- remove
-  for _, v in pairs(self._remove) do
-    if v.removed then v:removed() end
-    self._updates:remove(v)
-    v._removalQueued = false
-    v._world = nil
-    if v._layer then self._layers[v._layer]:remove(v) end
+  if #self._remove then
+    for _, v in pairs(self._remove) do
+      if v.removed then v:removed() end
+      self._updates:remove(v)
+      v._removalQueued = false
+      v._world = nil
+      if v._layer then self._layers[v._layer]:remove(v) end
+    end
+    
+    self._remove = {}
   end
   
   -- add
-  for _, v in pairs(self._add) do
-    self._updates:push(v)
-    v._additionQueued = false
-    v._world = self
-    if v._layer then self:_setLayer(v) end
-    if v.added then v:added() end
-  end
+  if #self._add then
+    for _, v in pairs(self._add) do
+      self._updates:push(v)
+      v._additionQueued = false
+      v._world = self
+      if v._layer then self:_setLayer(v) end
+      if v.added then v:added() end
+    end
   
-  -- empty tables
-  self._add = {}
-  self._remove = {}
+    self._add = {}
+  end
 end
 
 function World:_setLayer(e, prev)
