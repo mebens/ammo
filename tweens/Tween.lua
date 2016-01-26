@@ -55,6 +55,12 @@ function Tween:update(dt)
     self.time = self.time + dt
     local t = self.time / self.duration
     
+    -- need to clamp time before applying values, therefore it appears up here
+    if t >= 1 then
+      self.time = self.duration
+      t = 1
+    end
+    
     if self.ease and t > 0 and t < 1 then
       t = self.ease(t)
     end
@@ -63,8 +69,7 @@ function Tween:update(dt)
       self._obj[k] = v + self._range[k] * t
     end
     
-    if self.time >= self.duration then
-      self.time = self.duration
+    if t >= 1 then
       self:_finish()
       if self.complete then self.complete(unpack(self.completeArgs)) end
     end
