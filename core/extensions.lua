@@ -49,14 +49,16 @@ end
 
 -- love.graphics
 
-local r, g, b, a = love.graphics.getColor()
+local getColor = love.graphics.getColor
+local setColor = love.graphics.setColor
+local r, g, b, a = getColor()
 
 function love.graphics.storeColor()
-  r, g, b, a = love.graphics.getColor()
+  r, g, b, a = getColor()
 end
 
 function love.graphics.resetColor()
-  love.graphics.setColor(r, g, b, a)
+  setColor(r, g, b, a)
 end
 
 -- love.window

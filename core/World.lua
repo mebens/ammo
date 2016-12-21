@@ -1,9 +1,5 @@
 World = class("World")
 
--- for speed
-local storeColor = love.graphics.storeColor
-local resetColor = love.graphics.resetColor
-
 function World:__index(key)
   if key == "count" then
     return self._updates._length
@@ -56,6 +52,10 @@ function World:update(dt)
   self:_updateLists()
 end
 
+local getColor = love.graphics.getColor
+local setColor = love.graphics.setColor
+local r, g, b, a
+
 function World:draw()
   for i = self._layers.max, self._layers.min, -1 do
     local layer = self._layers[i]
@@ -69,9 +69,9 @@ function World:draw()
       
       for v in layer:iterate(true) do -- reverse
         if v.visible then
-          storeColor()
+          r, g, b, a = getColor()
           v:draw()
-          resetColor()
+          setColor()
         end
       end
       
