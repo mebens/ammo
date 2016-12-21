@@ -19,7 +19,7 @@ function Camera:__newindex(key, value)
 end
 
 function Camera:initialize(x, y, zoom, angle)
-  self._pos = Vector(x or 0, y or 0)
+  self._pos = Vector(x or love.graphics.width / 2, y or love.graphics.height / 2)
   self.zoom = zoom or 1
   self.angle = angle or 0
 end
