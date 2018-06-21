@@ -19,7 +19,7 @@ function Camera:__newindex(key, value)
 end
 
 function Camera:initialize(x, y, zoom, angle)
-  self._pos = Vector(x or love.graphics.width / 2, y or love.graphics.height / 2)
+  self._pos = Vector(x or 0, y or 0)
   self.zoom = zoom or 1
   self.angle = angle or 0
 end
@@ -65,6 +65,27 @@ end
 function Camera:setPosition(x, y)
   self.x = x
   self.y = y
+end
+
+-- for speed
+local cos = math.cos
+local sin = math.sin
+
+function Camera:worldPosition(screenX, screenY)
+  local angcos = cos(-self.angle)
+  local angsin = sin(-self.angle)
+  local x = (screenX - love.graphics.width / 2) / self.zoom
+  local y = (screenY - love.graphics.height / 2) / self.zoom
+  return (x * angcos - y * angsin) + self._pos.x, (x * angsin + y * angcos) + self._pos.y
+end
+
+function Camera:screenPosition(worldX, worldY)
+  local angcos = cos(-camera.angle)
+  local angsin = sin(-camera.angle)
+  local x, y = screenX - self._pos.x, screenY - self._pos.y
+  x = (x * angcos - y * angsin) * self.zoom
+  y = (x * angsin + y * angcos) * self.zoom
+  return x + love.graphics.width / 2, y + love.graphics.height / 2
 end
 
 function Camera:setBounds(x1, y1, x2, y2)
