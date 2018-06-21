@@ -72,14 +72,22 @@ function Camera:setBounds(x1, y1, x2, y2)
 end
 
 function Camera:bindX()
-  self._pos.x = math.clamp(self._pos.x, self.bounds[1] + love.graphics.width / 2 / self.zoom, self.bounds[3] - love.graphics.width / 2 / self.zoom)
+  self._pos.x = math.clamp(
+    self._pos.x,
+    self.bounds[1] + love.graphics.width / 2 / self.zoom,
+    self.bounds[3] - love.graphics.width / 2 / self.zoom
+  )
 end
 
 function Camera:bindY()
-  self._pos.y = math.clamp(self._pos.y, self.bounds[2] + love.graphics.height / 2 / self.zoom, self.bounds[4] - love.graphics.height / 2 / self.zoom)
+  self._pos.y = math.clamp(
+    self._pos.y,
+    self.bounds[2] + love.graphics.height / 2 / self.zoom,
+    self.bounds[4] - love.graphics.height / 2 / self.zoom
+  )
 end
 
 function Camera:bind()
-  self._pos.x = math.clamp(self._pos.x, self.bounds[1] + love.graphics.width / 2 / self.zoom, self.bounds[3] - love.graphics.width / 2 / self.zoom)
-  self._pos.y = math.clamp(self._pos.y, self.bounds[2] + love.graphics.height / 2 / self.zoom, self.bounds[4] - love.graphics.height / 2 / self.zoom)
+  self:bindX()
+  self:bindY()
 end

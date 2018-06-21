@@ -8,7 +8,7 @@ end
 
 -- math
 
-math.tau = math.pi * 2 -- the proper circle constant
+math.tau = math.pi * 2
 
 function math.scale(x, min1, max1, min2, max2)
   return min2 + ((x - min1) / (max1 - min1)) * (max2 - min2)
@@ -64,23 +64,43 @@ end
 -- love.window
 
 local oldSetMode = love.window.setMode
+local oldUpdateMode = love.window.updateMode
 
-local function setWindowConstants()
-  love.window.width, love.window.height = love.graphics.getDimensions()
-  love.graphics.width = love.window.width
-  love.graphics.height = love.window.height
+local function setWindowConstants(w, h)
+  if not w then
+    w, h = love.graphics.getDimensions()
+  end
+
+  love.window.width, love.window.height = w, h
+  love.graphics.width, love.graphics.height = w, h
 end
 
 function love.window.setMode(width, height, flags)
   local success, result = pcall(oldSetMode, width, height, flags)
   
   if success then
-    if result then setWindowConstants() end
+    if result then setWindowConstants(width, height) end
     return result
   else
     error(result, 2)
     return false
   end
+end
+
+function love.window.updateMode(width, height, settings)
+  local success, result = pcall(oldUpdateMode, width, height, settings)
+
+  if success then
+    if result then setWindowConstants(width, height) end
+    return result
+  else
+    error(result, 2)
+    return false
+  end
+end
+
+if not love.resize then
+  love.resive = setWindowConstants
 end
 
 setWindowConstants()
@@ -91,25 +111,31 @@ love.mouse.getRawX = love.mouse.getX
 love.mouse.getRawY = love.mouse.getY
 love.mouse.getRawPosition = love.mouse.getPosition
 
-function love.mouse.getWorldX(camera)
+-- for extra speed
+local rawX = love.mouse.getRawX
+local rawY = love.mouse.getRawY
+local rawPos = love.mouse.getRawPosition
+
+function love.mouse.getTranslatedX(camera)
   camera = camera or ammo.world.camera
-  return (love.mouse.getRawX() - love.graphics.width / 2) / camera.zoom + camera.x 
+  return (rawX() - love.graphics.width / 2) / camera.zoom + camera.x 
 end
 
-function love.mouse.getWorldY(camera)
+function love.mouse.getTranslatedY(camera)
   camera = camera or ammo.world.camera
-  return (love.mouse.getRawY() - love.graphics.height / 2) / camera.zoom + camera.y
+  return (rawY() - love.graphics.height / 2) / camera.zoom + camera.y
 end
 
-function love.mouse.getWorldPosition(camera)
+function love.mouse.getTranslatedPosition(camera)
   camera = camera or ammo.world.camera
-  return (love.mouse.getRawX() - love.graphics.width / 2) / camera.zoom + camera.x,
-         (love.mouse.getRawY() - love.graphics.height / 2) / camera.zoom + camera.y
+  local x, y = rawPos()
+  return (x - love.graphics.width / 2) / camera.zoom + camera.x,
+         (y - love.graphics.height / 2) / camera.zoom + camera.y
 end
 
 function love.mouse.getRotatedX(camera)
   camera = camera or ammo.world.camera
-  local x, y = love.mouse.getRawPosition()
+  local x, y = rawPos()
   local cos = math.cos(-camera.angle)
   local sin = math.sin(-camera.angle)
   x, y = (x - love.graphics.width / 2) / camera.zoom, (y - love.graphics.height / 2) / camera.zoom
@@ -118,7 +144,7 @@ end
 
 function love.mouse.getRotatedY(camera)
   camera = camera or ammo.world.camera
-  local x, y = love.mouse.getRawPosition()
+  local x, y = rawPos()
   local cos = math.cos(-camera.angle)
   local sin = math.sin(-camera.angle)
   x, y = (x - love.graphics.width / 2) / camera.zoom, (y - love.graphics.height / 2) / camera.zoom
@@ -127,7 +153,7 @@ end
 
 function love.mouse.getRotatedPosition(camera)
   camera = camera or ammo.world.camera
-  local x, y = love.mouse.getRawPosition()
+  local x, y = rawPos()
   local cos = math.cos(-camera.angle)
   local sin = math.sin(-camera.angle)
   x, y = (x - love.graphics.width / 2) / camera.zoom, (y - love.graphics.height / 2) / camera.zoom
@@ -135,12 +161,14 @@ function love.mouse.getRotatedPosition(camera)
 end
 
 function love.mouse.switchToWorld()
+  love.mouse.positionMode = "world"
   love.mouse.getX = love.mouse.getWorldX
   love.mouse.getY = love.mouse.getWorldY
   love.mouse.getPosition = love.mouse.getWorldPosition
 end
 
 function love.mouse.switchToRotated()
+  love.mouse.positionMode = "rotated"
   love.mouse.getX = love.mouse.getRotatedX
   love.mouse.getY = love.mouse.getRotatedY
   love.mouse.getPosition = love.mouse.getRotatedPosition
