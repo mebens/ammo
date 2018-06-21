@@ -71,7 +71,7 @@ function World:draw()
         if v.visible then
           r, g, b, a = getColor()
           v:draw()
-          setColor()
+          setColor(r, g, b, a)
         end
       end
       
