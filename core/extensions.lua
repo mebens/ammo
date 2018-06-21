@@ -66,7 +66,7 @@ end
 local oldSetMode = love.window.setMode
 local oldUpdateMode = love.window.updateMode
 
-local function setWindowConstants(w, h)
+local function updateWindowConstants(w, h)
   if not w then
     w, h = love.graphics.getDimensions()
   end
@@ -79,7 +79,7 @@ function love.window.setMode(width, height, flags)
   local success, result = pcall(oldSetMode, width, height, flags)
   
   if success then
-    if result then setWindowConstants(width, height) end
+    if result then updateWindowConstants(width, height) end
     return result
   else
     error(result, 2)
@@ -91,7 +91,7 @@ function love.window.updateMode(width, height, settings)
   local success, result = pcall(oldUpdateMode, width, height, settings)
 
   if success then
-    if result then setWindowConstants(width, height) end
+    if result then updateWindowConstants(width, height) end
     return result
   else
     error(result, 2)
@@ -99,11 +99,8 @@ function love.window.updateMode(width, height, settings)
   end
 end
 
-if not love.resize then
-  love.resive = setWindowConstants
-end
-
-setWindowConstants()
+love.window.updateConstants = updateWindowConstants
+updateWindowConstants()
 
 -- love.mouse
 
