@@ -6,10 +6,10 @@ end
 
 function Camera:__newindex(key, value)
   if key == "x" then
-    self.transform:translate(-(x - self._x), 0)
+    self.transform:translate(-(value - self._x), 0)
     self._x = value
   elseif key == "y" then
-    self.transform:translate(0, -(y - self._y))
+    self.transform:translate(0, -(value - self._y))
     self._y = value
   elseif key == "zoom" then
     self.transform:scale(value / self._zoom)
@@ -30,7 +30,7 @@ function Camera:initialize(x, y, zoom, angle)
   self._lscale = 1
 
   self.transform = love.math.newTransform(love.graphics.width / 2, love.graphics.height / 2)
-  self.transform:scale(self.zoom):rotate(self.rotate):translate(-x, -y)
+  self.transform:scale(self.zoom):rotate(self.angle):translate(-self._x, -self._y)
 end
 
 function Camera:update(dt) end
@@ -47,6 +47,7 @@ function Camera:set(scale)
   end
 
   love.graphics.push()
+  love.graphics.applyTransform(self.transform)
 end
 
 function Camera:unset()

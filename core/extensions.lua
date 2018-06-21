@@ -115,19 +115,19 @@ love.mouse.getRawPosition = love.mouse.getPosition
 local rawPos = love.mouse.getRawPosition
 
 function love.mouse.getWorldX(camera)
-  camera = camera or ammo.camera
+  camera = camera or ammo.world.camera
   local x, y = camera:worldPosition(rawPos())
   return x
 end
 
 function love.mouse.getWorldY(camera)
-  camera = camera or ammo.camera
+  camera = camera or ammo.world.camera
   local x, y = camera:worldPosition(rawPos())
   return y
 end  
 
 function love.mouse.getWorldPosition(camera)
-  camera = camera or ammo.camera
+  camera = camera or ammo.world.camera
   return camera:worldPosition(rawPos())
 end
 
