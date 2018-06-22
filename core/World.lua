@@ -41,6 +41,9 @@ function World:initialize()
 end
 
 function World:update(dt)
+  -- update lists at beginning of frame
+  self:_updateLists()
+  
   -- update
   for v in self._updates:iterate() do
     if v.active ~= false then
@@ -49,7 +52,6 @@ function World:update(dt)
   end
   
   self.camera:update(dt)
-  self:_updateLists()
 end
 
 local getColor = love.graphics.getColor
