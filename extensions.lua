@@ -1,9 +1,20 @@
 -- table
 
+-- locals for speed
+local tpairs = pairs
+local move = table.move
+local setmeta = setmetatable
+local getmeta = getmetatable
+
 function table.copy(t)
   local ret = {}
-  for k, v in pairs(t) do ret[k] = v end
-  return setmetatable(ret, getmetatable(t))
+  for k, v in tpairs(t) do ret[k] = v end
+  return setmeta(ret, getmeta(t))
+end
+
+function table.acopy(t, start)
+  start = start or 1
+  return setmeta(move(t, start, #t, start, {}), getmeta(t))
 end
 
 -- math
@@ -124,7 +135,7 @@ love.mouse.getRawX = love.mouse.getX
 love.mouse.getRawY = love.mouse.getY
 love.mouse.getRawPosition = love.mouse.getPosition
 
--- for speed
+-- local for speed
 local rawPos = love.mouse.getRawPosition
 
 function love.mouse.getWorldX(camera)
