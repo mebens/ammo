@@ -76,19 +76,25 @@ function Camera:setBounds(x1, y1, x2, y2)
 end
 
 function Camera:bindX()
-  self.x = math.clamp(
-    self.x,
-    self.bounds[1] + love.graphics.width / 2 / self.zoom,
-    self.bounds[3] - love.graphics.width / 2 / self.zoom
-  )
+  local val = self.bounds[1] + love.graphics.width / 2 / self.zoom
+
+  if self.x < val then
+    self.x = val
+  else
+    val = self.bounds[3] - love.graphics.width / 2 / self.zoom
+    if self.x > val then self.x = val end
+  end
 end
 
 function Camera:bindY()
-  self.y = math.clamp(
-    self.y,
-    self.bounds[2] + love.graphics.height / 2 / self.zoom,
-    self.bounds[4] - love.graphics.height / 2 / self.zoom
-  )
+  local val = self.bounds[2] + love.graphics.height / 2 / self.zoom
+
+  if self.y < val then
+    self.y = val
+  else
+    val = self.bounds[4] - love.graphics.height / 2 / self.zoom
+    if self.y > val then self.y = val end
+  end
 end
 
 function Camera:bind()
