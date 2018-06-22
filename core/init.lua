@@ -4,13 +4,9 @@ if not ammo then
   ammo.path = ({...})[1]:gsub("%.ammo$", "")
 end
 
-require(ammo.path .. ".core.extensions")
 require(ammo.path .. ".core.LinkedList")
-require(ammo.path .. ".core.Vector")
 require(ammo.path .. ".core.Camera")
 require(ammo.path .. ".core.World")
-
--- these two are not crucial, but included anyway
 require(ammo.path .. ".core.Entity")
 require(ammo.path .. ".core.Sound")
 
