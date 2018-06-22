@@ -1,17 +1,11 @@
 Entity = class("Entity")
 
 function Entity:__index(key)
-  if key == "x" or key == "y" then
-    return self._pos[key]
-  else
-    return rawget(self, "_" .. key) or self.class.__instanceDict[key]
-  end
+  return rawget(self, "_" .. key) or self.class.__instanceDict[key]
 end
 
 function Entity:__newindex(key, value)
-  if key == "x" or key == "y" then
-    self._pos[key] = value
-  elseif key == "layer" then
+  if key == "layer" then
     if self._layer == value then return end
     
     if self._world then
@@ -31,7 +25,8 @@ function Entity:__newindex(key, value)
 end
 
 function Entity:initialize(x, y)
-  self._pos = Vector(x or 0, y or 0)
+  self.x = x or 0
+  self.y = y or 0
   self.collidable = true
   self.active = true
   self.visible = true

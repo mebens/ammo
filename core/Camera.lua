@@ -1,25 +1,8 @@
 Camera = class("Camera")
 
-function Camera:__index(key)
-  if key == "x" or key == "y" then
-    return self._pos[key]
-  else
-    return rawget(self, "_" .. key) or self.class.__instanceDict[key]
-  end
-end
-
-function Camera:__newindex(key, value)
-  if key == "x" or key == "y" then
-    self._pos[key] = value
-  elseif key == "pos" then
-    self._pos = value
-  else
-    rawset(self, key, value)
-  end
-end
-
 function Camera:initialize(x, y, zoom, angle)
-  self._pos = Vector(x or love.graphics.width / 2, y or love.graphics.height / 2)
+  self.x = x or love.graphics.width / 2
+  self.y = y or love.graphics.height / 2
   self.zoom = zoom or 1
   self.angle = angle or 0
 end
@@ -41,7 +24,7 @@ function Camera:set(scale)
   if scale == 0 then
     love.graphics.translate(-xCentre, -yCentre)
   else
-    love.graphics.translate(-self._pos.x * scale, -self._pos.y * scale)
+    love.graphics.translate(-self.x * scale, -self.y * scale)
   end
 end
 
@@ -50,8 +33,8 @@ function Camera:unset()
 end
 
 function Camera:move(dx, dy)
-  self.x = self._pos.x + dx -- the _pos shortcut can be used when getting, but not setting
-  self.y = self._pos.y + dy
+  self.x = self.x + dx
+  self.y = self.y + dy
 end
 
 function Camera:rotate(dr)
@@ -59,7 +42,7 @@ function Camera:rotate(dr)
 end
 
 function Camera:getPosition()
-  return self._pos.x, self._pos.y
+  return self.x, self.y
 end
 
 function Camera:setPosition(x, y)
@@ -76,13 +59,13 @@ function Camera:worldPosition(screenX, screenY)
   local angsin = sin(-self.angle)
   local x = (screenX - love.graphics.width / 2) / self.zoom
   local y = (screenY - love.graphics.height / 2) / self.zoom
-  return (x * angcos - y * angsin) + self._pos.x, (x * angsin + y * angcos) + self._pos.y
+  return (x * angcos - y * angsin) + self.x, (x * angsin + y * angcos) + self.y
 end
 
 function Camera:screenPosition(worldX, worldY)
   local angcos = cos(-camera.angle)
   local angsin = sin(-camera.angle)
-  local x, y = screenX - self._pos.x, screenY - self._pos.y
+  local x, y = screenX - self.x, screenY - self.y
   x = (x * angcos - y * angsin) * self.zoom
   y = (x * angsin + y * angcos) * self.zoom
   return x + love.graphics.width / 2, y + love.graphics.height / 2
@@ -93,16 +76,16 @@ function Camera:setBounds(x1, y1, x2, y2)
 end
 
 function Camera:bindX()
-  self._pos.x = math.clamp(
-    self._pos.x,
+  self.x = math.clamp(
+    self.x,
     self.bounds[1] + love.graphics.width / 2 / self.zoom,
     self.bounds[3] - love.graphics.width / 2 / self.zoom
   )
 end
 
 function Camera:bindY()
-  self._pos.y = math.clamp(
-    self._pos.y,
+  self.y = math.clamp(
+    self.y,
     self.bounds[2] + love.graphics.height / 2 / self.zoom,
     self.bounds[4] - love.graphics.height / 2 / self.zoom
   )
