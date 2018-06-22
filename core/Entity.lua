@@ -21,15 +21,6 @@ function Entity:__newindex(key, value)
     else
       self._layer = value
     end
-  elseif key == "name" then
-    if self._name == value then return end
-    
-    if self._world then
-      if self._name then self._world.names[self._name] = nil end
-      self._world.names[value] = self
-    else
-      self._name = value
-    end
   elseif key == "world" then
     if self._world == value then return end
     if self._world then self._world:remove(self) end
