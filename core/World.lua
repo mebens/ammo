@@ -88,7 +88,7 @@ function World:add(...)
   for _, v in pairs{...} do
     if not v._world then
       self._add[#self._add + 1] = v
-      self._additionQueued = true
+      v._additionQueued = true
     end
   end
 end
