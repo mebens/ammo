@@ -11,9 +11,11 @@ end
 math.tau = math.pi * 2
 
 -- locals for speed
-local floor
-local atan2
-local sqrt
+local floor = math.floor
+local atan2 = math.atan2
+local sqrt = math.sqrt
+local cos = math.cos
+local sin = math.sin
 
 function math.scale(x, min1, max1, min2, max2)
   return min2 + ((x - min1) / (max1 - min1)) * (max2 - min2)
@@ -50,6 +52,15 @@ end
 
 function math.dot(x1, y1, x2, y2)
   return x1 * x2 + y1 * y2
+end
+
+function math.cross(x1, y1, x2, y2)
+  return x1 * y2 - y1 * x2
+end
+
+function math.rotate(x, y, dr)
+  local c, s = cos(dr), sin(dr)
+  return c * x - s * y, s * x + c * y
 end
 
 -- love.graphics
