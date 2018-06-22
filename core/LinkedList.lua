@@ -18,7 +18,6 @@ function LinkedList:__index(key)
   end
 end
 
-
 function LinkedList:initialize(nextProp, prevProp, ...)
   self._first = nil
   self._last = nil
