@@ -1,5 +1,5 @@
 -- making these locals will make things slighly faster
-local tau = math.tau
+local pi = math.pi
 local b1 = 1 / 2.75
 local b2 = 2 / 2.75
 local b3 = 1.5 / 2.75
@@ -90,15 +90,15 @@ function t.quintInOut(t)
 end
 
 function t.sineIn(t)
-  return -cos(tau / 4 * t) + 1
+  return -cos(pi / 2 * t) + 1
 end
 
 function t.sineOut(t)
-  return sin(tau / 4 * t)
+  return sin(pi / 2 * t)
 end
 
 function t.sineInOut(t)
-  return -cos(tau / 2 * t) / 2 + .5
+  return -cos(pi * t) / 2 + .5
 end
 
 function t.bounceIn(t)
