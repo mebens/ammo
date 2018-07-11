@@ -1,5 +1,19 @@
 Camera = class("Camera")
 
+function Camera:__index(key)
+  return rawget(self, "_" .. key) or self.class.__instanceDict[key]
+end
+
+function Camera:__newindex(key, value)
+  if key == 'world' then
+    if self._world == value then return end
+    if self._world then self._world.camera = nil end
+    value.camera = self
+  else
+    rawset(self, key, value)
+  end
+end
+
 function Camera:initialize(x, y, zoom, angle)
   self.x = x or love.graphics.width / 2
   self.y = y or love.graphics.height / 2
