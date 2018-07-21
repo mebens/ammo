@@ -6,5 +6,4 @@ if not class then
   class = require(ammo.path .. ".lib.middleclass")
 end
 
-require(ammo.path .. ".extensions")
 require(ammo.path .. ".core")

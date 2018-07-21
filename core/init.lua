@@ -4,6 +4,7 @@ if not ammo then
   ammo.path = ({...})[1]:gsub("%.ammo$", "")
 end
 
+require(ammo.path .. ".core.window")
 require(ammo.path .. ".core.LinkedList")
 require(ammo.path .. ".core.Camera")
 require(ammo.path .. ".core.World")
