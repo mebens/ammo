@@ -1,13 +1,12 @@
-input = {}
-input.key = {}
-input.mouse = {}
+local input = {}
+input.key = { down = { count = 0 } }
+input.mouse = { down = { count = 0 } }
 input.wheel = {}
 input._maps = {}
 
--- a couple of shortcuts
-key = input.key
-mouse = input.mouse
-wheel = input.wheel
+local key = input.key
+local mouse = input.mouse
+local wheel = input.wheel
 
 function input.define(t, ...)
   if type(t) == "string" then
@@ -114,8 +113,6 @@ function input.wheelmoved(x, y)
   if y < 0 then wheel.down = true end
 end
 
-key.down = { count = 0 }
-mouse.down = { count = 0 }
 input.update()
 
 if not love.keypressed then love.keypressed = input.keypressed end
@@ -123,3 +120,5 @@ if not love.keyreleased then love.keyreleased = input.keyreleased end
 if not love.mousepressed then love.mousepressed = input.mousepressed end
 if not love.mousereleased then love.mousereleased = input.mousereleased end
 if not love.wheelmoved then love.wheelmoved = input.wheelmoved end
+
+return input

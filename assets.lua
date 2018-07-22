@@ -62,26 +62,73 @@ function assets.loadImage(file, name)
   return img
 end
 
-function assets.loadSfx(file, name, volume, long)
-  if type(name) == "number" then
+function assets.loadSfx(file, name, pool, volume, stream)
+  if type(name) == "boolean" then
+    stream = volume
+    volume = pool
+    pool = name
+    name = nil
+  elseif type(name) == "number" then
     volume = name
+    stream = pool
+    pool = false
     name = nil
   end
   
-  local sound = Sound:new(assets.getPath(file, "sfx"), long or false, volume)
+  if type(file) == "table" then
+    for i, v in ipairs(file) do
+      file[i] = assets.getPath(file, "sfx")
+    end
+  else
+    file = assets.getPath(file, "sfx")
+  end
+
+  local sound
+
+  if pool then
+    sound = SoundPool:new(file, volume or 1, stream)
+  elseif Sound then
+    sound = Sound:new(file, volume or 1, stream)
+  else
+    sound = love.audio.newSource(file, stream and "stream" or "static")
+    if volume then sound:setVolume(volume) end
+  end
+
   rawset(assets.sfx, name or assets.getName(file), sound)
   return sound
 end
 
-function assets.loadMusic(file, name)
-  local sound = Sound:new(assets.getPath(file, "music"), true)
+function assets.loadMusic(file, name, volume)
+  if type(name) == "number" then
+    volume = name
+    name = nil
+  end
+
+  local sound
+
+  if Sound then
+    sound = Sound:new(assets.getPath(file, "music"), volume or 1, true)
+  else
+    sound = love.audio.newSource(file, "stream")
+    if volume then sound:setVolume(volume) end
+  end
+  
   rawset(assets.music, name or assets.getName(file), sound)
   return sound
 end
 
-function assets.loadShader(file, name)
+function assets.loadShader(file, fileOrName, name)
   local source = love.filesystem.read(assets.getPath(file, "shader"))
-  local shader = love.graphics.newShader(source)
+  local shader
+
+  if name then
+    local source2 = love.filesystem.read(assets.getPath(fileOrName, "shader"))
+    shader = love.graphics.newShader(source, source2)
+  else
+    shader = love.graphics.newShader(source)
+    name = fileOrName
+  end
+
   rawset(assets.shaders, name or assets.getName(file), shader)
   return shader
 end
@@ -102,15 +149,12 @@ function assets.loadFont(file, size, name)
 end
 
 function assets.getName(path)
-  return assets.removeExtension(path:match("([^/]+)$"))
+  -- isolates file names, and camelcases it where punctuation separates words
+  return path:match("([^/]+)%.[^%.]+$"):gsub("%p(%w)", string.upper)
 end
 
 function assets.getPath(file, type)
-  return assets.path .. "/" .. assets[type .. "Path"] .. "/" .. file
-end
-
-function assets.removeExtension(path)
-  return path:match("^([^%.]*)%.?")
+  return (assets.path and (assets.path .. "/") or "") .. assets[type .. "Path"] .. "/" .. file
 end
 
 return assets
