@@ -9,7 +9,6 @@ require(ammo.path .. ".core.LinkedList")
 require(ammo.path .. ".core.Camera")
 require(ammo.path .. ".core.World")
 require(ammo.path .. ".core.Entity")
-require(ammo.path .. ".core.Sound")
 
 ammo.ext = {}
 ammo._default = World:new()

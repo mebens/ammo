@@ -18,11 +18,17 @@ function LinkedList:__index(key)
   end
 end
 
+function LinkedList:__len()
+  return self._length
+end
+
 function LinkedList:initialize(nextProp, prevProp, ...)
   self._first = nil
   self._last = nil
   self._np = nextProp or "_next"
   self._pp = prevProp or "_prev"
+  self._inp = self._np .. "iter"
+  self._ipp = self._pp .. "iter"
   self._length = 0
   for _, v in ipairs{...} do self:push(v) end
 end
@@ -145,25 +151,63 @@ function LinkedList:clear(complete)
 end
 
 local function iterate(self, current)
-  if not current then
-    current = self._first
-  elseif current then
+  if current then
     current = current[self._np]
+  else
+    current = self._first
   end
   
+  return current
+end
+
+-- delete-safe iteration using extra property
+local function safeIterate(self, current)
+  if current then
+    local newCur = current[self._inp]
+    current[self._inp] = nil
+    current = newCur
+  else
+    current = self._first
+  end
+  
+  if current then
+    current[self._inp] = current[self._np]
+  end
+
   return current
 end
 
 local function reverseIterate(self, current)
-  if not current then
-    current = self._last
-  elseif current then
+  if current then
     current = current[self._pp]
+  else
+    current = self._last
   end
   
   return current
 end
 
+local function reverseSafeIterate(self, current)
+  if current then
+    local newCur = current[self._ipp]
+    current[self._ipp] = nil
+    current = newCur
+  else
+    current = self._last
+  end
+
+  if current then
+    current[self._ipp] = current[self._pp]
+  end
+
+  return current
+end
+
+
 function LinkedList:iterate(reverse)
   return (reverse and reverseIterate or iterate), self, nil
+end
+
+function LinkedList:safeIterate(reverse)
+  return (reverse and reverseSafeIterate or safeIterate), self, nil
 end
