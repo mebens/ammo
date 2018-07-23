@@ -18,7 +18,7 @@ function t:step(steps)
   end
 end
 
-function t:backstep()
+function t:backstep(steps)
   if not ammo.world then return end
   steps = steps and tonumber(steps) or 1
 
@@ -35,5 +35,31 @@ function t:recreate()
     ammo.world = world
   end
 end
+
+t.help = {
+  pause = {
+    summary = "Pauses/unpauses the current world."
+  },
+
+  hide = {
+    summary = "Hides/unhides the current world."
+  },
+
+  step = {
+    args = "[count]",
+    summary = "Steps the world forward one or more frames.",
+    description = "Calls the current world's update function with the current delta time, one or more times (if specified)."
+  },
+
+  backstep = {
+    args = "[count]",
+    summary = "Steps the world backward one or more frames.",
+    description = "Calls the current world's update function with the negative of the current delta time, one or more times (if specified)."
+  },
+
+  recreate = {
+    summary = "Replaces the current world with a new instance of itself."
+  }
+}
 
 return t
