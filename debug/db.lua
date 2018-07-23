@@ -445,7 +445,7 @@ function db.draw()
     local lineChange
 
     while i >= begin do
-      if db.buffer.index > rows then
+      if db.buffer.index >= rows then
         begin = begin + floor(s.font:getWidth(db.buffer[i]) / consoleWidth)
 
         if begin > i then

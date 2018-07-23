@@ -6,9 +6,9 @@ local function getChar(s, i)
 end
 
 local function directorySort(x, y)
-  local xdir = love.filesystem.isDirectory(x)
-  local ydir = love.filesystem.isDirectory(y)
-    
+  local xdir = love.filesystem.getInfo(x).type == "directory"
+  local ydir = love.filesystem.getInfo(y).type == "directory"
+
   if xdir and not ydir then
     return true
   elseif ydir and not xdir then
@@ -28,10 +28,14 @@ local function directorySort(x, y)
 end
 
 function t:cat(file)
-  if love.filesystem.isFile(file) then
+  local info = love.filesystem.getInfo(file)
+
+  if not info then
+    return "File does not exist."
+  elseif info.type == "file" then
     return love.filesystem.read(file)
   else
-    return "Either the file doesn't exist or the path specifies a directory."
+    return "Path is not a file."
   end
 end
 
@@ -40,7 +44,7 @@ function t:ls(arg1, arg2)
   local path = arg2
   if not arg2 and not option then path = arg1 end
   
-  local files = love.filesystem.enumerate(path or ".")
+  local files = love.filesystem.getDirectoryItems(path or ".")
   local all
   
   if option then
@@ -49,7 +53,7 @@ function t:ls(arg1, arg2)
   end
     
   for i, v in ipairs(files) do
-    if getChar(v, 1) ~= "." or all then self.log(v) end
+    if all or getChar(v, 1) ~= "." then self.log(v) end
   end
 end
 
@@ -71,9 +75,9 @@ function t:mkfile(path, ...)
   if not status then return "File wasn't written to." end
 end
 
-function t:rm(file)
-  if love.filesystem.exists(file) then
-    local status = love.filesystem.remove(file)
+function t:rm(path)
+  if love.filesystem.getInfo(path) then
+    local status = love.filesystem.remove(path)
     if not status then return "File wasn't removed." end
   else
     return "File doesn't exist."
@@ -84,14 +88,64 @@ function t:setidentity(name)
   love.filesystem.setIdentity(name)
 end
 
-function t:dofile(file)
-  if love.filesystem.exists(file) then
-    local func = love.filesystem.load(file)
+function t:dofile(path)
+  if love.filesystem.getInfo(path) then
+    local func = love.filesystem.load(path)
     local status, result = pcall(func)
     return result
   else
     return "File doesn't exist."
   end
 end
+
+t.help = {
+  cat = {
+    args = "file",
+    summary = "Prints a file to the console."
+  },
+
+  ls = {
+    args = "[-opts] [dir]",
+    summary = "Displays the contents of a directory.",
+    description = [[If no directory is specified, the contents of the working directory are printed.
+    
+Options can specified in the form -ad, with either a or d present:
+  - a: print all files (normally hidden files are excluded).
+  - d: sort contents (alphabetical, directory first).]]
+  },
+
+  pwd = {
+    summary = "Prints working directory."
+  },
+
+  psd = {
+    summary = "Prints the save directory."
+  },
+
+  mkdir = {
+    args = "path",
+    summary = "Creates the specified directory."
+  },
+
+  mkfile = {
+    args = "path [contents...]",
+    summary = "Creates a file at the specified path and writes to it."
+  },
+
+  rm = {
+    args = "path",
+    summary = "Removes the file at the specified path."
+  },
+
+  setidentity = {
+    args = "name",
+    summary = "Sets the game's identity folder."
+  },
+
+  dofile = {
+    args = "path",
+    summary = "Runs the Lua file at the specified path."
+  }
+}
 
 return t
