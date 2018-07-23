@@ -58,6 +58,7 @@ end
 function t:rmcmd(name)
   if self.commands[name] then
     self.commands[name] = nil
+    self.help[name] = nil
     return 'Command "' .. name .. '" has been removed.'
   else
     return 'No command named "' .. name .. '"'
@@ -77,5 +78,49 @@ function t:rminfo(title)
 end
 
 t.rmgraph = t.rminfo
+
+t.help = {
+  set = {
+    args = "[control] name value ...",
+    summary = "Set any setting or control for the debug console.",
+    description = [[Set any setting in the debug console by specifying its name and value.
+Set any keyboard control with the syntax "set control <name> <value>".
+
+Values will be converted to a type based on their current value's type:
+  - number: enter the value normally.
+  - string: if the string contains a space, enclose with quotes.
+  - boolean: enter "true" or "false".
+  - table: enter each value separated by a space."]],
+    example = "> set color 0.7 0.7 0.6 1\n> set control open q"
+  },
+
+  mkcmd = {
+    args = "name code...",
+    summary = "Create a command with Lua code.",
+    example = "> mkcmd test self.log('test')"
+  },
+
+  rmcmd = {
+    args = "name",
+    summary = "Removes a command."
+  },
+
+  addinfo = {
+    args = "title code...",
+    summary = "Creates a new info item with Lua code.",
+    example = "> addinfo Time return os.time()"
+  },
+
+  addgraph = {
+    args = "title code...",
+    summary = "Creates a new info/graph item with Lua code.",
+    example = "> addgraph Rand return math.random(1, 1000)"
+  },
+
+  rminfo = {
+    args = "title",
+    summary = "Removes an info item with the specified title."
+  }
+}
 
 return t

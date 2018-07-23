@@ -48,11 +48,11 @@ function Info:draw(x, y)
   local s = self.dsettings
   local width = s.infoWidth - s.padding * 2
   local yOffset = s.font:getHeight() + self.padding
-  
+
   -- info text
   love.graphics.setColor(s.color)
   love.graphics.setFont(s.font)
-  love.graphics.printf(self.title .. s.infoSeparator .. tostring(self.source()), x, y, width)
+  love.graphics.printf(self.title .. s.infoSeparator .. tostring(self.source() or ""), x, y, width)
   
   if self.dsettings.drawGraphs and self.graph then
     local x1, y1
