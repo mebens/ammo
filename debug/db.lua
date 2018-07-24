@@ -193,7 +193,13 @@ end
 -- resets the console
 local function reset()
   db.buffer = { index = 0 }
-  
+  db.removeAllInfo()
+
+  -- default info graphs
+  db.addGraph("FPS", love.timer.getFPS)
+  db.addGraph("Memory", function() return ("%.2f MB"):format(collectgarbage("count") / 1024) end, function() return collectgarbage("count") / 1024 end)
+  db.addGraph("Entities", function() return ammo.world and ammo.world.count or nil end)
+
   -- initialisation file
   if love.filesystem.getInfo(db.settings.initFile) then
     runBatch(db.settings.initFile)
@@ -224,11 +230,6 @@ function db.init()
   db.y = -db.settings.height
   reset()
   if db.live then db.check() end
-  
-  -- default info graphs
-  db.addGraph("FPS", love.timer.getFPS)
-  db.addGraph("Memory", function() return ("%.2f MB"):format(collectgarbage("count") / 1024) end, function() return collectgarbage("count") / 1024 end)
-  db.addGraph("Entities", function() return ammo.world and ammo.world.count or nil end)
 end
 
 function db.log(...)
@@ -299,6 +300,10 @@ function db.removeInfo(title)
       break
     end
   end
+end
+
+function db.removeAllInfo()
+  db.info = {}
 end
 
 function db.include(t)

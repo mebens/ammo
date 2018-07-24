@@ -120,6 +120,11 @@ Values will be converted to a type based on their current value's type:
   rminfo = {
     args = "title",
     summary = "Removes an info item with the specified title."
+  },
+
+  rmgraph = {
+    args = "title",
+    summary = "Removes an info item with the specified title."
   }
 }
 

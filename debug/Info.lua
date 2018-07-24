@@ -1,7 +1,9 @@
 local Info = class("Info")
 
 local function formatNumber(num)
-  if math.round(num) == num then
+  if not num then
+    return ""
+  elseif math.floor(num + 0.5) == num then
     return tostring(num)
   else
     return ("%.1f"):format(num)
