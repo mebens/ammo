@@ -2,7 +2,7 @@
 local t = {}
 
 local function info(self, f, title, graph, ...)
-  local func, err = loadstring(self._joinWithSpaces(...))
+  local func, err = loadstring(self.joinWithSpaces(...))
   
   if err then
     return err
@@ -44,7 +44,7 @@ function t:mkcmd(...)
   local args = { ... }
   local name = args[1]
   table.remove(args, 1)
-  local func, err = loadstring(self._joinWithSpaces(unpack(args)))
+  local func, err = loadstring(self.joinWithSpaces(unpack(args)))
   
   if err then
     return err

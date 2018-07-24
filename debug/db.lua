@@ -16,70 +16,13 @@ db.buffer = { index = 0 }
 db.info = {}
 db.commands = {}
 
-db.settings = {
-  -- booleans
-  alwaysShowInfo = false, -- show info even when console is closed
-  drawGraphs = false,
-  pauseWorld = true, -- pause world when console is opened
-  printOutput = false, -- db.log will also print to the standard output
-  tween = true,
-  
-  -- limits
-  bufferLimit = 1000, -- maximum lines in the buffer
-  historyLimit = 100, -- maximum entries in the command history
-  
-  -- timing
-  multiEraseTime = 0.35,
-  multiEraseCharTime = 0.025,
-  cursorBlinkTime = 0.5,
-  openTime = 0.1,
-  
-  -- spacial
-  height = 400,
-  infoWidth = 300,
-  borderSize = 2,
-  padding = 10,
-  
-  -- colors
-  color = { 0.95, 0.95, 0.95, 1 },
-  bgColor = { 0, 0, 0, 0.8 },
-  borderColor = { 0.8, 0.8, 0.8, 0.85 },
-  graphColor = { 0.7, 0.7, 0.7, 1 },
-  graphTextColor = { 1, 1, 1, 1 },
-  
-  -- text
-  font = love.graphics.newFont(db.path:gsub("%.", "/") .. "/inconsolata.otf", 18),
-  graphFont = love.graphics.newFont(db.path:gsub("%.", "/") .. "/inconsolata.otf", 14),
-  prompt = "> ",
-  cursor = "|",
-  infoSeparator = ": ",
-  
-  -- other
-  initFile = "db-init", -- if present, this batch file will be executed on initialisation
-  graphLineStyle = "rough"
-}
-
--- keyboard controls
-db.controls = {
-  open = "`",
-  pause = "",
-  toggleInfo = "",
-  toggleGraphs = "",
-  up = "pageup",
-  down = "pagedown",
-  historyUp = "up",
-  historyDown = "down",
-  erase = "backspace",
-  execute = "return"
-}
-
 -- LOCAL --
 
 -- a few timer variables
 local timers = {
   multiErase = 0,
   multiEraseChar = 0,
-  blink = -db.settings.cursorBlinkTime -- negative = cursor off, positive = cursor on
+  blink = 0 -- negative = cursor off, positive = cursor on
 }
 
 -- used to not receive open control as text input
@@ -190,10 +133,88 @@ local function handleHistory()
   end
 end
 
--- resets the console
-local function reset()
+-- FUNCTIONS --
+
+function db.init()
+  db.y = -db.settings.height
+  db.reset(true)
+  if db.live then db.check() end
+end
+
+function db.resetSettings()
+  db.settings = {
+    -- booleans
+    alwaysShowInfo = false, -- show info even when console is closed
+    drawGraphs = false,
+    pauseWorld = true, -- pause world when console is opened
+    printOutput = false, -- db.log will also print to the standard output
+    tween = true,
+    
+    -- limits
+    bufferLimit = 1000, -- maximum lines in the buffer
+    historyLimit = 100, -- maximum entries in the command history
+    
+    -- timing
+    multiEraseTime = 0.35,
+    multiEraseCharTime = 0.025,
+    cursorBlinkTime = 0.5,
+    openTime = 0.1,
+    
+    -- spacial
+    height = 400,
+    infoWidth = 300,
+    borderSize = 2,
+    padding = 10,
+    
+    -- colors
+    color = { 0.95, 0.95, 0.95, 1 },
+    bgColor = { 0, 0, 0, 0.8 },
+    borderColor = { 0.8, 0.8, 0.8, 0.85 },
+    graphColor = { 0.7, 0.7, 0.7, 1 },
+    graphTextColor = { 1, 1, 1, 1 },
+    
+    -- text
+    font = love.graphics.newFont(db.path:gsub("%.", "/") .. "/inconsolata.otf", 18),
+    graphFont = love.graphics.newFont(db.path:gsub("%.", "/") .. "/inconsolata.otf", 14),
+    prompt = "> ",
+    cursor = "|",
+    infoSeparator = ": ",
+    
+    -- other
+    initMessage = "Ammo v" .. ammo.version .. " debug console",
+    initFile = "db-init", -- if present, this batch file will be executed on initialisation
+    graphLineStyle = "rough"
+  }
+
+  -- keyboard controls
+  db.controls = {
+    open = "`",
+    pause = "",
+    toggleInfo = "",
+    toggleGraphs = "",
+    up = "pageup",
+    down = "pagedown",
+    historyUp = "up",
+    historyDown = "down",
+    erase = "backspace",
+    execute = "return"
+  }
+end
+
+function db.clear()
   db.buffer = { index = 0 }
-  db.removeAllInfo()
+end
+
+function db.reset(init)
+  if not init then
+    db.clear()
+    db.resetSettings()
+    db.removeAllInfo()
+  end
+
+  if db.settings.initMessage then
+    db.log(db.settings.initMessage)
+  end
 
   -- default info graphs
   db.addGraph("FPS", love.timer.getFPS)
@@ -206,34 +227,8 @@ local function reset()
   end
 end
 
--- joins a list of strings, separating them with spaces
-function db._joinWithSpaces(...)
-  local str = ""
-  local args = { ... }
-  
-  for i, v in ipairs(args) do
-    if type(v) == "boolean" then
-      v = v and "true" or "false"
-    else
-      v = tostring(v)
-    end
-    
-    str = str .. v .. (i == #args and "" or " ")
-  end
-  
-  return str
-end
-
--- FUNCTIONS --
-
-function db.init()
-  db.y = -db.settings.height
-  reset()
-  if db.live then db.check() end
-end
-
 function db.log(...)
-  local msg = db._joinWithSpaces(...)
+  local msg = db.joinWithSpaces(...)
   addToBuffer(msg)
   if db.settings.printOutput then print(msg) end
 end
@@ -275,6 +270,24 @@ function db.runCommand(line, ret)
       db.log('No command named "' .. terms[1] .. '"')
     end
   end
+end
+
+-- utility function for commands
+function db.joinWithSpaces(...)
+  local str = ""
+  local args = { ... }
+  
+  for i, v in ipairs(args) do
+    if type(v) == "boolean" then
+      v = v and "true" or "false"
+    else
+      v = tostring(v)
+    end
+    
+    str = str .. v .. (i == #args and "" or " ")
+  end
+  
+  return str
 end
 
 function db.addInfo(title, func)
@@ -525,7 +538,7 @@ end
 -- DEFAULT COMMANDS --
 
 function db.commands:lua(...)
-  local func, err = loadstring(self._joinWithSpaces(...))
+  local func, err = loadstring(self.joinWithSpaces(...))
   
   if err then
     return err
@@ -557,19 +570,21 @@ function db.commands:include(file)
 end
 
 db.commands["repeat"] = function(self, times, ...)
-  local cmd = db._joinWithSpaces(...)
+  local cmd = db.joinWithSpaces(...)
   for i = 1, tonumber(times) do self.runCommand(cmd) end
 end
 
 function db.commands:clear()
-  self.buffer = { index = 0 }
+  self.clear()
 end
 
 function db.commands:echo(...)
-  return self._joinWithSpaces(...)
+  return self.joinWithSpaces(...)
 end
 
-db.commands.reset = reset
+function db.commands:reset()
+  self.reset()
+end
 
 function db.commands:reload(path)
   return self.reload(path)
@@ -691,4 +706,5 @@ db.help = {
   }
 }
 
+db.resetSettings()
 return db

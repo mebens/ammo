@@ -71,7 +71,7 @@ function t:mkdir(path)
 end
 
 function t:mkfile(path, ...)
-  local status = love.filesystem.write(path, self._joinWithSpaces(...))
+  local status = love.filesystem.write(path, self.joinWithSpaces(...))
   if not status then return "File wasn't written to." end
 end
 
