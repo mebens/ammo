@@ -50,6 +50,19 @@ local function addToBuffer(str)
   end
 end
 
+local function sortedKeys(t)
+  local keys = {}
+  local n = 1
+
+  for k, _ in pairs(t) do
+    keys[n] = k
+    n = n + 1
+  end
+
+  table.sort(keys)
+  return keys
+end
+
 -- compile an argument as a string if possible
 local function compileArg(arg)
   if arg:sub(1, 1) == "$" then
@@ -561,11 +574,21 @@ function db.commands:bat(file)
   end
 end
 
-function db.commands:include(file)
-  if not file or file == "" then
-    db.includeAll()
+function db.commands:include(...)
+  local args = { ... }
+
+  if #args > 0 then
+    for _, v in ipairs(args) do
+      db.include(v)
+    end
   else
-    db.include(file)
+    db.includeAll()
+  end
+end
+
+function db.commands:exclude(...)
+  for _, v in ipairs{...} do
+    db.exclude(v)
   end
 end
 
@@ -600,15 +623,7 @@ end
 
 function db.commands:help(cmd)
   if not cmd then
-    local names = {}
-    local n = 1
-
-    for name in pairs(self.commands) do
-      names[n] = name
-      n = n + 1
-    end
-
-    table.sort(names)
+    local names = sortedKeys(self.commands)
 
     for _, name in pairs(names) do
       local str = "* " .. name
@@ -639,6 +654,18 @@ function db.commands:help(cmd)
   end
 end
 
+function db.commands:controls()
+  local names = sortedKeys(self.controls)
+
+  for _, name in ipairs(names) do
+    local key = self.controls[name]
+
+    if key and key ~= "" then
+      self.log(name .. ": " .. key)
+    end
+  end
+end
+
 -- COMMAND DOCUMENTATION --
 
 db.help = {
@@ -661,9 +688,15 @@ db.help = {
   },
 
   include = {
-    args = "[module]",
-    summary = "Include one or all of the bundled command modules.",
-    description = "Include one of the command modules contained in debug/commands by specifying its name (no .lua extension). Include all of them by omitting the argument."
+    args = "[module]...",
+    summary = "Include one or more of the bundled command modules.",
+    description = "Include one or more of the command modules contained in debug/commands by specifying their names (no .lua extension). Include all of them by omitting the argument."
+  },
+
+  exclude = {
+    args = "module...",
+    summary = "Remove one or more of the bundled command modules.",
+    description = "Remove one or more of the command modules contained in debug/commands by specifying their names (no .lua extension)."
   },
   
   ["repeat"] = {
@@ -703,6 +736,10 @@ db.help = {
   help = {
     args = "[command]",
     summary = "Lists all available commands or provides documentation for a specific command."
+  },
+
+  controls = {
+    summary = "Lists all currently assigned keyboard controls for the console."
   }
 }
 
