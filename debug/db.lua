@@ -678,7 +678,8 @@ db.help = {
   ["="] = {
     args = "code...",
     summary = "Executes Lua code, but also prefixes the return statement to the code.",
-    description = "Compiles and executes Lua code, much like the lua command.\nHowever, it prefixes the return statement to the code.\nFor example, \"= 3 + 4\" is the same as \"lua return 3 + 4\"."
+    description = "Compiles and executes Lua code, much like the lua command.\nHowever, it prefixes the return statement to the code.",
+    example = "> = 3 + 4\n7"
   },
   
   bat = {
