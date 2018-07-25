@@ -175,8 +175,6 @@ function db.resetSettings()
     historyLimit = 100, -- maximum entries in the command history
     
     -- timing
-    rapidEraseTime = 0.35,
-    rapidEraseCharTime = 0.025,
     rapidCursorTime = 0.35,
     rapidCursorCharTime = 0.025,
     cursorBlinkTime = 0.5,
@@ -494,11 +492,11 @@ function db.update(dt)
     if (beDown or feDown) and #db.input > 0 then
       if timers.rapidErase == 0 then
         removeCharacter(feDown) -- first character when pressed
-      elseif timers.rapidErase > db.settings.rapidEraseTime then
+      elseif timers.rapidErase > db.settings.rapidCursorTime then
         -- rapidly erasing multiple characters
         if timers.rapidEraseChar <= 0 then
           removeCharacter(feDown)
-          timers.rapidEraseChar = timers.rapidEraseChar + db.settings.rapidEraseCharTime
+          timers.rapidEraseChar = timers.rapidEraseChar + db.settings.rapidCursorCharTime
         else
           timers.rapidEraseChar = timers.rapidEraseChar - dt
         end
