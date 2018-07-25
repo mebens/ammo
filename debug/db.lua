@@ -135,11 +135,13 @@ function db.init()
 end
 
 function db.resetSettings()
+  local initMsg = "Ammo v" .. ammo.version .. " debug console"
   local initFile = "db-init"
 
-  -- init file should be preserved across resets
-  if db.settings and db.settings.initFile then
-    initFile = db.settings.initFile
+  -- init file and message should be preserved across resets
+  if db.settings then
+    if db.settings.initMessage then initMsg = db.settings.initMessage end
+    if db.settings.initFile then initFile = db.settings.initFile end
   end
 
   db.settings = {
@@ -150,6 +152,7 @@ function db.resetSettings()
     silenceOutput = false, -- db.log will not print visually
     printOutput = false, -- db.log will also print to the standard output
     tween = true,
+    mouseWheel = true, -- allows mouse wheel movement of the buffer
     
     -- limits
     bufferLimit = 1000, -- maximum lines in the buffer
@@ -175,14 +178,14 @@ function db.resetSettings()
     graphTextColor = { 1, 1, 1, 1 },
     
     -- text
-    font = love.graphics.newFont(db.path:gsub("%.", "/") .. "/inconsolata.otf", 18),
+    font = love.graphics.newFont(db.path:gsub("%.", "/") .. "/inconsolata.otf", 16),
     graphFont = love.graphics.newFont(db.path:gsub("%.", "/") .. "/inconsolata.otf", 14),
     prompt = "> ",
     cursor = "|",
     infoSeparator = ": ",
     
     -- other
-    initMessage = "Ammo v" .. ammo.version .. " debug console",
+    initMessage = initMsg,
     initFile = initFile, -- if present, this batch file will be executed on initialisation
     graphLineStyle = "rough"
   }
@@ -243,19 +246,46 @@ end
 function db.runCommand(line, ret)
   local terms = {}
   local quotes = false
+  local opening = false
+  local n = 0
   
+  -- allows = command to not require a space after
+  if line:sub(1, 1) == "=" then
+    terms[1] = "="
+    n = 1
+    line = line:sub(2)
+  end
+
   -- split and compile terms
   for t in line:gmatch("[^%s]+") do
     if quotes then
-      terms[#terms] = terms[#terms] .. " " .. t
+      terms[n] = terms[n] .. " " .. t
+      opening = false
     else
-      terms[#terms + 1] = t
+      n = n + 1
+      terms[n] = t
       quotes = t:match("^[\"'$]")
+
+      if quotes and t:len() == 1 then
+        opening = true
+      end
     end
     
-    if quotes and t:sub(-1) == quotes then
+    if quotes and not opening and t:sub(-1) == quotes then
       quotes = false
-      terms[#terms] = compileArg(terms[#terms])
+
+      if terms[n]:sub(1, 1) == "$" then
+        terms[n] = db.runCommand(terms[n]:match("^$(.+)$$"), true)
+      else
+        -- use Lua to provide string escaping and the like
+        local func = loadstring("return " .. terms[n])
+        
+        if func then
+          terms[n] = func()
+        else
+          db.log("Couldn't compile argument " .. terms[n] .. " as string.")
+        end
+      end
     end
   end
   
@@ -457,6 +487,9 @@ function db.update(dt)
 end
 
 local ceil = math.ceil -- for speed
+local floor = math.floor
+local min = math.min
+local max = math.max
 
 function db.draw()
   local s = db.settings
@@ -473,9 +506,9 @@ function db.draw()
     
     -- text
     local str = ""
-    local rows = math.floor((s.height - s.padding * 2) / s.font:getHeight())
+    local rows = floor((s.height - s.padding * 2) / s.font:getHeight())
     local drawY = db.y + s.padding
-    local begin = math.max(db.buffer.index - rows + 2, 1) -- add 1 for input line and 3 to keep in bounds (unsure why this is necessary)
+    local begin = max(db.buffer.index - rows + 2, 1) -- add 1 for input line and 3 to keep in bounds (unsure why this is necessary)
     local consoleWidth = love.graphics.width - s.infoWidth - s.padding * 2
     local i = 0
     local used = 0
@@ -525,7 +558,7 @@ function db.keypressed(key, code)
     if key == c.execute then
       handleInput()
     elseif key == c.historyUp then
-      db.history.index = math.max(db.history.index - 1, 1)
+      db.history.index = max(db.history.index - 1, 1)
       handleHistory()
     elseif key == c.historyDown then
       -- have to use if statement since handleHistory shouldn't be called if index is already one over #history
@@ -534,12 +567,20 @@ function db.keypressed(key, code)
         handleHistory()
       end
     elseif key == c.up then
-      db.buffer.index = math.max(db.buffer.index - 1, 0)
+      db.buffer.index = max(db.buffer.index - 1, 0)
     elseif key == c.down then
-      db.buffer.index = math.min(db.buffer.index + 1, #db.buffer)
+      db.buffer.index = min(db.buffer.index + 1, #db.buffer)
     end
   end
 end
+
+function db.wheelmoved(dx, dy)
+  if not db.settings.mouseWheel then return end
+
+  if dy ~= 0 then
+    db.buffer.index = min(max(db.buffer.index - dy, 0), #db.buffer)
+  end
+end  
 
 function db.textinput(t)
   if db.active and not rejectInput then
@@ -553,7 +594,7 @@ function db.focus(f)
 end
 
 -- update and draw taken by ammo
--- keypressed will likely be taken by input
+-- keypressed and wheelmoved will likely be taken by input
 if not love.textinput then love.textinput = db.textinput end
 if not love.focus then love.focus = db.focus end
 

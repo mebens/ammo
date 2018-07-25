@@ -16,7 +16,13 @@ local function setValue(t, key, ...)
   local values = { ... }
   
   if type(base) == "number" then
-    t[key] = tonumber(values[1])
+    local conversion = tonumber(values[1])
+
+    if conversion then
+      t[key] = conversion
+    else
+      return "Invalid number"
+    end
   elseif type(base) == "boolean" then
     t[key] = values[1] == "true"
   elseif type(base) == "table" then
@@ -28,13 +34,13 @@ end
 
 function t:set(name, val, ...)
   if name == "control" then
-    if self.controls[val] then
-      setValue(self.controls, val, ...)
+    if self.controls[val] ~= nil then
+      return setValue(self.controls, val, ...)
     else
       return 'No control named "' .. val .. '"'
     end
-  elseif self.settings[name] then
-    setValue(self.settings, name, val, ...)
+  elseif self.settings[name] ~= nil then
+    return setValue(self.settings, name, val, ...)
   else
     return 'No setting named "' .. name .. '"'
   end
