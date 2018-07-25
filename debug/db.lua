@@ -12,6 +12,7 @@ db.live = false
 db.resetInProgress = false -- flag to prevent infinite reset loop
 
 db.input = ""
+db.inputIndex = 1
 db.history = { index = 0 }
 db.buffer = { index = 0 }
 db.info = {}
@@ -21,17 +22,31 @@ db.commands = {}
 
 -- a few timer variables
 local timers = {
-  multiErase = 0,
-  multiEraseChar = 0,
+  rapidErase = 0,
+  rapidEraseChar = 0,
+  rapidCursor = 0,
+  rapidCursorChar = 0,
   blink = 0 -- negative = cursor off, positive = cursor on
 }
 
 local rejectInput = false -- used to not receive open control as text input
 local modified = {} -- holds modified times for included files
 
+-- for speed
+local ceil = math.ceil
+local floor = math.floor
+local min = math.min
+local max = math.max
+
 -- removes the last character from the input line
-local function removeCharacter()
-  db.input = db.input:sub(1, #db.input - 1)
+local function removeCharacter(forward)
+  if forward then
+    db.input = db.input:sub(1, db.inputIndex - 1) .. db.input:sub(db.inputIndex + 1)
+    db.inputIndex = min(db.inputIndex, #db.input + 1)
+  else
+    db.input = db.input:sub(1, #db.input - 1)
+    db.inputIndex = max(db.inputIndex - 1, 1)
+  end
 end
 
 -- adds the item to the table, making sure the table's length hasn't exceeded the limit
@@ -112,6 +127,7 @@ local function handleInput()
   addTo(db.history, db.input, db.settings.bufferLimit)
   db.history.index = #db.history + 1  
   db.input = ""
+  db.inputIndex = 1
 end
 
 -- displays the currently selected line in the history
@@ -159,8 +175,10 @@ function db.resetSettings()
     historyLimit = 100, -- maximum entries in the command history
     
     -- timing
-    multiEraseTime = 0.35,
-    multiEraseCharTime = 0.025,
+    rapidEraseTime = 0.35,
+    rapidEraseCharTime = 0.025,
+    rapidCursorTime = 0.35,
+    rapidCursorCharTime = 0.025,
     cursorBlinkTime = 0.5,
     openTime = 0.1,
     
@@ -200,7 +218,10 @@ function db.resetSettings()
     down = "pagedown",
     historyUp = "up",
     historyDown = "down",
-    erase = "backspace",
+    inputLeft = "left",
+    inputRight = "right",
+    backErase = "backspace",
+    forwardErase = "delete",
     execute = "return"
   }
 end
@@ -226,7 +247,13 @@ function db.reset(init)
 
   -- default info graphs
   db.addGraph("FPS", love.timer.getFPS)
-  db.addGraph("Memory", function() return ("%.2f MB"):format(collectgarbage("count") / 1024) end, function() return collectgarbage("count") / 1024 end)
+
+  db.addGraph(
+    "Memory",
+    function() return ("%.2f MB"):format(collectgarbage("count") / 1024) end,
+    function() return collectgarbage("count") / 1024 end
+  )
+
   db.addGraph("Entities", function() return ammo.world and ammo.world.count or nil end)
 
   -- initialisation file
@@ -266,7 +293,7 @@ function db.runCommand(line, ret)
       terms[n] = t
       quotes = t:match("^[\"'$]")
 
-      if quotes and t:len() == 1 then
+      if quotes and #t == 1 then
         opening = true
       end
     end
@@ -461,35 +488,57 @@ function db.update(dt)
     end
     
     -- erasing characters
-    if love.keyboard.isDown(db.controls.erase) and #db.input > 0 then
-      if timers.multiErase == 0 then
-        removeCharacter() -- first character when pressed
-      elseif timers.multiErase > db.settings.multiEraseTime then
+    local beDown = love.keyboard.isDown(db.controls.backErase)
+    local feDown = love.keyboard.isDown(db.controls.forwardErase)
+
+    if (beDown or feDown) and #db.input > 0 then
+      if timers.rapidErase == 0 then
+        removeCharacter(feDown) -- first character when pressed
+      elseif timers.rapidErase > db.settings.rapidEraseTime then
         -- rapidly erasing multiple characters
-        if timers.multiEraseChar <= 0 then
-          removeCharacter()
-          timers.multiEraseChar = timers.multiEraseChar + db.settings.multiEraseCharTime
+        if timers.rapidEraseChar <= 0 then
+          removeCharacter(feDown)
+          timers.rapidEraseChar = timers.rapidEraseChar + db.settings.rapidEraseCharTime
         else
-          timers.multiEraseChar = timers.multiEraseChar - dt
+          timers.rapidEraseChar = timers.rapidEraseChar - dt
         end
       end
       
-      timers.multiErase = timers.multiErase + dt
+      timers.rapidErase = timers.rapidErase + dt
       timers.blink = 0 -- always show the cursor
     else
-      timers.multiErase = 0
-      timers.multiEraseChar = 0
+      timers.rapidErase = 0
+      timers.rapidEraseChar = 0
+    end
+
+    local moveAxis = 0
+    if love.keyboard.isDown(db.controls.inputLeft) then moveAxis = moveAxis - 1 end
+    if love.keyboard.isDown(db.controls.inputRight) then moveAxis = moveAxis + 1 end
+
+    if moveAxis ~= 0 then
+      if timers.rapidCursor == 0 then
+        db.inputIndex = min(max(db.inputIndex + moveAxis, 1), #db.input + 1)
+      elseif timers.rapidCursor > db.settings.rapidCursorTime then
+        -- rapidly moving multiple characters
+        if timers.rapidCursorChar <= 0 then
+          db.inputIndex = min(max(db.inputIndex + moveAxis, 1), #db.input + 1)
+          timers.rapidCursorChar = timers.rapidCursorChar + db.settings.rapidCursorCharTime
+        else
+          timers.rapidCursorChar = timers.rapidCursorChar - dt
+        end
+      end
+      
+      timers.rapidCursor = timers.rapidCursor + dt
+      timers.blink = 0 -- always show the cursor
+    else
+      timers.rapidCursor = 0
+      timers.rapidCursorChar = 0
     end
   end
   
   for _, info in ipairs(db.info) do info:update(dt) end
   if db.tween and db.tween.active then db.tween:update(dt) end
 end
-
-local ceil = math.ceil -- for speed
-local floor = math.floor
-local min = math.min
-local max = math.max
 
 function db.draw()
   local s = db.settings
@@ -525,8 +574,10 @@ function db.draw()
       end
     end
 
-    str = str .. s.prompt .. db.input
-    if timers.blink >= 0 then str = str .. s.cursor end
+    str = str .. s.prompt
+              .. db.input:sub(1, db.inputIndex - 1)
+              .. (timers.blink >= 0 and s.cursor or " ")
+              .. db.input:sub(db.inputIndex)
     love.graphics.setFont(s.font)
     love.graphics.setColor(s.color)
     love.graphics.printf(str, s.padding, drawY, consoleWidth)
@@ -543,7 +594,7 @@ end
 
 function db.keypressed(key, code)
   local c = db.controls
-  
+  -- db.log(key)
   if key == c.open then
     if not db.active then rejectInput = true end
     db.toggle()
@@ -584,7 +635,15 @@ end
 
 function db.textinput(t)
   if db.active and not rejectInput then
-    db.input = db.input .. t
+    if db.inputIndex == 1 then
+      db.input = t .. db.input
+    elseif db.inputIndex <= #db.input then
+      db.input = db.input:sub(1, db.inputIndex - 1) .. t .. db.input:sub(db.inputIndex)
+    else
+      db.input = db.input .. t
+    end
+
+    db.inputIndex = db.inputIndex + 1
     timers.blink = 0
   end
 end
