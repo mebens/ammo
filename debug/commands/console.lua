@@ -79,6 +79,10 @@ end
 
 t.rmgraph = t.rminfo
 
+function t:silence()
+  self.settings.silenceOutput = not self.settings.silenceOutput
+end
+
 t.help = {
   set = {
     args = "[control] name value ...",
@@ -125,6 +129,11 @@ Values will be converted to a type based on their current value's type:
   rmgraph = {
     args = "title",
     summary = "Removes an info item with the specified title."
+  },
+
+  silence = {
+    summary = "Toggles silencing output from all following commands.",
+    description = "Toggles silencing output from all following commands.\nShorthand for set silenceOutput true/false.\nOutput will still be printed to command line if printOutput is true."
   }
 }
 

@@ -4,11 +4,12 @@ local Info = require(db.path .. ".Info")
 
 -- PROPERTIES/SETTINGS --
 
+db.y = -1000
 db.opened = false
 db.active = false
 db.visible = false
 db.live = false
-db.y = -1000
+db.resetInProgress = false -- flag to prevent infinite reset loop
 
 db.input = ""
 db.history = { index = 0 }
@@ -25,11 +26,8 @@ local timers = {
   blink = 0 -- negative = cursor off, positive = cursor on
 }
 
--- used to not receive open control as text input
-local rejectInput = false
-
--- for live code checking
-local modified = {}
+local rejectInput = false -- used to not receive open control as text input
+local modified = {} -- holds modified times for included files
 
 -- removes the last character from the input line
 local function removeCharacter()
@@ -50,19 +48,6 @@ local function addToBuffer(str)
   end
 end
 
-local function sortedKeys(t)
-  local keys = {}
-  local n = 1
-
-  for k, _ in pairs(t) do
-    keys[n] = k
-    n = n + 1
-  end
-
-  table.sort(keys)
-  return keys
-end
-
 -- compile an argument as a string if possible
 local function compileArg(arg)
   if arg:sub(1, 1) == "$" then
@@ -78,11 +63,6 @@ local function compileArg(arg)
   end
   
   return arg
-end
-
--- run a batch file
-local function runBatch(file)
-  for line in love.filesystem.lines(file) do db.runCommand(line) end
 end
 
 -- converts package path to file path and finds it in any given package path
@@ -155,11 +135,19 @@ function db.init()
 end
 
 function db.resetSettings()
+  local initFile = "db-init"
+
+  -- init file should be preserved across resets
+  if db.settings and db.settings.initFile then
+    initFile = db.settings.initFile
+  end
+
   db.settings = {
     -- booleans
     alwaysShowInfo = false, -- show info even when console is closed
     drawGraphs = false,
     pauseWorld = true, -- pause world when console is opened
+    silenceOutput = false, -- db.log will not print visually
     printOutput = false, -- db.log will also print to the standard output
     tween = true,
     
@@ -195,7 +183,7 @@ function db.resetSettings()
     
     -- other
     initMessage = "Ammo v" .. ammo.version .. " debug console",
-    initFile = "db-init", -- if present, this batch file will be executed on initialisation
+    initFile = initFile, -- if present, this batch file will be executed on initialisation
     graphLineStyle = "rough"
   }
 
@@ -225,6 +213,10 @@ function db.reset(init)
     db.removeAllInfo()
   end
 
+  db.commands = {}
+  db.help = {}
+  db.include("default")
+
   if db.settings.initMessage then
     db.log(db.settings.initMessage)
   end
@@ -236,13 +228,15 @@ function db.reset(init)
 
   -- initialisation file
   if love.filesystem.getInfo(db.settings.initFile) then
-    runBatch(db.settings.initFile)
+    db.resetInProgress = true
+    db.runBatch(db.settings.initFile)
+    db.resetInProgress = false
   end
 end
 
 function db.log(...)
   local msg = db.joinWithSpaces(...)
-  addToBuffer(msg)
+  if not db.settings.silenceOutput then addToBuffer(msg) end
   if db.settings.printOutput then print(msg) end
 end
 
@@ -282,6 +276,12 @@ function db.runCommand(line, ret)
     else
       db.log('No command named "' .. terms[1] .. '"')
     end
+  end
+end
+
+function db.runBatch(file)
+  for line in love.filesystem.lines(file) do
+    db.runCommand(line)
   end
 end
 
@@ -340,7 +340,7 @@ function db.include(t)
   for k, v in pairs(t) do 
     if type(v) == "function" then
       db.commands[k] = v
-    elseif k == "help" then
+    elseif k == "help" or k == "_help" then
       for cmd, docs in pairs(v) do db.help[cmd] = docs end
     end
   end
@@ -354,6 +354,11 @@ end
 
 function db.exclude(t)
   if type(t) == "string" then
+    if t == "default" then
+      db.log("Cannot exclude the default module")
+      return
+    end
+
     t = require(db.path .. ".commands." .. t)
   end
 
@@ -451,7 +456,7 @@ function db.update(dt)
   if db.tween and db.tween.active then db.tween:update(dt) end
 end
 
-local floor = math.floor -- for speed
+local ceil = math.ceil -- for speed
 
 function db.draw()
   local s = db.settings
@@ -472,20 +477,19 @@ function db.draw()
     local drawY = db.y + s.padding
     local begin = math.max(db.buffer.index - rows + 2, 1) -- add 1 for input line and 3 to keep in bounds (unsure why this is necessary)
     local consoleWidth = love.graphics.width - s.infoWidth - s.padding * 2
-    local i = db.buffer.index
-    local lineChange
+    local i = 0
+    local used = 0
+    local line
 
-    while i >= begin do
-      if db.buffer.index >= rows then
-        begin = begin + floor(s.font:getWidth(db.buffer[i]) / consoleWidth)
+    while used < rows and i < db.buffer.index do
+      line = db.buffer[db.buffer.index - i]
+      str = line .. "\n" .. str
+      i = i + 1
+      used = used + ceil(s.font:getWidth(line) / consoleWidth)
 
-        if begin > i then
-          drawY = drawY - s.font:getHeight()
-        end
+      if used >= rows then
+        drawY = drawY - s.font:getHeight() * (used - rows + 1)
       end
-
-      str = db.buffer[i] .. "\n" .. str
-      i = i - 1 
     end
 
     str = str .. s.prompt .. db.input
@@ -548,201 +552,10 @@ function db.focus(f)
   if db.live and f then db.check() end
 end
 
--- DEFAULT COMMANDS --
-
-function db.commands:lua(...)
-  local func, err = loadstring(self.joinWithSpaces(...))
-  
-  if err then
-    return err
-  else
-    local result, msg = pcall(func)
-    return msg
-  end
-end
-
--- works like the Lua interpreter
-db.commands["="] = function(self, ...)
-  return self.commands.lua(self, "return", ...)
-end
-
-function db.commands:bat(file)
-  if love.filesystem.getInfo(file) then
-    runBatch(file)
-  else
-    return "File doesn't exist."
-  end
-end
-
-function db.commands:include(...)
-  local args = { ... }
-
-  if #args > 0 then
-    for _, v in ipairs(args) do
-      db.include(v)
-    end
-  else
-    db.includeAll()
-  end
-end
-
-function db.commands:exclude(...)
-  for _, v in ipairs{...} do
-    db.exclude(v)
-  end
-end
-
-db.commands["repeat"] = function(self, times, ...)
-  local cmd = db.joinWithSpaces(...)
-  for i = 1, tonumber(times) do self.runCommand(cmd) end
-end
-
-function db.commands:clear()
-  self.clear()
-end
-
-function db.commands:echo(...)
-  return self.joinWithSpaces(...)
-end
-
-function db.commands:reset()
-  self.reset()
-end
-
-function db.commands:reload(path)
-  return self.reload(path)
-end
-
-function db.commands:info()
-  self.settings.alwaysShowInfo = not self.settings.alwaysShowInfo
-end
-
-function db.commands:graphs()
-  self.settings.drawGraphs = not self.settings.drawGraphs
-end
-
-function db.commands:help(cmd)
-  if not cmd then
-    local names = sortedKeys(self.commands)
-
-    for _, name in pairs(names) do
-      local str = "* " .. name
-      local docs = self.help[name]
-      
-      if docs then
-        if docs.args then str = str .. " " .. docs.args end
-        if docs.summary then str = str .. " -- " .. docs.summary end
-      end
-      
-      self.log(str)
-    end
-  elseif self.commands[cmd] then
-    local docs = self.help[cmd]
-    
-    if docs then
-      local str = "SYNTAX\n" .. cmd
-      if docs.args then str = str .. " " .. docs.args end
-      if docs.summary then str = str .. "\n \nSUMMARY\n" .. docs.summary end
-      if docs.description then str = str .. "\n \nDESCRIPTION\n" .. docs.description end
-      if docs.example then str = str .. "\n \nEXAMPLE\n" .. docs.example end
-      return str
-    else
-      return 'No documentation for "' .. cmd .. '"'
-    end
-  else
-    return 'No command named "' .. cmd .. '"'
-  end
-end
-
-function db.commands:controls()
-  local names = sortedKeys(self.controls)
-
-  for _, name in ipairs(names) do
-    local key = self.controls[name]
-
-    if key and key ~= "" then
-      self.log(name .. ": " .. key)
-    end
-  end
-end
-
--- COMMAND DOCUMENTATION --
-
-db.help = {
-  lua = {
-    args = "code...",
-    summary = "Compiles and executes Lua code. Returns the result.",
-    example = "> lua function globalFunc() return 3 ^ 2 end\n> lua return globalFunc()\n9"
-  },
-  
-  ["="] = {
-    args = "code...",
-    summary = "Executes Lua code, but also prefixes the return statement to the code.",
-    description = "Compiles and executes Lua code, much like the lua command.\nHowever, it prefixes the return statement to the code.",
-    example = "> = 3 + 4\n7"
-  },
-  
-  bat = {
-    args = "file",
-    summary = "Executes a batch file containing multiple commands.",
-    description = "Executes a batch file. A batch file is a text which contains multiple commands which can be executed on the console."
-  },
-
-  include = {
-    args = "[module]...",
-    summary = "Include one or more of the bundled command modules.",
-    description = "Include one or more of the command modules contained in debug/commands by specifying their names (no .lua extension). Include all of them by omitting the argument."
-  },
-
-  exclude = {
-    args = "module...",
-    summary = "Remove one or more of the bundled command modules.",
-    description = "Remove one or more of the command modules contained in debug/commands by specifying their names (no .lua extension)."
-  },
-  
-  ["repeat"] = {
-    args = "num-times command [args...]",
-    summary = "Repeats a command multiple times.",
-    example = "> repeat 3 echo hello\nhello\nhello\nhello"
-  },
-  
-  clear = {
-    summary = "Clears the console's text buffer."
-  },
-
-  reset = {
-    summary = "Reset the console, running the initial batch file if present."
-  },
-
-  reload = {
-    args = "package-path",
-    summary = "Attempts to reload the given file.",
-    description = "Attempts to reload the given file, searching for it in all Lua's package paths. Dots (from a package path) and backslashes are converted to forward slashes before checking."
-  },
-  
-  echo = {
-    args = "text...",
-    summary = "Outputs the text given.",
-    example = "> echo foo bar \"la la\"\nfoo bar la la"
-  },
-
-  info = {
-    summary = "Toggles whether info is shown when console is closed."
-  },
-
-  graphs = {
-    summary = "Toggles the display of any active graphs."
-  },
-  
-  help = {
-    args = "[command]",
-    summary = "Lists all available commands or provides documentation for a specific command."
-  },
-
-  controls = {
-    summary = "Lists all currently assigned keyboard controls for the console."
-  }
-}
+-- update and draw taken by ammo
+-- keypressed will likely be taken by input
+if not love.textinput then love.textinput = db.textinput end
+if not love.focus then love.focus = db.focus end
 
 db.resetSettings()
 return db
