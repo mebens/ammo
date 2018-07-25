@@ -137,8 +137,10 @@ local function handleHistory()
   
   if i == #db.history + 1 then
     db.input = ""
+    db.inputIndex = 1
   else
     db.input = db.history[i]
+    db.inputIndex = #db.input + 1
   end
 end
 
