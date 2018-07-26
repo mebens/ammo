@@ -653,7 +653,8 @@ function db.focus(f)
 end
 
 -- update and draw taken by ammo
--- keypressed and wheelmoved will likely be taken by input
+if not love.keypressed then love.keypressed = db.keypressed end
+if not love.wheelmoved then love.wheelmoved = db.wheelmoved end
 if not love.textinput then love.textinput = db.textinput end
 if not love.focus then love.focus = db.focus end
 

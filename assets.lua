@@ -16,6 +16,20 @@ assets.images = setmetatable({}, {
     else
       rawset(self, key, value)
     end
+  end,
+
+  __call = function(self, ...)
+    local args = {...}
+
+    if type(args[1]) == "table" then
+      for key, val in pairs(args[1]) do
+        assets.loadImage(val, key)
+      end
+    else
+      for _, f in ipairs{...} do
+        assets.loadImage(f)
+      end
+    end
   end
 })
 
@@ -25,6 +39,20 @@ assets.sfx = setmetatable({}, {
       assets.loadSfx(value, key)
     else
       rawset(self, key, value)
+    end
+  end,
+
+  __call = function(self, ...)
+    local args = {...}
+
+    if type(args[1]) == "table" then
+      for key, val in pairs(args[1]) do
+        assets.loadSfx(val, key)
+      end
+    else
+      for _, f in ipairs{...} do
+        assets.loadSfx(f)
+      end
     end
   end
 })
@@ -36,15 +64,43 @@ assets.music = setmetatable({}, {
     else
       rawset(self, key, value)
     end
+  end,
+
+  __call = function(self, ...)
+    local args = {...}
+
+    if type(args[1]) == "table" then
+      for key, val in pairs(args[1]) do
+        assets.loadMusic(val, key)
+      end
+    else
+      for _, f in ipairs{...} do
+        assets.loadMusic(f)
+      end
+    end
   end
 })
 
 assets.shaders = setmetatable({}, {
   __newindex = function(self, key, value)
     if type(value) == "string" then
-      assets.loadEffect(value, key)
+      assets.loadShader(value, key)
     else
       rawset(self, key, value)
+    end
+  end,
+
+  __call = function(self, ...)
+    local args = {...}
+
+    if type(args[1]) == "table" then
+      for key, val in pairs(args[1]) do
+        assets.loadShader(val, key)
+      end
+    else
+      for _, f in ipairs{...} do
+        assets.loadShader(f)
+      end
     end
   end
 })
