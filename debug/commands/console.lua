@@ -72,11 +72,11 @@ function t:rmcmd(name)
 end
 
 function t:addinfo(title, ...)
-  info(self, self.addInfo, title, false, ...)
+  return info(self, self.addInfo, title, false, ...)
 end
 
 function t:addgraph(title, ...)
-  info(self, self.addGraph, title, true, ...)
+  return info(self, self.addGraph, title, true, ...)
 end
 
 function t:rminfo(title)

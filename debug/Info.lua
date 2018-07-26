@@ -30,7 +30,7 @@ function Info:update(dt)
   if not (self.graph or self.alwaysRecord) then return end
   
   if self.timer <= 0 then
-    local n = self.graphSource()
+    local status, n = pcall(self.graphSource)
     self.timer = self.timer + self.interval
     
     if type(n) == "number" then
@@ -52,9 +52,10 @@ function Info:draw(x, y)
   local yOffset = s.font:getHeight() + self.padding
 
   -- info text
+  local status, data = pcall(self.source)
   love.graphics.setColor(s.color)
   love.graphics.setFont(s.font)
-  love.graphics.printf(self.title .. s.infoSeparator .. tostring(self.source() or ""), x, y, width)
+  love.graphics.printf(self.title .. s.infoSeparator .. tostring(data), x, y, width)
   
   if self.dsettings.drawGraphs and self.graph then
     local x1, y1
