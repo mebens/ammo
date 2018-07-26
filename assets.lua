@@ -12,7 +12,7 @@ assets.fontPath = "fonts"
 assets.images = setmetatable({}, {
   __newindex = function(self, key, value)
     if type(value) == "string" then
-      assets.loadImage(value, key)
+      assets.image(value, key)
     else
       rawset(self, key, value)
     end
@@ -23,11 +23,11 @@ assets.images = setmetatable({}, {
 
     if type(args[1]) == "table" then
       for key, val in pairs(args[1]) do
-        assets.loadImage(val, key)
+        assets.image(val, key)
       end
     else
       for _, f in ipairs{...} do
-        assets.loadImage(f)
+        assets.image(f)
       end
     end
   end
@@ -36,7 +36,7 @@ assets.images = setmetatable({}, {
 assets.sfx = setmetatable({}, {
   __newindex = function(self, key, value)
     if type(value) == "string" then
-      assets.loadSfx(value, key)
+      assets.sfx(value, key)
     else
       rawset(self, key, value)
     end
@@ -47,11 +47,11 @@ assets.sfx = setmetatable({}, {
 
     if type(args[1]) == "table" then
       for key, val in pairs(args[1]) do
-        assets.loadSfx(val, key)
+        assets.sfx(val, key)
       end
     else
       for _, f in ipairs{...} do
-        assets.loadSfx(f)
+        assets.sfx(f)
       end
     end
   end
@@ -60,7 +60,7 @@ assets.sfx = setmetatable({}, {
 assets.music = setmetatable({}, {
   __newindex = function(self, key, value)
     if type(value) == "string" then
-      assets.loadMusic(value, key)
+      assets.music(value, key)
     else
       rawset(self, key, value)
     end
@@ -71,11 +71,11 @@ assets.music = setmetatable({}, {
 
     if type(args[1]) == "table" then
       for key, val in pairs(args[1]) do
-        assets.loadMusic(val, key)
+        assets.music(val, key)
       end
     else
       for _, f in ipairs{...} do
-        assets.loadMusic(f)
+        assets.music(f)
       end
     end
   end
@@ -84,7 +84,7 @@ assets.music = setmetatable({}, {
 assets.shaders = setmetatable({}, {
   __newindex = function(self, key, value)
     if type(value) == "string" then
-      assets.loadShader(value, key)
+      assets.shader(value, key)
     else
       rawset(self, key, value)
     end
@@ -95,11 +95,11 @@ assets.shaders = setmetatable({}, {
 
     if type(args[1]) == "table" then
       for key, val in pairs(args[1]) do
-        assets.loadShader(val, key)
+        assets.shader(val, key)
       end
     else
       for _, f in ipairs{...} do
-        assets.loadShader(f)
+        assets.shader(f)
       end
     end
   end
@@ -112,13 +112,13 @@ function assets.get(key)
   return assets.images[key] or assets.sfx[key] or assets.music[key] or assets.shaders[key] or assets.fonts[key]
 end
 
-function assets.loadImage(file, name)
+function assets.image(file, name)
   local img = love.graphics.newImage(assets.getPath(file, "image"))
   rawset(assets.images, name or assets.getName(file), img)
   return img
 end
 
-function assets.loadSfx(file, name, pool, volume, stream)
+function assets.sfx(file, name, pool, volume, stream)
   if type(name) == "boolean" then
     stream = volume
     volume = pool
@@ -132,6 +132,10 @@ function assets.loadSfx(file, name, pool, volume, stream)
   end
   
   if type(file) == "table" then
+    if not name then
+      name = assets.getName(file[1], true)
+    end
+
     for i, v in ipairs(file) do
       file[i] = assets.getPath(file, "sfx")
     end
@@ -154,7 +158,7 @@ function assets.loadSfx(file, name, pool, volume, stream)
   return sound
 end
 
-function assets.loadMusic(file, name, volume)
+function assets.music(file, name, volume)
   if type(name) == "number" then
     volume = name
     name = nil
@@ -173,7 +177,7 @@ function assets.loadMusic(file, name, volume)
   return sound
 end
 
-function assets.loadShader(file, fileOrName, name)
+function assets.shader(file, fileOrName, name)
   local source = love.filesystem.read(assets.getPath(file, "shader"))
   local shader
 
@@ -189,12 +193,12 @@ function assets.loadShader(file, fileOrName, name)
   return shader
 end
 
-function assets.loadFont(file, size, name)
+function assets.font(file, size, name)
   name = name or assets.getName(file)
   size = size or 12
   
   if type(size) == "table" then
-    for i = 1, #size do assets.loadFont(file, size[i], name) end
+    for i = 1, #size do assets.font(file, size[i], name) end
     return assets.fonts[name]
   end
   
@@ -204,9 +208,15 @@ function assets.loadFont(file, size, name)
   return font
 end
 
-function assets.getName(path)
-  -- isolates file names, and camelcases it where punctuation separates words
-  return path:match("([^/]+)%.[^%.]+$"):gsub("%p(%w)", string.upper)
+-- isolates file names, and camelcases it where punctuation separates words
+function assets.getName(path, multi)
+  if multi then
+    path = path:match("([^/]+)[%-_]?%d?%.[^%.]+$") -- strip ending number
+  else
+    path = path:match("([^/]+)%.[^%.]+$")
+  end
+
+  return path:gsub("%p(%w)", string.upper)
 end
 
 function assets.getPath(file, type)
