@@ -142,8 +142,8 @@ t._help = {
   ["="] = {
     args = "code...",
     summary = "Executes Lua code, but also prefixes the return statement to the code.",
-    description = "Compiles and executes Lua code, much like the lua command.\nHowever, it prefixes the return statement to the code.",
-    example = "> = 3 + 4\n7"
+    description = "Compiles and executes Lua code, much like the lua command.\nHowever, it prefixes the return statement to the code.\nA space between this command and its arguments is optional.",
+    example = "> =3 + 4\n7"
   },
   
   bat = {
