@@ -4,9 +4,9 @@ local function matchType(file, name)
   if name then
     local types = assets.types[name]
 
-    for i = 2, #types do
-      if file:match(types[i] .. "$") then
-        return types[1]
+    for _, ext in ipairs(assets.types[name]) do
+      if file:match(ext .. "$") then
+        return true
       end
     end
 
@@ -15,8 +15,9 @@ local function matchType(file, name)
     local func
 
     for name, _ in pairs(assets.types) do
-      func = matchType(file, name)
-      if func then return func end
+      if matchType(file, name) then
+        return assets["new" .. name:gsub("^.", string.upper)]
+      end
     end
 
     error("Unable to automatically match asset type to file '" .. file .. "'")
@@ -75,17 +76,11 @@ function assets.newType(name, plural, path, types, loadFunc)
   assets[name .. "Path"] = path
 
   if types then
-    if type(types) == "string" then
-      types = { loadFunc, types }
-    else
-      table.insert(types, 1, loadFunc)
-    end
-
-    assets.types[name] = types
+    assets.types[name] = type(types) == "string" and { types } or types
   end
 
   assets["all" .. plural:gsub("^.", string.upper)] = function()
-    for _, f in ipairs(love.filesystem.getDirectoryItems(assets[name .. "Path"])) do
+    for _, f in ipairs(love.filesystem.getDirectoryItems(assets.getPath(nil, name))) do
       if not assets.types[name] then
         loadFunc(f)
       elseif matchType(f, name) then
@@ -116,7 +111,7 @@ function assets.getName(path, multi)
 end
 
 function assets.getPath(file, type)
-  return (assets.path and (assets.path .. "/") or "") .. assets[type .. "Path"] .. "/" .. file
+  return (assets.path and (assets.path .. "/") or "") .. assets[type .. "Path"] .. "/" .. (file or "")
 end
 
 assets.newType("image", nil, nil, { "png", "jpg", "jpeg", "tga", "bmp" }, function (file, name)
