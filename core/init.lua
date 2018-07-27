@@ -10,7 +10,7 @@ require(ammo.path .. ".core.Camera")
 require(ammo.path .. ".core.World")
 require(ammo.path .. ".core.Entity")
 
-ammo.version = "1.3.0"
+ammo.version = "2.0.0"
 ammo.ext = {}
 ammo._default = World:new()
 ammo._world = ammo._default
