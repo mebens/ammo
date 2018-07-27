@@ -41,10 +41,10 @@ local max = math.max
 -- removes the last character from the input line
 local function removeCharacter(forward)
   if forward then
-    db.input = db.input:sub(1, db.inputIndex - 1) .. db.input:sub(db.inputIndex + 1)
+    db.input = db.input:sub(1, max(db.inputIndex - 1, 0)) .. db.input:sub(db.inputIndex + 1)
     db.inputIndex = min(db.inputIndex, #db.input + 1)
   else
-    db.input = db.input:sub(1, #db.input - 1)
+    db.input = db.input:sub(1, max(db.inputIndex - 2, 0)) .. db.input:sub(db.inputIndex)
     db.inputIndex = max(db.inputIndex - 1, 1)
   end
 end
