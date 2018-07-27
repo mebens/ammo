@@ -1,124 +1,131 @@
+local function matchType(file, name)
+  if type(file) == "table" then file = file[1] end
+
+  if name then
+    local types = assets.types[name]
+
+    for i = 2, #types do
+      if file:match(types[i] .. "$") then
+        return types[1]
+      end
+    end
+
+    return false
+  else
+    local func
+
+    for name, _ in pairs(assets.types) do
+      func = matchType(file, name)
+      if func then return func end
+    end
+
+    error("Unable to automatically match asset type to file '" .. file .. "'")
+  end
+end
+
 local assets = setmetatable({}, {
-  __index = function(self, key) return self.get(key) end
+  __index = function(self, key) return self.get(key) end,
+  __call = function(self, ...)
+    local args = {...}
+    local func
+
+    if #args == 1 and type(args[1]) == "table" then
+      for key, val in pairs(args[1]) do
+        func = matchType(val)
+        func(val, type(key) ~= "number" and key or nil)
+      end
+    else
+      for _, f in ipairs(args) do
+        func = matchType(f)
+        func(f)
+      end
+    end
+  end
 })
 
 assets.path = "assets"
-assets.imagePath = "images"
-assets.sfxPath = "sfx"
-assets.musicPath = "music"
-assets.shaderPath = "shaders"
-assets.fontPath = "fonts"
-
-assets.images = setmetatable({}, {
-  __newindex = function(self, key, value)
-    if type(value) == "string" then
-      assets.image(value, key)
-    else
-      rawset(self, key, value)
-    end
-  end,
-
-  __call = function(self, ...)
-    local args = {...}
-
-    if type(args[1]) == "table" then
-      for key, val in pairs(args[1]) do
-        assets.image(val, key)
-      end
-    else
-      for _, f in ipairs{...} do
-        assets.image(f)
-      end
-    end
-  end
-})
-
-assets.sfx = setmetatable({}, {
-  __newindex = function(self, key, value)
-    if type(value) == "string" then
-      assets.sfx(value, key)
-    else
-      rawset(self, key, value)
-    end
-  end,
-
-  __call = function(self, ...)
-    local args = {...}
-
-    if type(args[1]) == "table" then
-      for key, val in pairs(args[1]) do
-        assets.sfx(val, key)
-      end
-    else
-      for _, f in ipairs{...} do
-        assets.sfx(f)
-      end
-    end
-  end
-})
-
-assets.music = setmetatable({}, {
-  __newindex = function(self, key, value)
-    if type(value) == "string" then
-      assets.music(value, key)
-    else
-      rawset(self, key, value)
-    end
-  end,
-
-  __call = function(self, ...)
-    local args = {...}
-
-    if type(args[1]) == "table" then
-      for key, val in pairs(args[1]) do
-        assets.music(val, key)
-      end
-    else
-      for _, f in ipairs{...} do
-        assets.music(f)
-      end
-    end
-  end
-})
-
-assets.shaders = setmetatable({}, {
-  __newindex = function(self, key, value)
-    if type(value) == "string" then
-      assets.shader(value, key)
-    else
-      rawset(self, key, value)
-    end
-  end,
-
-  __call = function(self, ...)
-    local args = {...}
-
-    if type(args[1]) == "table" then
-      for key, val in pairs(args[1]) do
-        assets.shader(val, key)
-      end
-    else
-      for _, f in ipairs{...} do
-        assets.shader(f)
-      end
-    end
-  end
-})
-
--- can't do it here because fonts require a size
-assets.fonts = {}
+assets.types = {}
 
 function assets.get(key)
   return assets.images[key] or assets.sfx[key] or assets.music[key] or assets.shaders[key] or assets.fonts[key]
 end
 
-function assets.image(file, name)
+function assets.newType(name, plural, path, types, loadFunc)
+  local t = setmetatable({}, {
+    __call = function(self, ...)
+      local args = {...}
+
+      if #args == 1 and type(args[1]) == "table" then
+        for key, val in pairs(args[1]) do
+          loadFunc(val, type(key) ~= "number" and key or nil)
+        end
+      else
+        for _, f in ipairs(args) do
+          loadFunc(f)
+        end
+      end
+    end
+  })
+
+  plural = plural or name .. "s"
+  path = path or plural
+  assets[name] = t
+  assets[plural] = t
+  assets["new" .. name:gsub("^.", string.upper)] = loadFunc
+  assets[name .. "Path"] = path
+
+  if types then
+    if type(types) == "string" then
+      types = { loadFunc, types }
+    else
+      table.insert(types, 1, loadFunc)
+    end
+
+    assets.types[name] = types
+  end
+
+  assets["all" .. plural:gsub("^.", string.upper)] = function()
+    for _, f in ipairs(love.filesystem.getDirectoryItems(assets[name .. "Path"])) do
+      if not assets.types[name] then
+        loadFunc(f)
+      elseif matchType(f, name) then
+        loadFunc(f)
+      end
+    end
+  end
+end
+
+-- isolates file names, and camelcases it where punctuation separates words
+function assets.getName(path, multi)
+  if multi then
+    local stripEnd = path:match("([^/]+)([%-_]?%d+)%.[^%.]+$") -- strip ending number
+
+    if stripEnd then
+      path = stripEnd
+    else
+      multi = false -- use the matching below
+    end
+  end
+
+  if not multi then
+    path = path:match("([^/]+)%.[^%.]+$")
+  end
+
+  path = path:gsub("%p(%w)", string.upper)
+  return path
+end
+
+function assets.getPath(file, type)
+  return (assets.path and (assets.path .. "/") or "") .. assets[type .. "Path"] .. "/" .. file
+end
+
+assets.newType("image", nil, nil, { "png", "jpg", "jpeg", "tga", "bmp" }, function (file, name)
   local img = love.graphics.newImage(assets.getPath(file, "image"))
   rawset(assets.images, name or assets.getName(file), img)
   return img
-end
+end)
 
-function assets.sfx(file, name, pool, volume, stream)
+assets.newType("sfx", "sfx", nil, { "ogg", "oga", "wav", "mp3" }, function (file, name, pool, volume, stream)
   if type(name) == "boolean" then
     stream = volume
     volume = pool
@@ -137,7 +144,7 @@ function assets.sfx(file, name, pool, volume, stream)
     end
 
     for i, v in ipairs(file) do
-      file[i] = assets.getPath(file, "sfx")
+      file[i] = assets.getPath(file[i], "sfx")
     end
   else
     file = assets.getPath(file, "sfx")
@@ -156,9 +163,9 @@ function assets.sfx(file, name, pool, volume, stream)
 
   rawset(assets.sfx, name or assets.getName(file), sound)
   return sound
-end
+end)
 
-function assets.music(file, name, volume)
+assets.newType("music", "music", nil, nil, function (file, name, volume)
   if type(name) == "number" then
     volume = name
     name = nil
@@ -175,9 +182,9 @@ function assets.music(file, name, volume)
   
   rawset(assets.music, name or assets.getName(file), sound)
   return sound
-end
+end)
 
-function assets.shader(file, fileOrName, name)
+assets.newType("shader", nil, nil, { "frag", "vert", "glsl", "shader" }, function (file, fileOrName, name)
   local source = love.filesystem.read(assets.getPath(file, "shader"))
   local shader
 
@@ -191,14 +198,21 @@ function assets.shader(file, fileOrName, name)
 
   rawset(assets.shaders, name or assets.getName(file), shader)
   return shader
-end
+end)
 
-function assets.font(file, size, name)
+assets.newType("font", nil, nil, { "ttf", "otf" }, function (file, size, name)
+  -- support for assets.fonts() syntax
+  if type(file) == "table" then
+    size = file[2]
+    name = file[3]
+    file = file[1]
+  end
+
   name = name or assets.getName(file)
   size = size or 12
-  
+
   if type(size) == "table" then
-    for i = 1, #size do assets.font(file, size[i], name) end
+    for i = 1, #size do assets.newFont(file, size[i], name) end
     return assets.fonts[name]
   end
   
@@ -206,21 +220,6 @@ function assets.font(file, size, name)
   if not assets.fonts[name] then assets.fonts[name] = {} end
   assets.fonts[name][size] = font
   return font
-end
-
--- isolates file names, and camelcases it where punctuation separates words
-function assets.getName(path, multi)
-  if multi then
-    path = path:match("([^/]+)[%-_]?%d?%.[^%.]+$") -- strip ending number
-  else
-    path = path:match("([^/]+)%.[^%.]+$")
-  end
-
-  return path:gsub("%p(%w)", string.upper)
-end
-
-function assets.getPath(file, type)
-  return (assets.path and (assets.path .. "/") or "") .. assets[type .. "Path"] .. "/" .. file
-end
+end)
 
 return assets
