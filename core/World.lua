@@ -62,10 +62,10 @@ function World:draw()
   for i = self._layers.max, self._layers.min, -1 do
     local layer = self._layers[i]
     
-    if layer then
+    if layer and layer.visible then
       if layer.pre then layer.pre() end
       
-      if layer.camera ~= false then
+      if layer.camera then
         self.camera:set(layer.scale)
       end
       
@@ -77,7 +77,7 @@ function World:draw()
         end
       end
       
-      if layer.camera ~= false then self.camera:unset() end
+      if layer.camera then self.camera:unset() end
       if layer.post then layer.post() end
     end
   end
@@ -122,11 +122,11 @@ function World:addLayer(index, scale, pre, post, camera)
     camera = index.camera
   end
   
-  if camera ~= false then camera = true end
   layer.scale = scale or 1
   layer.pre = pre
   layer.post = post
-  layer.camera = camera
+  layer.camera = camera ~= false
+  layer.visible = true
   self._layers[index] = layer
   self._layers.min = math.min(index, self._layers.min)
   self._layers.max = math.max(index, self._layers.max)
