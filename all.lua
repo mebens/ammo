@@ -1,6 +1,6 @@
 if not ammo then
   ammo = {}
-  ammo.path = ({...})[1]:gsub("%.init$", "")
+  ammo.path = ({...})[1]:gsub("%.all$", "")
 
   -- only include middleclass if it's not already defined
   if not class then
