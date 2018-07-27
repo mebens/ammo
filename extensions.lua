@@ -127,9 +127,3 @@ function love.mouse.switchToRaw()
 end
 
 love.mouse.switchToWorld()
-
--- backwards compatibility until 1.3
-love.mouse.switchToRotated = love.mouse.switchToWorld
-love.mouse.getRotatedX = love.mouse.getWorldX
-love.mouse.getRotatedY = love.mouse.getWorldY
-love.mouse.getRotatedPosition = love.mouse.getWorldPosition

@@ -7,4 +7,3 @@ if not class then
 end
 
 require(ammo.path .. ".core")
-require(ammo.path .. ".extensions")
