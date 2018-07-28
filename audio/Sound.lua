@@ -16,7 +16,7 @@ function Sound:__index(key)
             v[key](v, ...)
           end
         else
-          s._proto[key](s._proto, ...)
+          return s._proto[key](s._proto, ...)
         end
       end
 
@@ -62,4 +62,9 @@ function Sound:play()
   local src = proto:clone()
   src:play()
   return src
+end
+
+function Sound:clone()
+  local proto = self._multi and self._protos[rand(1, #self._protos)] or self._proto
+  return proto:clone()
 end

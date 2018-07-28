@@ -2,8 +2,6 @@ local function matchType(file, name)
   if type(file) == "table" then file = file[1] end
 
   if name then
-    local types = assets.types[name]
-
     for _, ext in ipairs(assets.types[name]) do
       if file:match(ext .. "$") then
         return true
@@ -12,8 +10,6 @@ local function matchType(file, name)
 
     return false
   else
-    local func
-
     for name, _ in pairs(assets.types) do
       if matchType(file, name) then
         return assets["new" .. name:gsub("^.", string.upper)]
@@ -90,12 +86,20 @@ function assets.newType(name, plural, path, types, loadFunc)
     assets.types[name] = type(types) == "string" and { types } or types
   end
 
-  assets["all" .. plural:gsub("^.", string.upper)] = function()
+  assets["all" .. plural:gsub("^.", string.upper)] = function(func)
+    local obj, objName
+
     for _, f in ipairs(love.filesystem.getDirectoryItems(assets.getPath(nil, name))) do
+      obj = nil
+
       if not assets.types[name] then
-        loadAsset(f)
+        obj, objName = loadAsset(f)
       elseif matchType(f, name) then
-        loadAsset(f)
+        obj, objName = loadAsset(f)
+      end
+
+      if obj and func then
+        func(obj, objName)
       end
     end
   end
