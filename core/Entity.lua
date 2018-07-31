@@ -27,7 +27,6 @@ end
 function Entity:initialize(x, y)
   self.x = x or 0
   self.y = y or 0
-  self.collidable = true
   self.active = true
   self.visible = true
   self._layer = 1
